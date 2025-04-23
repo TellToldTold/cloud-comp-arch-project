@@ -21,6 +21,20 @@ from parsec_runner import (
 )
 from delete_cluster import delete_cluster
 
+# job               cpu/memory intensive?               sclability                              minutes with 1 thread
+# blackscholes:     generally light                     scalable to 2 and 4 threads             1.26
+# canneal:          slightly memory intensive           not very scalable                       3.02
+# dedup:            cpu intensive                       scalable to 2 threads                   0.14
+# ferret:           cpu and memory intensive            very scalable to 2 threads              3.45
+# freqmine:         very cpu intensive,                 very scalable to 2 threads              5.45
+# radix:            generally light, more memory        very scalable to 2 and 4 threads        0.40
+# vips:             cpu and memory intensive            very scalable to 2 and 4 threads        1.05
+
+# node-a-2core: 2 cores, 16GB RAM (least powerful node)
+# node-b-2core: 2 cores, 2GB RAM
+# node-c-4core: 4 cores, 8GB RAM  (most powerful node)
+# node-d-4core: 4 cores, 16GB RAM (same CPU as node-b-2core)
+
 def load_matrix(path):
     return json.load(open(path))
 
@@ -123,7 +137,14 @@ def run_experiments(args):
         # Launch all PARSEC benchmarks concurrently for this experiment
         benchings = exp["benchings"]
         configs = [
-            (b["name"], b["node_type"], b["threads"], b.get("cpuset", ""))
+            (
+                b["name"], 
+                b["node_type"], 
+                b["threads"], 
+                b.get("cpuset", ""),
+                b.get("delay", 0),
+                b.get("dependencies", [])
+            )
             for b in benchings
         ]
         # Apply scheduling and launch jobs

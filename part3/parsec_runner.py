@@ -64,12 +64,19 @@ def modify_yaml_for_scheduling(
 
 def launch_jobs(configs, workdir):
     """
-    Launches multiple PARSEC jobs with specified scheduling parameters.
+    Launches multiple PARSEC jobs with specified scheduling parameters,
+    respecting dependencies and delays.
     
     Parameters
     ----------
     configs : list of tuples
-        Each tuple is (benchmark, node_type, threads, cpuset).
+        Each tuple should contain 6 elements:
+        - benchmark: str - Name of the benchmark to run
+        - node_type: str - Target node type to schedule onto
+        - threads: int - Number of threads to use
+        - cpuset: str - CPU set to pin job to
+        - delay: int - Seconds to wait before launching job (from function start)
+        - dependencies: list[str] - Job names that must complete before launching
     workdir : str
         Directory where modified YAMLs will be written.
     
@@ -78,39 +85,104 @@ def launch_jobs(configs, workdir):
     list of str
         List of job names launched (metadata.name from each YAML).
     """
-    job_names = []
-
+    # Record function start time for absolute delays
+    start_time = time.time()
+    
     # Prepare the launch times file
     launch_times_path = os.path.join(workdir, "launch_times.txt")
-    # Overwrite any existing file
     with open(launch_times_path, "w") as _:
         pass
-
-    for bench, node_type, thr, cpu in configs:
-        yaml_path = modify_yaml_for_scheduling(
-            bench,
-            node_type,
-            thr,
-            cpu,
-            workdir
-        )
-        run_command(f"kubectl create -f {yaml_path}", check = True)
-        print(
-            f"[STATUS] launch_jobs: Launched {bench} on {node_type} with " + 
-            f"{thr} threads"
-        )
-
-        # Assuming each YAML defines a Job named `parsec-<benchmark>`
+    
+    # Track all job names for return value
+    all_job_names = []
+    
+    # Initialize pending_jobs as all jobs
+    pending_jobs = []
+    for bench, node_type, thr, cpu, delay, dependencies in configs:
         job_name = f"parsec-{bench}"
+        all_job_names.append(job_name)
+        pending_jobs.append({
+            "bench": bench,
+            "node_type": node_type,
+            "threads": thr,
+            "cpuset": cpu,
+            "delay": delay,
+            "delay_until": start_time + delay,
+            "dependencies": dependencies,
+            "job_name": job_name
+        })
+    
+    # Track completed jobs
+    completed_jobs = set()
+    
+    # For periodic status reporting
+    last_status_time = time.time() - 30
+    
+    # Launch jobs that meet criteria (delay passed, dependencies satisfied)
+    while pending_jobs:
+        # Check and update completed jobs
+        out = subprocess.check_output(["kubectl", "get", "jobs", "-o", "json"])
+        data = json.loads(out)
+        for item in data["items"]:
+            job_name = item["metadata"]["name"]
+            if job_name in all_job_names and item["status"].get("succeeded", 0) >= 1:
+                completed_jobs.add(job_name)
         
-        # Record the launch timestamp in milliseconds
-        start_ms = int(time.time() * 1000)
-        with open(launch_times_path, "a") as lt:
-            lt.write(f"Job:  {job_name}\n")
-            lt.write(f"Start time:  {start_ms}\n")
-        job_names.append(job_name)
+        current_time = time.time()
         
-    return job_names
+        # Periodically print status update
+        if current_time - last_status_time >= 10:
+            print("[STATUS] launch_jobs: Current job status:")
+            print(f"  - Completed jobs: {len(completed_jobs)}/{len(all_job_names)}")
+            print(f"  - Pending jobs: {len(pending_jobs)}")
+            
+            # Report on jobs waiting for dependencies
+            for job in pending_jobs:
+                missing_deps = [dep for dep in job["dependencies"] if dep not in completed_jobs]
+                if missing_deps:
+                    print(f"  - Job {job['job_name']} is waiting for dependencies: {', '.join(missing_deps)}")
+            
+            run_command("kubectl get jobs", check=False)
+            last_status_time = current_time
+        
+        # Try to launch jobs that meet criteria
+        for job in pending_jobs[:]:  # Use a copy of the list for iteration
+            # Check if delay time has passed
+            delay_satisfied = current_time >= job["delay_until"]
+            
+            # Check if dependencies are satisfied
+            deps_satisfied = all(dep in completed_jobs for dep in job["dependencies"])
+            
+            if delay_satisfied and deps_satisfied:
+                # Launch the job
+                yaml_path = modify_yaml_for_scheduling(
+                    job["bench"],
+                    job["node_type"],
+                    job["threads"],
+                    job["cpuset"],
+                    workdir
+                )
+                run_command(f"kubectl create -f {yaml_path}", check=True)
+                print(
+                    f"[STATUS] launch_jobs: Launched {job['bench']} on {job['node_type']} " + 
+                    f"with {job['threads']} threads"
+                )
+                
+                # Record the launch timestamp in milliseconds
+                launch_ms = int(time.time() * 1000)
+                with open(launch_times_path, "a") as lt:
+                    lt.write(f"Job:  {job['job_name']}\n")
+                    lt.write(f"Start time:  {launch_ms}\n")
+                
+                # Mark as launched but keep in pending list until completion
+                pending_jobs.remove(job)
+        
+        # Pause before next iteration
+        if pending_jobs:
+            time.sleep(2)
+    
+    print("[STATUS] launch_jobs: All jobs launched")
+    return all_job_names
 
 def wait_for_jobs(jobs, poll_interval=5):
     """
