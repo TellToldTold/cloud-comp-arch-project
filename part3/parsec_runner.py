@@ -99,17 +99,21 @@ def launch_jobs(configs, workdir):
     # Initialize pending_jobs as all jobs
     pending_jobs = []
     for bench, node_type, thr, cpu, delay, dependencies in configs:
-        job_name = f"parsec-{bench}"
+        # Standardize job name to match Kubernetes naming convention
+        job_name = f"parsec-{bench}"  
         all_job_names.append(job_name)
+        
+        standardized_dependencies = [f"parsec-{dep}" for dep in dependencies]
+        
         pending_jobs.append({
-            "bench": bench,
+            "bench": bench,  # Keep original benchmark name for logging/YAML creation
             "node_type": node_type,
             "threads": thr,
             "cpuset": cpu,
             "delay": delay,
             "delay_until": start_time + delay,
-            "dependencies": dependencies,
-            "job_name": job_name
+            "dependencies": standardized_dependencies, 
+            "job_name": job_name  
         })
     
     # Track completed jobs
