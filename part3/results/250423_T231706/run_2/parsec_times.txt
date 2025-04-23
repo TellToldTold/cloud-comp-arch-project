@@ -1,0 +1,20 @@
+Job:  memcached
+Job:  parsec-blackscholes
+Job time:  0:00:35
+Job:  parsec-canneal
+Job time:  0:01:11
+Job:  parsec-canneal
+Job time:  0:02:57
+Job:  parsec-dedup
+Job time:  0:00:27
+Job:  parsec-dedup
+Job time:  0:00:53
+Job:  parsec-ferret
+Job time:  0:01:54
+Job:  parsec-freqmine
+Job time:  0:02:42
+Job:  parsec-radix
+Job time:  0:00:43
+Job:  parsec-vips
+Job time:  0:01:44
+You haven't run all the PARSEC jobs. Exiting...

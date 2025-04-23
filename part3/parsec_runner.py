@@ -188,16 +188,17 @@ def launch_jobs(configs, workdir):
     print("[STATUS] launch_jobs: All jobs launched")
     return all_job_names
 
-def wait_for_jobs(jobs, poll_interval=5):
+def wait_for_jobs(jobs, poll_interval=5, timeout=300):
     """
     Polls the Kubernetes API until all specified Jobs have completed
-    successfully.
+    successfully or a timeout is reached.
     
     This function:
     1) Periodically retrieves the list of Job objects in JSON format.
     2) Filters for the provided `jobs` whose `.status.succeeded` count is at
        least 1.
-    3) Repeats the check every `poll_interval` seconds until all jobs are done.
+    3) Repeats the check every `poll_interval` seconds until all jobs are done
+       or `timeout` seconds have passed.
     
     Parameters
     ----------
@@ -205,29 +206,56 @@ def wait_for_jobs(jobs, poll_interval=5):
         Names of the Kubernetes Job resources to wait for.
     poll_interval : int, optional
         Number of seconds to wait between successive polls (default is 5).
+    timeout : int, optional
+        Maximum number of seconds to wait before returning (default is 300).
+        Set to 0 or None to disable the timeout.
     
     Returns
     -------
     None
     """
     print("[STATUS] wait_for_jobs: Waiting for jobs to complete...")
+    start_time = time.time()
     last_status_time = time.time() - 30
 
+    job_set = set(jobs) # Use a set for efficient lookup
+
     while True:
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+
+        # Check for timeout
+        if timeout and elapsed_time > timeout:
+            print(f"[WARNING] wait_for_jobs: Timeout of {timeout} seconds reached.")
+            out = subprocess.check_output(["kubectl","get","jobs","-o","json"])
+            data = json.loads(out)
+            done_jobs = {j["metadata"]["name"] for j in data["items"] 
+                         if j["metadata"]["name"] in job_set 
+                         and j["status"].get("succeeded",0) >= 1}
+            pending_jobs = job_set - done_jobs
+            if pending_jobs:
+                print(f"  - The following jobs did not complete: {', '.join(pending_jobs)}")
+            else:
+                print("  - All expected jobs completed just before timeout.")
+            break
+
+        # Check for job completion
         out = subprocess.check_output(["kubectl","get","jobs","-o","json"])
         data = json.loads(out)
-        done = [j for j in data["items"] 
-                if j["metadata"]["name"] in jobs 
-                and j["status"].get("succeeded",0) >= 1]
-        if len(done) == len(jobs):
+        done_jobs = {j["metadata"]["name"] for j in data["items"] 
+                     if j["metadata"]["name"] in job_set 
+                     and j["status"].get("succeeded",0) >= 1}
+        
+        if len(done_jobs) == len(jobs):
+            print("[STATUS] wait_for_jobs: All jobs completed successfully.")
             break
 
         # Periodically print job status every 30 seconds
-        now = time.time()
-        if now - last_status_time >= 30:
-            print("[STATUS] wait_for_jobs: Current job status:")
+        if current_time - last_status_time >= 30:
+            pending_count = len(jobs) - len(done_jobs)
+            print(f"[STATUS] wait_for_jobs: {len(done_jobs)}/{len(jobs)} jobs completed. Waiting for {pending_count} more...")
             run_command("kubectl get jobs", check = False)
-            last_status_time = now
+            last_status_time = current_time
 
         time.sleep(poll_interval)
 
