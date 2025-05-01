@@ -93,7 +93,7 @@ def export_graph(folder, run_number):
         ncols=1,
         figsize=(12, 6),
         sharex=True,
-        gridspec_kw={'height_ratios': [3, 1]}  # Top plot taller than bottom
+        gridspec_kw={'height_ratios': [5, 2]}  # Top plot taller than bottom
     )
 
     # --- Bar plot for p95 latency ---
@@ -104,22 +104,23 @@ def export_graph(folder, run_number):
         align='edge',
         color='lightskyblue'
     )
-    ax1.set_ylabel('p95 latency (µs)')
-    ax1.set_title('p95 latency during parsec benchmark load for ' + run_number)
+    ax1.set_ylabel('95th Percentile Latency (µs)')
+    ax1.set_title('95th Percentile Memcached Latency During PARSEC Benchmark Loads for ' + run_number)
     ax1.grid(True, which='both', linestyle='--', alpha=0.5)
     ax1.grid(which='minor', linestyle=':', alpha=0.3)
     ax1.minorticks_on()
 
+    spacing = 2
     # --- Job duration horizontal bars ---
     for i, row in job_interval_df.iterrows():
         color = colors.get(row['job'], '#000000')
         ax2.hlines(
-            y=i, xmin=row['start_time'], xmax=row['end_time'],
+            y=i * spacing, xmin=row['start_time'], xmax=row['end_time'],
             color=color, linewidth=6
         )
         ax2.text(
             x=(row['start_time'] + row['end_time']) / 2,
-            y=i + 0.2,
+            y= i * spacing + 0.3,
             s=row['job'],
             ha='center',
             va='bottom',
@@ -131,7 +132,7 @@ def export_graph(folder, run_number):
     ax2.set_yticklabels([])
     ax2.set_xlabel('Time (ms)')
     ax2.set_ylabel('Jobs')
-    ax2.set_ylim(-1, len(job_interval_df))
+    ax2.set_ylim(-1, spacing * len(job_interval_df))
     ax2.grid(True, axis='x', which='both', linestyle='--', alpha=0.5)
     ax2.minorticks_on()
     ax2.tick_params(axis='x', which='both', direction='out', top=True)
