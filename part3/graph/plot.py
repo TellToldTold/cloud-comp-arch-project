@@ -69,7 +69,7 @@ def export_graph(folder, run_number):
     result_path = path + folder + '/' + run_number + "/mcperf_results_local.txt"
     header = """type avg std min p5 p10 p50 p67 p75 p80 p85 p90 p95 p99 p999 p9999 QPS target ts_start ts_end"""
     column_names = header.split()
-    latencies_df = pd.read_csv(result_path, sep=r'\s+', comment='#', engine='python')
+    latencies_df = pd.read_csv(result_path, sep=r'\s+', engine='python')
     latencies_df.columns = column_names
 
     p95_latencies = latencies_df[['p95', 'ts_start', 'ts_end']].copy()
