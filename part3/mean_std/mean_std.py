@@ -13,6 +13,9 @@ def get_time(folder, run_number):
     jobs = re.findall(r"Job:\s+([^\n]+)", duration)
     durations = re.findall(r"Job time:\s+([0-9:]+)", duration)
 
+    total_time = re.findall(r"Total time:\s+([0-9:]+)", duration)
+    durations.append(total_time[0])
+
     # Remove "memcached" or any non-parsec job if needed
     job_names = [j.replace("parsec-", "") for j in jobs if "parsec-" in j]
 
@@ -25,7 +28,7 @@ def get_time(folder, run_number):
 
     # Create DataFrame
     df = pd.DataFrame({
-        "job": job_names,
+        "job": job_names + ["Total"],
         "duration_sec_" + run_number: durations_sec
     })
 
@@ -40,18 +43,6 @@ def main(folder):
     duration_df = pd.merge(merged, run_3, left_on="job", right_on="job")
 
     duration_columns = ['duration_sec_run_1', 'duration_sec_run_2', 'duration_sec_run_3']
-
-    total_row = {
-    'job': 'Total',
-    'duration_sec_run_1': duration_df[duration_columns[0]].sum(),
-    'duration_sec_run_2': duration_df[duration_columns[1]].sum(),
-    'duration_sec_run_3': duration_df[duration_columns[2]].sum(),
-    'duration_mean': duration_df[duration_columns].sum(axis=1).mean(),
-    'duration_std': duration_df[duration_columns].sum(axis=1).std()
-    }
-
-    # Append the total row to the dataframe
-    duration_df = duration_df._append(total_row, ignore_index=True)
     
     duration_df['duration_mean'] = duration_df[duration_columns].mean(axis=1)
     duration_df['duration_std'] = duration_df[duration_columns].std(axis=1)
