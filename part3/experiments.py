@@ -20,6 +20,7 @@ from parsec_runner import (
     delete_all_parsec_jobs
 )
 from delete_cluster import delete_cluster
+import time
 
 # job               cpu/memory intensive?               sclability                              minutes with 1 thread
 # blackscholes:     generally light                     scalable to 2 and 4 threads             1.26
@@ -147,6 +148,8 @@ def run_experiments(args):
             )
             for b in benchings
         ]
+        # wait 30 seconds
+        time.sleep(30)
         # Apply scheduling and launch jobs
         job_names = launch_jobs(configs, exp_dir)
         # Wait until all batch jobs finish
