@@ -1,0 +1,48 @@
+[
+  {
+    "experiment_name": "all_batch_on_heterogeneous_nodes",
+    "mem_node": "node-a-2core",
+    "mem_threads": 2,
+    "mem_cpuset": "1",
+    "benchings": [
+      {
+        "name": "blackscholes",
+        "node_type": "node-b-2core",
+        "threads": 2
+      },
+      {
+        "name": "canneal",
+        "node_type": "node-d-4core",
+        "threads": 4
+      },
+      {
+        "name": "dedup",
+        "node_type": "node-b-2core",
+        "threads": 2,
+        "dependencies": ["blackscholes"]
+      },
+      {
+        "name": "ferret",
+        "node_type": "node-d-4core",
+        "threads": 4
+      },
+      {
+        "name": "freqmine",
+        "node_type": "node-c-4core",
+        "threads": 4
+      },
+      {
+        "name": "radix",
+        "node_type": "node-a-2core",
+        "threads": 1,
+        "cpuset": "0"
+      },
+      {
+        "name": "vips",
+        "node_type": "node-c-4core",
+        "threads": 4,
+        "dependencies": ["freqmine"]
+      }
+    ]
+  }
+]

@@ -1,0 +1,14 @@
+Job:  parsec-blackscholes
+Start time:  1745399782020
+Job:  parsec-canneal
+Start time:  1745399782247
+Job:  parsec-dedup
+Start time:  1745399782443
+Job:  parsec-ferret
+Start time:  1745399782644
+Job:  parsec-freqmine
+Start time:  1745399782883
+Job:  parsec-radix
+Start time:  1745399783119
+Job:  parsec-vips
+Start time:  1745399783325

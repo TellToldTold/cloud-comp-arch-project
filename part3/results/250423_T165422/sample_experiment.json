@@ -1,0 +1,235 @@
+[
+  {
+    "experiment_name": "all_batch_on_heterogeneous_nodes",
+    "mem_node": "node-d-4core",
+    "mem_threads": 4,
+    "mem_cpuset": "0,1,2,3",
+    "benchings": [
+      {
+        "name": "blackscholes",
+        "node_type": "node-a-2core",
+        "threads": 2
+      },
+      {
+        "name": "canneal",
+        "node_type": "node-c-4core",
+        "threads": 4,
+        "cpuset": "0,1,2,3"
+      },
+      {
+        "name": "dedup",
+        "node_type": "node-a-2core",
+        "threads": 2,
+        "dependencies": ["blackscholes"]
+      },
+      {
+        "name": "ferret",
+        "node_type": "node-d-4core",
+        "threads": 3,
+        "cpuset": "0,1,2"
+      },
+      {
+        "name": "freqmine",
+        "node_type": "node-c-4core",
+        "threads": 4,
+        "cpuset": "1,2,3,4"
+      },
+      {
+        "name": "radix",
+        "node_type": "node-d-4core",
+        "threads": 4,
+        "cpuset": "1,2,3"
+      },
+      {
+        "name": "vips",
+        "node_type": "node-b-2core",
+        "threads": 2
+      }
+    ]
+  },
+  {
+    "experiment_name": "all_batch_on_heterogeneous_nodes",
+    "mem_node": "node-d-4core",
+    "mem_threads": 4,
+    "benchings": [
+      {
+        "name": "blackscholes",
+        "node_type": "node-a-2core",
+        "threads": 2
+      },
+      {
+        "name": "canneal",
+        "node_type": "node-c-4core",
+        "threads": 4,
+        "cpuset": "0,1,2"
+      },
+      {
+        "name": "dedup",
+        "node_type": "node-a-2core",
+        "threads": 2,
+        "dependencies": ["blackscholes"]
+      },
+      {
+        "name": "ferret",
+        "node_type": "node-d-4core",
+        "threads": 2
+      },
+      {
+        "name": "freqmine",
+        "node_type": "node-c-4core",
+        "threads": 4,
+        "cpuset": "1,2,3"
+      },
+      {
+        "name": "radix",
+        "node_type": "node-b-2core",
+        "threads": 2,
+        "dependencies": ["vips"]
+      },
+      {
+        "name": "vips",
+        "node_type": "node-b-2core",
+        "threads": 2
+      }
+    ]
+  },
+  {
+    "experiment_name": "optimized_critical_path",
+    "mem_node": "node-d-4core",
+    "mem_threads": 4,
+    "mem_cpuset": "0,1,2,3",
+    "benchings": [
+      {
+        "name": "freqmine",
+        "node_type": "node-c-4core",
+        "threads": 4
+      },
+      {
+        "name": "blackscholes",
+        "node_type": "node-a-2core",
+        "threads": 2
+      },
+      {
+        "name": "canneal",
+        "node_type": "node-c-4core",
+        "threads": 4,
+        "dependencies": ["freqmine"]
+      },
+      {
+        "name": "ferret",
+        "node_type": "node-b-2core",
+        "threads": 2
+      },
+      {
+        "name": "vips",
+        "node_type": "node-a-2core",
+        "threads": 2,
+        "dependencies": ["blackscholes"]
+      },
+      {
+        "name": "dedup",
+        "node_type": "node-a-2core",
+        "threads": 2,
+        "dependencies": ["vips"]
+      },
+      {
+        "name": "radix",
+        "node_type": "node-b-2core",
+        "threads": 2,
+        "dependencies": ["ferret"]
+      }
+    ]
+  },
+  {
+    "experiment_name": "balanced_resource_allocation",
+    "mem_node": "node-c-4core",
+    "mem_threads": 4,
+    "mem_cpuset": "0,1,2,3",
+    "benchings": [
+      {
+        "name": "freqmine",
+        "node_type": "node-c-4core",
+        "threads": 4,
+        "cpuset": "2,3"
+      },
+      {
+        "name": "canneal",
+        "node_type": "node-d-4core",
+        "threads": 4
+      },
+      {
+        "name": "ferret",
+        "node_type": "node-d-4core",
+        "threads": 2
+      },
+      {
+        "name": "blackscholes",
+        "node_type": "node-a-2core",
+        "threads": 2
+      },
+      {
+        "name": "vips",
+        "node_type": "node-b-2core",
+        "threads": 2
+      },
+      {
+        "name": "dedup",
+        "node_type": "node-a-2core",
+        "threads": 2,
+        "dependencies": ["blackscholes"]
+      },
+      {
+        "name": "radix",
+        "node_type": "node-b-2core",
+        "threads": 2,
+        "dependencies": ["vips"]
+      }
+    ]
+  },
+  {
+    "experiment_name": "staged_execution",
+    "mem_node": "node-d-4core",
+    "mem_threads": 4,
+    "mem_cpuset": "0,1,2,3",
+    "benchings": [
+      {
+        "name": "blackscholes",
+        "node_type": "node-a-2core",
+        "threads": 2
+      },
+      {
+        "name": "vips",
+        "node_type": "node-b-2core",
+        "threads": 2
+      },
+      {
+        "name": "radix",
+        "node_type": "node-b-2core",
+        "threads": 2,
+        "dependencies": ["vips"]
+      },
+      {
+        "name": "dedup",
+        "node_type": "node-a-2core",
+        "threads": 2,
+        "dependencies": ["blackscholes"]
+      },
+      {
+        "name": "ferret",
+        "node_type": "node-d-4core",
+        "threads": 4
+      },
+      {
+        "name": "canneal",
+        "node_type": "node-c-4core",
+        "threads": 4
+      },
+      {
+        "name": "freqmine",
+        "node_type": "node-c-4core",
+        "threads": 4,
+        "dependencies": ["canneal"]
+      }
+    ]
+  }
+]
