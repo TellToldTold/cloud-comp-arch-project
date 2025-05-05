@@ -1,0 +1,7 @@
+Job:  memcached
+Job:  parsec-blackscholes
+Job time:  0:01:15
+Job:  parsec-canneal
+Job time:  0:02:36
+Job:  parsec-dedup
+Job parsec-dedup has not completed....

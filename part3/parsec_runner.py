@@ -46,7 +46,7 @@ def modify_yaml_for_scheduling(
 
     # Substitute placeholders in the YAML:
     content = content.replace("NODE_TYPE", node_type)
-    content = content.replace("THREAD_COUNT", f"{threads}")
+    content = content.replace("THREAD_COUNT", f"{2*int(threads)}")
     if cpuset != "":
         content = content.replace("CPUSET_PREFIX", f"taskset -c {cpuset} ")
     else:

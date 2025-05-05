@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: parsec-vips
+  labels:
+    name: parsec-vips
+    app: parsec
+spec:
+  template:
+    spec:
+      containers:
+      - image: anakli/cca:parsec_vips
+        name: parsec-vips
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
+        args: ["-c", "CPUSET_PREFIX./run -a run -S parsec -p vips -i native -n THREAD_COUNT"]
+      restartPolicy: Never
+      nodeSelector:
+        cca-project-nodetype: "NODE_TYPE"
