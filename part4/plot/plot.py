@@ -1,6 +1,7 @@
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
+import os
 
 path = "../results/"
 
@@ -22,9 +23,42 @@ def export_plot(folder):
     folder_path = path + folder + '/'
     
     p95_run1 = get_p95_latencies(folder_path, "run_1")
+    p95_run2 = get_p95_latencies(folder_path, "run_2")
+    p95_run3 = get_p95_latencies(folder_path, "run_3")
 
-    print(p95_run1)
+    combined = pd.concat([p95_run1, p95_run2, p95_run3], axis=1)
 
+    combined.columns = [
+        'p95_1', 'QPS_1',
+        'p95_2', 'QPS_2',
+        'p95_3', 'QPS_3'
+    ]
+
+    combined['p95_mean'] = combined[['p95_1', 'p95_2', 'p95_3']].mean(axis=1)
+    combined['p95_std'] = combined[['p95_1', 'p95_2', 'p95_3']].std(axis=1)
+
+    combined['QPS_mean'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].mean(axis=1)
+    combined['QPS_std'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].std(axis=1)
+
+    plt.figure(figsize=(10,5))
+
+    plt.errorbar(combined['QPS_mean'], combined['QPS_std'], xerr=combined['p95_mean'], yerr=combined['p95_std'], 
+             fmt='-o', capsize=5, label="", color='blue')
+
+
+    # Labels and grid
+    plt.xlabel("Queries per Second (QPS)")
+    plt.ylabel("Latency (μs)")
+    plt.title("Benchmark Performance")
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.legend()
+    plt.tight_layout()
+
+    os.makedirs(folder, exist_ok=True)
+    file_path = os.path.join(folder, "p95_latency_plot" + ".png")
+    plt.savefig(file_path, dpi=300)
+
+    plt.close()
 
 def main(folder):
     export_plot(folder)
