@@ -210,7 +210,6 @@ def deploy_memcached(thread_count = 1, memory_limit = 1024, cpuset = None):
     )
     return ip
 
-
 def delete_all_k8s_jobs():
     """Delete all jobs in the Kubernetes cluster."""
     run_command("kubectl delete jobs --all", check=False)
@@ -218,14 +217,11 @@ def delete_all_k8s_jobs():
 
 if __name__ == "__main__":
     # Example usage
-    # state_store = "gs://cca-eth-2025-group-092-fbaldin/"
-    # cluster_config_yaml = "part4.yaml"
+    state_store = "gs://cca-eth-2025-group-092-fbaldin/"
+    cluster_config_yaml = "part4.yaml"
     
-    # # Setup the cluster
-    # setup_cluster(state_store, cluster_config_yaml)
+    # Setup the cluster
+    setup_cluster(state_store, cluster_config_yaml)
     
     # # Deploy memcached
     memcached_ip = deploy_memcached(thread_count=4, memory_limit=2048)
-    
-    # Update memcached resources
-    update_memcached_resources(thread_count=6, memory_limit=1024, cpuset="0-3")

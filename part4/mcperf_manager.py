@@ -14,9 +14,8 @@ def setup_mcperf_agents(force_install = False):
     client-measure.
     2) SSHes into each to check if mcperf is already installed and executable.
        If not, it installs dependencies and builds memcache-perf-dynamic.
-    3) Returns a dict with keys 'client_agent_a', 'client_agent_b', and
-       'client_measure', each mapping to a dict containing 'name',
-       'internal_ip', and 'external_ip'.
+    3) Returns a dict with keys 'client_agent' and 'client_measure', each
+        mapping to a dict containing 'name', 'internal_ip', and 'external_ip'.
 
     Parameters
     ----------
@@ -34,21 +33,14 @@ def setup_mcperf_agents(force_install = False):
     nodes_output = run_command("kubectl get nodes -o json", capture_output=True)
     nodes_data = json.loads(nodes_output)
     
-    client_agent_a = None
-    client_agent_b = None
+    client_agent = None
     client_measure = None
     
     # Find the client nodes
     for node in nodes_data["items"]:
         node_name = node["metadata"]["name"]
-        if "client-agent-a" in node_name:
-            client_agent_a = {
-                "name": node_name,
-                "internal_ip": node["status"]["addresses"][0]["address"],
-                "external_ip": node["status"]["addresses"][1]["address"]
-            }
-        elif "client-agent-b" in node_name:
-            client_agent_b = {
+        if "client-agent" in node_name:
+            client_agent = {
                 "name": node_name,
                 "internal_ip": node["status"]["addresses"][0]["address"],
                 "external_ip": node["status"]["addresses"][1]["address"]
@@ -60,20 +52,18 @@ def setup_mcperf_agents(force_install = False):
                 "external_ip": node["status"]["addresses"][1]["address"]
             }
     
-    if not (client_agent_a and client_agent_b and client_measure):
+    if not (client_agent and client_measure):
         print(
             "[ERROR] setup_mcperf_agents: Could not find all required client " +
             "nodes"
         )
         return None
     
-    print(f"[STATUS] setup_mcperf_agents: Client Agent A: {client_agent_a}")
-    print(f"[STATUS] setup_mcperf_agents: Client Agent B: {client_agent_b}")
+    print(f"[STATUS] setup_mcperf_agents: Client Agent: {client_agent}")
     print(f"[STATUS] setup_mcperf_agents: Client Measure: {client_measure}")
 
     clients_info = {
-        "client_agent_a": client_agent_a,
-        "client_agent_b": client_agent_b,
+        "client_agent": client_agent,
         "client_measure": client_measure
     }
     
@@ -89,7 +79,7 @@ def setup_mcperf_agents(force_install = False):
     
     ssh_key_path = os.path.expanduser("~/.ssh/cloud-computing")
     
-    for node_key in ["client_agent_a", "client_agent_b", "client_measure"]:
+    for node_key in ["client_agent", "client_measure"]:
         node = clients_info[node_key]
 
         # Check if mcperf is already installed
@@ -122,7 +112,7 @@ def setup_mcperf_agents(force_install = False):
             run_command(ssh_cmd, check=False)
 
     # Verification: ensure mcperf was built correctly
-    for node_key in ["client_agent_a", "client_agent_b", "client_measure"]:
+    for node_key in ["client_agent", "client_measure"]:
         node = clients_info[node_key]
         verify_cmd = (
             f"gcloud compute ssh --ssh-key-file {ssh_key_path} "
@@ -144,22 +134,21 @@ def setup_mcperf_agents(force_install = False):
 
     return clients_info
 
-def start_load_agents(clients_info):
+def start_load_agent(clients_info):
     """
-    Starts mcperf load-generating agents on client-agent-a and client-agent-b.
+    Starts mcperf load-generating agent on client-agent.
 
     Parameters
     ----------
     clients_info : dict
-        Contains 'client_agent_a' and 'client_agent_b' entries, each with
-        'name'.
+        Contains 'client_agent' entry with 'name'.
 
     Returns
     -------
     None
     """
     ssh_key_path = os.path.expanduser("~/.ssh/cloud-computing")
-    for agent_key, threads in [("client_agent_a", 2), ("client_agent_b", 4)]:
+    for agent_key, threads in [("client_agent", 8)]:
         node = clients_info[agent_key]
         cmd = (
             f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node['name']} "
@@ -172,25 +161,24 @@ def start_load_agents(clients_info):
             f" with {threads} threads"
         )
 
-def restart_mcperf_agents(clients_info):
+def restart_mcperf_agent(clients_info):
     """
     Restarts mcperf agent processes across all client VMs and kills mcperf
     measure process.
 
     This function:
     1) Validates that a non-empty clients_info dict is provided.
-    2) Terminates any lingering mcperf processes on client-agent-a,
-       client-agent-b, and client-measure via `pkill -f mcperf`.
+    2) Terminates any lingering mcperf processes on client-agent and
+        client-measure via `pkill -f mcperf`.
     3) Waits briefly for processes to exit.
-    4) Relaunches client_agent_a and client_agent_b
+    4) Relaunches client_agent
     5) Prints a consolidated status message.
     
     Parameters
     ----------
     clients_info : dict
-        A dict containing keys 'client_agent_a', 'client_agent_b', and
-        'client_measure', each mapping to a dict with at least 'name' indicating
-        the VM hostname.
+        A dict containing keys 'client_agent' and 'client_measure', each mapping
+        to a dict with at least 'name' indicating the VM hostname.
     
     Returns
     -------
@@ -198,7 +186,7 @@ def restart_mcperf_agents(clients_info):
     """
     if not clients_info:
         print(
-            "[ERROR] restart_mcperf_agents: No client_info dictionary provided"
+            "[ERROR] restart_mcperf_agent: No client_info dictionary provided"
         )
         return
          
@@ -207,11 +195,11 @@ def restart_mcperf_agents(clients_info):
     
     # Poll until no mcperf processes remain on any client node
     print(
-        f"[STATUS] restart_mcperf_agents: Killed existing mcperf processes, " +
+        f"[STATUS] restart_mcperf_agent: Killed existing mcperf processes, " +
         f"waiting for cleanup..."
     )
     ssh_key_path = os.path.expanduser("~/.ssh/cloud-computing")
-    for node_key in ['client_agent_a', 'client_agent_b', 'client_measure']:
+    for node_key in ['client_agent', 'client_measure']:
         node = clients_info[node_key]
         while True:
             check_cmd = (
@@ -224,13 +212,13 @@ def restart_mcperf_agents(clients_info):
                 break
             time.sleep(1)
     print(
-        "[STATUS] restart_mcperf_agents: all previous mcperf processes exited"
+        "[STATUS] restart_mcperf_agent: all previous mcperf processes exited"
     )
 
-    # Restart mcperf agents
-    start_load_agents(clients_info)
+    # Restart mcperf agent
+    start_load_agent(clients_info)
 
-    print("[STATUS] restart_mcperf_agents: load agents restarted")
+    print("[STATUS] restart_mcperf_agent: load agent restarted")
 
 def stop_mcperf_agents():
     """
@@ -315,7 +303,7 @@ def run_mcperf_load(
     Parameters
     ----------
     clients_info : dict
-        Contains 'client_agent_a', 'client_agent_b', 'client_measure' with dicts
+        Contains 'client_agent', 'client_measure' with dicts
         holding 'name' and 'internal_ip'.
     memcached_ip : str
         The IP address of the memcached server.
@@ -340,8 +328,7 @@ def run_mcperf_load(
     # Setup
     os.makedirs(output_dir, exist_ok=True)
     ssh_key = os.path.expanduser("~/.ssh/cloud-computing")
-    agent_a_ip = clients_info["client_agent_a"]["internal_ip"]
-    agent_b_ip = clients_info["client_agent_b"]["internal_ip"]
+    agent_ip = clients_info["client_agent"]["internal_ip"]
     measure = clients_info["client_measure"]
     remote_script = "start_load.sh"
 
@@ -349,7 +336,7 @@ def run_mcperf_load(
     script_path = os.path.join(output_dir, remote_script)
     script_contents = f"""#!/bin/bash
         cd ~/memcache-perf-dynamic
-        ./mcperf -s {memcached_ip} -a {agent_a_ip} -a {agent_b_ip} --noload \
+        ./mcperf -s {memcached_ip} -a {agent_ip} --noload \
         -T 6 -C 4 -D 4 -Q 1000 -c 4 -t {duration} --scan {scan}
     """
     with open(script_path, "w") as f:

@@ -120,6 +120,7 @@ spec:
     cloud.google.com/metadata-proxy-ready: "true"
     kops.k8s.io/instancegroup: nodes-europe-west1-b
     cca-project-nodetype: "client-measure"
+    cca-project-role: "mcperf-client"
   role: Node
   subnets:
   - europe-west1
@@ -143,6 +144,7 @@ spec:
     cloud.google.com/metadata-proxy-ready: "true"
     kops.k8s.io/instancegroup: nodes-europe-west1-b
     cca-project-nodetype: "client-agent"
+    cca-project-role: "mcperf-client"
   role: Node
   subnets:
   - europe-west1
