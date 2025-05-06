@@ -1,9 +1,9 @@
+#!/usr/bin/env python3
+
 import subprocess
-import time
-import os
-from typing import List, Dict, Optional, Tuple
 import docker
 from docker.models.containers import Container
+from typing import List, Dict, Optional, Tuple
 from scheduler_logger import SchedulerLogger, Job
 
 
@@ -14,8 +14,7 @@ client = docker.from_env()
 def run_batch_job(
     job_name: str, 
     cores: List[int], 
-    threads: int, 
-    logger: SchedulerLogger
+    threads: int
 ) -> Optional[Container]:
     """
     Run a batch job on specific CPU cores with a given number of threads.
@@ -50,7 +49,6 @@ def run_batch_job(
         # Get the appropriate Docker image
         image = image_mapping.get(job_name.lower())
         if not image:
-            logger.custom_event(job_enum, f"Invalid job name: {job_name}")
             return None
         
         # Format the command to run the PARSEC benchmark
@@ -62,26 +60,55 @@ def run_batch_job(
             command=command,
             detach=True,
             name=f"parsec_{job_name.lower()}",
-            cpuset_cpus=cpuset,
-            remove=True  # Auto-remove when container exits
+            cpuset_cpus=cpuset
         )
         
-        # Log the job start
-        logger.job_start(job_enum, cores, threads)
         
         return container
     except Exception as e:
-        if logger:
-            logger.custom_event(job_enum, f"Error starting job: {str(e)}")
         print(f"Error starting job {job_name}: {str(e)}")
         return None
+
+
+def get_container_cores(container: Container) -> Optional[List[int]]:
+    """
+    Get the CPU cores currently assigned to a container.
+    
+    Args:
+        container (Container): Docker container object
+    
+    Returns:
+        Optional[List[int]]: List of CPU core IDs assigned to the container or None if failed
+    """
+    try:
+        container.reload()  # Refresh container state
+        cpuset = container.attrs['HostConfig']['CpusetCpus']
+        
+        # If cpuset is empty, return None
+        if not cpuset:
+            return None
+            
+        # Parse the cpuset string (e.g., "0,1,2" or "0-2,4") into a list of integers
+        cores = []
+        for segment in cpuset.split(','):
+            if '-' in segment:
+                # Handle range (e.g., "0-3")
+                start, end = map(int, segment.split('-'))
+                cores.extend(range(start, end + 1))
+            else:
+                # Handle single value
+                cores.append(int(segment))
+        
+        return cores
+    except Exception as e:
+        print(f"Error getting container cores: {str(e)}")
+        return None 
 
 
 def update_container_cores(
     container: Container, 
     cores: List[int], 
-    job_name: str, 
-    logger: SchedulerLogger
+    job_name: str
 ) -> bool:
     """
     Update the CPU cores assigned to a container.
@@ -105,18 +132,13 @@ def update_container_cores(
         # Update the container's CPU set
         container.update(cpuset_cpus=cpuset)
         
-        # Log the cores update
-        logger.update_cores(job_enum, cores)
-        
         return True
     except Exception as e:
-        if logger:
-            logger.custom_event(job_enum, f"Error updating cores: {str(e)}")
         print(f"Error updating cores for {job_name}: {str(e)}")
         return False
 
 
-def pause_container(container: Container, job_name: str, logger: SchedulerLogger) -> bool:
+def pause_container(container: Container, job_name: str) -> bool:
     """
     Pause a running container.
     
@@ -135,18 +157,13 @@ def pause_container(container: Container, job_name: str, logger: SchedulerLogger
         # Pause the container
         container.pause()
         
-        # Log the pause event
-        logger.job_pause(job_enum)
-        
         return True
     except Exception as e:
-        if logger:
-            logger.custom_event(job_enum, f"Error pausing job: {str(e)}")
         print(f"Error pausing job {job_name}: {str(e)}")
         return False
 
 
-def unpause_container(container: Container, job_name: str, logger: SchedulerLogger) -> bool:
+def unpause_container(container: Container, job_name: str) -> bool:
     """
     Unpause a paused container.
     
@@ -165,18 +182,13 @@ def unpause_container(container: Container, job_name: str, logger: SchedulerLogg
         # Unpause the container
         container.unpause()
         
-        # Log the unpause event
-        logger.job_unpause(job_enum)
-        
         return True
     except Exception as e:
-        if logger:
-            logger.custom_event(job_enum, f"Error unpausing job: {str(e)}")
         print(f"Error unpausing job {job_name}: {str(e)}")
         return False
 
 
-def stop_container(container: Container, job_name: str, logger: SchedulerLogger) -> bool:
+def stop_container(container: Container, job_name: str) -> bool:
     """
     Stop a running container.
     
@@ -195,13 +207,8 @@ def stop_container(container: Container, job_name: str, logger: SchedulerLogger)
         # Stop the container
         container.stop(timeout=10)  # Allow 10 seconds for graceful shutdown
         
-        # Log the job end
-        logger.job_end(job_enum)
-        
         return True
     except Exception as e:
-        if logger:
-            logger.custom_event(job_enum, f"Error stopping job: {str(e)}")
         print(f"Error stopping job {job_name}: {str(e)}")
         return False
 
@@ -289,41 +296,32 @@ def get_all_running_containers() -> List[Container]:
         return []
 
 
-def set_memcached_affinity(cores: List[int], logger: SchedulerLogger) -> bool:
+def get_container_stats(container_id: str) -> Optional[Dict]:
     """
-    Set CPU affinity for the memcached process.
+    Get resource usage statistics for a Docker container.
     
     Args:
-        cores (List[int]): List of CPU core IDs to use
-        logger (SchedulerLogger): Logger to log events
+        container_id (str): ID or name of the Docker container
     
     Returns:
-        bool: True if successful, False otherwise
+        Optional[Dict]: Dictionary with container stats or None if failed
     """
     try:
-        # Find all memcached processes (main process and its threads)
-        cmd = "pgrep memcached"
+        cmd = f"docker stats {container_id} --no-stream --format '{{{{.CPUPerc}}}} {{{{.MemUsage}}}}'"
         output = subprocess.check_output(cmd, shell=True, text=True).strip()
-        if not output:
-            logger.custom_event(Job.MEMCACHED, "Memcached process not found")
-            return False
         
-        # Get the main PID
-        pids = output.split('\n')
-        main_pid = pids[0]
-        
-        # Format cores for taskset
-        cores_str = ','.join(map(str, cores))
-        
-        # Set affinity for all memcached threads using taskset
-        taskset_cmd = f"taskset -a -pc {cores_str} {main_pid}"
-        subprocess.check_call(taskset_cmd, shell=True)
-        
-        # Log the cores update
-        logger.update_cores(Job.MEMCACHED, cores)
-        
-        return True
-    except subprocess.CalledProcessError as e:
-        logger.custom_event(Job.MEMCACHED, f"Error setting affinity: {str(e)}")
-        print(f"Error setting memcached affinity: {str(e)}")
-        return False 
+        parts = output.split()
+        if len(parts) >= 3:
+            cpu_percent = float(parts[0].rstrip('%'))
+            mem_used = parts[1]
+            mem_limit = parts[3]
+            
+            return {
+                'cpu_percent': cpu_percent,
+                'memory_used': mem_used,
+                'memory_limit': mem_limit
+            }
+        return None
+    except subprocess.CalledProcessError:
+        return None
+

@@ -17,13 +17,13 @@ install_python_deps() {
     # Update package lists
     sudo apt-get update
     
-    # Install pip if not installed
-    if ! command -v pip3 &> /dev/null; then
-        sudo apt-get install -y python3-pip
-    fi
-    
-    # Install required Python packages
-    pip3 install --user psutil docker netaddr
+    # Install Python packages via apt instead of pip
+    # This avoids issues with externally-managed-environment errors in newer Ubuntu versions
+    sudo apt-get install -y \
+        python3-psutil \
+        python3-docker \
+        python3-netaddr \
+        screen
     
     echo "Python dependencies installed successfully."
 }
@@ -41,7 +41,7 @@ install_docker() {
         sudo apt-get update
         
         # Install dependencies
-        sudo apt-get install -y \
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
             apt-transport-https \
             ca-certificates \
             curl \
@@ -56,9 +56,12 @@ install_docker() {
             "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
             $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         
-        # Install Docker Engine
-        sudo apt-get update
-        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+        # Set dpkg to keep existing config files
+        echo 'Dpkg::Options {"--force-confold"};' | sudo tee /etc/apt/apt.conf.d/local > /dev/null
+        
+        # Install Docker Engine in noninteractive mode to prevent prompts
+        sudo DEBIAN_FRONTEND=noninteractive apt-get update
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io
         
         # Add current user to docker group to run docker without sudo
         sudo usermod -aG docker $USER
@@ -70,35 +73,11 @@ install_docker() {
 # Install netcat (for memcached stats)
 install_netcat() {
     print_section "Installing netcat"
-    sudo apt-get install -y netcat
+    # Install netcat-openbsd instead of the virtual netcat package
+    sudo apt-get install -y netcat-openbsd
     echo "Netcat installed successfully."
 }
 
-# Make scripts executable
-make_executable() {
-    print_section "Making scripts executable"
-    chmod +x scheduler_controller.py
-    chmod +x test_scheduler.py
-    echo "Scripts are now executable."
-}
-
-# Print usage information
-print_usage() {
-    print_section "Setup Complete! Here's how to use the scheduler:"
-    
-    echo "To run tests:"
-    echo "  ./test_scheduler.py --memcached-ip <MEMCACHED_IP>"
-    echo
-    echo "To run the scheduler controller:"
-    echo "  ./scheduler_controller.py --memcached-ip <MEMCACHED_IP>"
-    echo
-    echo "Replace <MEMCACHED_IP> with the internal IP address of your memcached server."
-    echo
-    echo "Note: If you're running this for the first time after installing Docker,"
-    echo "you may need to log out and back in for the docker group changes to take effect."
-    echo "Alternatively, you can run the following to use Docker without logging out:"
-    echo "  newgrp docker"
-}
 
 # Main function
 main() {
@@ -107,9 +86,7 @@ main() {
     install_python_deps
     install_docker
     install_netcat
-    make_executable
     
-    print_usage
 }
 
 # Run the main function

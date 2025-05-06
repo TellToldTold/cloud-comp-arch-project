@@ -64,32 +64,63 @@ def setup_cluster(state_store, cluster_config_yaml):
     nodes_info = run_command("kubectl get nodes -o wide", capture_output=True)
     print(f"[STATUS] setup_cluster: Cluster nodes:\n{nodes_info}")
 
-def get_memcached_ip():
-    """Get the memcached pod IP if it exists."""
-    # Check if memcached pod exists
-    pod_check = run_command(
-        "kubectl get pods -o wide | grep memcache",
-        capture_output=True,
-        check=False
-    )
+def get_node_name(node_type="memcache-server"):
+    """
+    Discover a node in the Kubernetes cluster by its label or name pattern.
     
-    if pod_check:
-        pod_info_lines = pod_check.split("\n")
-        pod_ip = None
-        for line in pod_info_lines:
-            if "memcache" in line:
-                pod_ip = line.split()[5]  # IP should be in the 6th column
-                break
+    Args:
+        node_type (str): String pattern to match in node name or label
+    
+    Returns:
+        str: The node name if found, None otherwise
+    """
+    try:
+        # Get nodes matching the node_type pattern
+        nodes_output = run_command(
+            f"kubectl get nodes -o wide | grep {node_type}",
+            capture_output=True,
+            check=False
+        ).strip()
         
-        if pod_ip:
-            print(
-                f"[STATUS] get_memcached_ip: Found existing memcached pod " + 
-                f"IP: {pod_ip}"
-            )
-            return pod_ip
+        if not nodes_output:
+            print(f"[ERROR] Could not find {node_type} node")
+            return None
+            
+        # Extract the node name (first column)
+        node_name = nodes_output.split()[0]
+        print(f"[STATUS] Found node: {node_name}")
+        return node_name
+        
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] Failed to get node name: {str(e)}")
+        return None
+
+def get_memcached_ip(node_name, ssh_key_path):
+    """
+    Get the internal IP address of the memcached server.
     
-    print("[ERROR] get_memcached_ip: No existing memcached pod found")
-    return None
+    Args:
+        node_name (str): The name of the node running memcached
+        ssh_key_path (str): Path to the SSH key
+    
+    Returns:
+        str: Internal IP address of the memcached server, or None if not found
+    """
+    try:
+        # Get the internal IP address
+        cmd = f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} " \
+              f"--zone europe-west1-b --command \"hostname -I | awk '{{print $1}}'\""
+        
+        ip_address = run_command(cmd, capture_output=True)
+        if ip_address:
+            print(f"[STATUS] Found memcached internal IP: {ip_address}")
+            return ip_address
+        else:
+            print("[ERROR] Could not determine memcached internal IP")
+            return None
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] Failed to get memcached IP: {str(e)}")
+        return None
 
 def deploy_memcached(thread_count = 1, memory_limit = 1024, cpuset = None):
     """
@@ -115,15 +146,11 @@ def deploy_memcached(thread_count = 1, memory_limit = 1024, cpuset = None):
         Returns None if the deployment fails.
     """
     # Discover the memcached server node via Kubernetes
-    nodes_output = run_command(
-        "kubectl get nodes -o wide | grep memcache-server",
-        capture_output=True,
-        check=False
-    ).strip()
-    if not nodes_output:
+    node_type = get_node_name("memcache-server")
+    if not node_type:
         print("[ERROR] deploy_memcached: Could not find memcache-server node")
         return None
-    node_type = nodes_output.split()[0]
+    
     print(f"[STATUS] deploy_memcached: deploying to node {node_type}")
 
     # Build SSH prefix
@@ -209,11 +236,6 @@ def deploy_memcached(thread_count = 1, memory_limit = 1024, cpuset = None):
         f"memory, and cpuset {cpuset}"
     )
     return ip
-
-def delete_all_k8s_jobs():
-    """Delete all jobs in the Kubernetes cluster."""
-    run_command("kubectl delete jobs --all", check=False)
-    print("[STATUS] delete_all_jobs: Deleted all jobs in the cluster")
 
 if __name__ == "__main__":
     # Example usage

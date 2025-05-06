@@ -10,7 +10,8 @@ import subprocess
 
 # Import our modules
 import resource_monitor as rm
-import docker_manager as dm
+import container_manager as cm
+import memcached_manager as mm
 from scheduler_logger import SchedulerLogger, Job
 
 
@@ -41,13 +42,13 @@ class SchedulerController:
         print(f"Total cores available: {self.total_cores}")
         
         # Set up memcached
-        self.memcached_pid = rm.get_memcached_pid()
+        self.memcached_pid = mm.get_memcached_pid()
         if not self.memcached_pid:
             print("Error: Memcached process not found!")
             self.logger.custom_event(Job.SCHEDULER, "Memcached process not found on startup")
         else:
             # Get initial memcached affinity
-            self.memcached_cores = rm.get_process_cpu_affinity(self.memcached_pid)
+            self.memcached_cores = mm.get_memcached_cpu_affinity()
             if not self.memcached_cores:
                 self.memcached_cores = [0]  # Default to core 0
                 self.set_memcached_cores(self.memcached_cores)
@@ -76,7 +77,7 @@ class SchedulerController:
         Returns:
             bool: True if successful, False otherwise
         """
-        success = dm.set_memcached_affinity(cores, self.logger)
+        success = mm.set_memcached_affinity(cores, self.logger)
         if success:
             self.memcached_cores = cores
             self.allocated_cores['memcached'] = cores
@@ -110,7 +111,7 @@ class SchedulerController:
                     return False
         
         # Start the job
-        container = dm.run_batch_job(job_name, cores, threads, self.logger)
+        container = cm.run_batch_job(job_name, cores, threads, self.logger)
         if container:
             self.running_jobs[job_name] = (container, cores, threads)
             self.allocated_cores[job_name] = cores
@@ -148,7 +149,7 @@ class SchedulerController:
         if job_name == 'memcached':
             success = self.set_memcached_cores(new_cores)
         else:
-            success = dm.update_container_cores(container, new_cores, job_name, self.logger)
+            success = cm.update_container_cores(container, new_cores, job_name, self.logger)
         
         if success:
             self.running_jobs[job_name] = (container, new_cores, threads)
@@ -178,7 +179,7 @@ class SchedulerController:
             return False
         
         container, cores, threads = self.running_jobs[job_name]
-        success = dm.pause_container(container, job_name, self.logger)
+        success = cm.pause_container(container, job_name, self.logger)
         
         if success:
             print(f"Paused job {job_name}")
@@ -202,7 +203,7 @@ class SchedulerController:
             return False
         
         container, cores, threads = self.running_jobs[job_name]
-        success = dm.unpause_container(container, job_name, self.logger)
+        success = cm.unpause_container(container, job_name, self.logger)
         
         if success:
             print(f"Unpaused job {job_name}")
@@ -230,7 +231,7 @@ class SchedulerController:
             return False
         
         container, cores, threads = self.running_jobs[job_name]
-        success = dm.stop_container(container, job_name, self.logger)
+        success = cm.stop_container(container, job_name, self.logger)
         
         if success:
             self.completed_jobs.add(job_name)
@@ -253,12 +254,12 @@ class SchedulerController:
             if job_name == 'memcached':
                 continue  # Skip memcached
             
-            if dm.is_container_completed(container):
+            if cm.is_container_completed(container):
                 print(f"Job {job_name} has completed successfully")
                 self.logger.job_end(getattr(Job, job_name.upper()))
                 self.completed_jobs.add(job_name)
                 jobs_to_remove.append(job_name)
-            elif dm.is_container_exited(container) and not dm.is_container_completed(container):
+            elif cm.is_container_exited(container) and not cm.is_container_completed(container):
                 print(f"Job {job_name} has failed")
                 self.logger.job_end(getattr(Job, job_name.upper()))
                 self.completed_jobs.add(job_name)
