@@ -2,9 +2,6 @@
 
 from utils import run_command
 import os
-import sys
-import time
-import argparse
 
 def setup_cluster(state_store, cluster_config_yaml):
     """
