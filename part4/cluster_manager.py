@@ -95,7 +95,7 @@ def get_node_name(node_type="memcache-server"):
         print(f"[ERROR] Failed to get node name: {str(e)}")
         return None
 
-def get_memcached_ip(node_name, ssh_key_path):
+def get_memcached_ip(ssh_key_path):
     """
     Get the internal IP address of the memcached server.
     
@@ -108,7 +108,7 @@ def get_memcached_ip(node_name, ssh_key_path):
     """
     try:
         # Get the internal IP address
-        cmd = f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} " \
+        cmd = f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{get_node_name('memcache-server')} " \
               f"--zone europe-west1-b --command \"hostname -I | awk '{{print $1}}'\""
         
         ip_address = run_command(cmd, capture_output=True)
@@ -246,4 +246,4 @@ if __name__ == "__main__":
     setup_cluster(state_store, cluster_config_yaml)
     
     # # Deploy memcached
-    memcached_ip = deploy_memcached(thread_count=4, memory_limit=2048)
+    memcached_ip = deploy_memcached(thread_count=2, memory_limit=2048)

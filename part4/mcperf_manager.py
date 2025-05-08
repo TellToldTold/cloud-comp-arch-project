@@ -337,7 +337,7 @@ def run_mcperf_load(
     script_contents = f"""#!/bin/bash
         cd ~/memcache-perf-dynamic
         ./mcperf -s {memcached_ip} -a {agent_ip} --noload \
-        -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 10 --qps_interval 2 --qps_min 5000 --qps_max 180000
+        -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 120 --qps_interval 2 --qps_min 5000 --qps_max 180000
     """
     with open(script_path, "w") as f:
         f.write(script_contents)

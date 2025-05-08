@@ -5,59 +5,6 @@ import psutil
 from typing import Dict, List, Optional
 
 
-# def get_local_ip() -> str:
-#     """
-#     Get the local IP address of the machine.
-    
-#     Returns:
-#         str: Local IP address
-#     """
-#     try:
-#         cmd = "hostname -I | awk '{print $1}'"
-#         output = subprocess.check_output(cmd, shell=True, text=True).strip()
-#         return output
-#     except subprocess.CalledProcessError:
-#         # Fallback to localhost if we can't get the IP
-        # return "127.0.0.1"
-
-
-# def get_memcached_stats() -> Optional[Dict]:
-#     """
-#     Get memcached server statistics.
-    
-#     Args:
-#         memcached_ip (str, optional): IP address of the memcached server. If None, local IP is used.
-#         port (int): Port of the memcached server (default: 11211)
-    
-#     Returns:
-#         Optional[Dict]: Dictionary of memcached statistics or None if failed
-#     """
-#     memcached_ip = get_local_ip()
-        
-#     try:
-#         cmd = f"echo 'stats' | nc {memcached_ip} {11211}"
-#         output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT, text=True)
-        
-#         # Parse the stats output
-#         stats = {}
-#         for line in output.strip().split('\n'):
-#             if line.startswith('STAT '):
-#                 parts = line.split()
-#                 if len(parts) >= 3:
-#                     key = parts[1]
-#                     try:
-#                         value = int(parts[2])
-#                     except ValueError:
-#                         try:
-#                             value = float(parts[2])
-#                         except ValueError:
-#                             value = parts[2]
-#                     stats[key] = value
-#         return stats
-#     except subprocess.CalledProcessError:
-#         return None
-
-
 def get_memcached_pid() -> Optional[int]:
     """
     Get the process ID of the memcached server.
@@ -91,10 +38,10 @@ def get_memcached_cpu_affinity() -> List[int]:
 
 def get_memcached_cpu_percent() -> float:
     """
-    Get the CPU usage percentage of memcached.
+    Get the CPU usage percentage of the memcached process.
     
     Returns:
-        float: CPU usage percentage (0-100%) or 0 if process not found
+        float: CPU usage percentage (0-100% per core) or 0 if process not found
     """
     pid = get_memcached_pid()
     if not pid:
@@ -102,9 +49,62 @@ def get_memcached_cpu_percent() -> float:
     
     try:
         process = psutil.Process(pid)
-        return process.cpu_percent(interval=0.1)
+        # Initialize CPU monitoring
+        process.cpu_percent(interval=None)
+        
+        # Wait a short interval for accurate measurement
+        import time
+        time.sleep(0.1)
+        
+        # Get actual CPU percentage
+        return process.cpu_percent(interval=None)
     except psutil.NoSuchProcess:
         return 0.0
+
+
+def get_memcached_cpu_percent_per_core() -> Dict[int, float]:
+    """
+    Get the CPU usage percentage of memcached per core.
+    
+    Returns:
+        Dict[int, float]: Dictionary mapping core IDs to usage percentages (0-100%)
+    """
+    pid = get_memcached_pid()
+    if not pid:
+        return {}
+    
+    # Get cores that memcached is allowed to run on
+    affinity = get_memcached_cpu_affinity()
+    if not affinity:
+        return {}
+    
+    # Initialize CPU usage dict with zeros for each core
+    cpu_usage = {core: 0.0 for core in affinity}
+    
+    try:
+        process = psutil.Process(pid)
+        import time
+        
+        # Get system-wide per-CPU times before and after a small interval
+        cpu_times_before = psutil.cpu_times_percent(interval=0.1, percpu=True)
+        cpu_times_after = psutil.cpu_times_percent(interval=0.3, percpu=True)
+        
+        # Get total process CPU usage
+        total_proc_cpu = process.cpu_percent(interval=None)
+        
+        if total_proc_cpu > 0:
+            # Estimate distribution across cores
+            for core_idx in affinity:
+                if core_idx < len(cpu_times_after):
+                    # Use the system usage on this core as a proportion
+                    core_usage = 100.0 - cpu_times_after[core_idx].idle
+                    
+                    # Estimate how much of this core usage is from memcached
+                    cpu_usage[core_idx] = min(core_usage, total_proc_cpu / len(affinity))
+        
+        return cpu_usage
+    except (psutil.NoSuchProcess, IndexError):
+        return cpu_usage
 
 
 def set_memcached_affinity(cores: List[int]) -> bool:
@@ -113,35 +113,23 @@ def set_memcached_affinity(cores: List[int]) -> bool:
     
     Args:
         cores (List[int]): List of CPU core IDs to use
-        logger (SchedulerLogger): Logger to log events
     
     Returns:
         bool: True if successful, False otherwise
     """
     try:
-        # Find all memcached processes (main process and its threads)
-        cmd = "pgrep memcached"
-        output = subprocess.check_output(cmd, shell=True, text=True).strip()
-        if not output:
-            # logger.custom_event(Job.MEMCACHED, "Memcached process not found")
+        pid = get_memcached_pid()
+        if not pid:
             return False
-        
-        # Get the main PID
-        pids = output.split('\n')
-        main_pid = pids[0]
         
         # Format cores for taskset
         cores_str = ','.join(map(str, cores))
         
-        # Set affinity for all memcached threads using taskset
-        taskset_cmd = f"taskset -a -pc {cores_str} {main_pid}"
+        # Set affinity using taskset
+        taskset_cmd = f"taskset -pc {cores_str} {pid}"
         subprocess.check_call(taskset_cmd, shell=True)
-        
-        # Log the cores update
-        # logger.update_cores(Job.MEMCACHED, cores)
         
         return True
     except subprocess.CalledProcessError as e:
-        # logger.custom_event(Job.MEMCACHED, f"Error setting affinity: {str(e)}")
         print(f"Error setting memcached affinity: {str(e)}")
         return False 
