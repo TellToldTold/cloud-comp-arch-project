@@ -5,6 +5,8 @@ import os
 
 path = "../results/"
 
+colors = ["red", "blue", "green", "orange"]
+
 def get_p95_latencies(folder_path, run_number):
     result_path = folder_path + run_number + "/mcperf_results_local.txt"
 
@@ -21,35 +23,38 @@ def get_p95_latencies(folder_path, run_number):
 
 def export_plot(folder):
     folder_path = path + folder + '/'
-    
-    p95_run1 = get_p95_latencies(folder_path, "run_1")
-    p95_run2 = get_p95_latencies(folder_path, "run_2")
-    p95_run3 = get_p95_latencies(folder_path, "run_3")
-
-    combined = pd.concat([p95_run1, p95_run2, p95_run3], axis=1)
-
-    combined.columns = [
-        'p95_1', 'QPS_1',
-        'p95_2', 'QPS_2',
-        'p95_3', 'QPS_3'
-    ]
-
-    combined['p95_mean'] = combined[['p95_1', 'p95_2', 'p95_3']].mean(axis=1)
-    combined['p95_std'] = combined[['p95_1', 'p95_2', 'p95_3']].std(axis=1)
-
-    combined['QPS_mean'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].mean(axis=1)
-    combined['QPS_std'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].std(axis=1)
 
     plt.figure(figsize=(10,5))
 
-    plt.errorbar(combined['QPS_mean'], combined['QPS_std'], xerr=combined['p95_mean'], yerr=combined['p95_std'], 
-             fmt='-o', capsize=5, label="", color='blue')
+    for T in range(1,3):
+        for C in range(1,3):
+    
+            p95_run1 = get_p95_latencies(folder_path, f"{T}_{C}_run_1")
+            p95_run2 = get_p95_latencies(folder_path, f"{T}_{C}_run_2")
+            p95_run3 = get_p95_latencies(folder_path, f"{T}_{C}_run_3")
+
+            combined = pd.concat([p95_run1, p95_run2, p95_run3], axis=1)
+
+            combined.columns = [
+                'p95_1', 'QPS_1',
+                'p95_2', 'QPS_2',
+                'p95_3', 'QPS_3'
+            ]
+
+            combined['p95_mean'] = combined[['p95_1', 'p95_2', 'p95_3']].mean(axis=1)
+            combined['p95_std'] = combined[['p95_1', 'p95_2', 'p95_3']].std(axis=1)
+
+            combined['QPS_mean'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].mean(axis=1)
+            combined['QPS_std'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].std(axis=1)
+
+            plt.errorbar(combined['QPS_mean'], combined['QPS_std'], xerr=combined['p95_mean'], yerr=combined['p95_std'], 
+                    fmt='-o', capsize=5, label=f"T={T}, C={C}", color=colors[T+C-1])
 
 
     # Labels and grid
     plt.xlabel("Achieved Queries per Second (QPS)")
     plt.ylabel("95th Percentile Latency (µs)")
-    plt.title("95th Percentile Memcached Latency During PARSEC Benchmark Loads")
+    plt.title("95th Percentile Memcached Latency (average on 3 runs)")
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.legend()
     plt.tight_layout()
