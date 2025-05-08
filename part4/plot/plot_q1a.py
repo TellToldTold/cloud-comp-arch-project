@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
@@ -10,7 +12,7 @@ colors = ["red", "blue", "green", "orange"]
 def get_p95_latencies(folder_path, run_number):
     result_path = folder_path + run_number + "/mcperf_results_local.txt"
 
-    header = """type avg std min p5 p10 p50 p67 p75 p80 p85 p90 p95 p99 p999 p9999 QPS target"""
+    header = """type avg std min p5 p10 p50 p67 p75 p80 p85 p90 p95 p99 p999 p9999 QPS target ts_start ts_end"""
     column_names = header.split()
 
     latencies_df = pd.read_csv(result_path, sep=r'\s+', engine='python')
@@ -47,9 +49,8 @@ def export_plot(folder):
             combined['QPS_mean'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].mean(axis=1)
             combined['QPS_std'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].std(axis=1)
 
-            plt.errorbar(combined['QPS_mean'], combined['QPS_std'], xerr=combined['p95_mean'], yerr=combined['p95_std'], 
+            plt.errorbar(combined['QPS_mean'], combined['p95_mean'], xerr=combined['QPS_std'], yerr=combined['p95_std'], 
                     fmt='-o', capsize=5, label=f"T={T}, C={C}", color=colors[T+C-1])
-
 
     # Labels and grid
     plt.xlabel("Achieved Queries per Second (QPS)")

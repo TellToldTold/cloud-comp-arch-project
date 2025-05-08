@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
@@ -54,7 +56,7 @@ def export_plot_A(p95_df, folder, run_number):
     plt.show()
 
     os.makedirs(folder, exist_ok=True)
-    file_path = os.path.join(folder, run_number + "A" + ".png")
+    file_path = os.path.join(folder, run_number.replace("run_", "") + "A" + ".png")
     plt.savefig(file_path, dpi=300)
 
     plt.close()
@@ -67,7 +69,7 @@ def export_plot_B(p95_df, folder, run_number):
     fig, ax1 = plt.subplots()
 
     color = 'tab:red'
-    ax1.set_xlabel('Time')
+    ax1.set_xlabel('Time')  
     ax1.set_ylabel('Number of CPU cores allocated to memcached', color=color)
     ax1.plot(x_axis, data1, color=color)
     ax1.tick_params(axis='y', labelcolor=color)
@@ -84,7 +86,7 @@ def export_plot_B(p95_df, folder, run_number):
     plt.show()
 
     os.makedirs(folder, exist_ok=True)
-    file_path = os.path.join(folder, run_number + "B" + ".png")
+    file_path = os.path.join(folder, run_number.replace("run_", "") + "B" + ".png")
     plt.savefig(file_path, dpi=300)
 
     plt.close()
