@@ -7,7 +7,6 @@ from datetime import datetime
 from cluster_manager import setup_cluster, deploy_memcached, delete_all_jobs
 from mcperf_manager import (
    setup_mcperf_agents,
-   start_load_agents,
    restart_mcperf_agents,
    preload,
    run_mcperf_load,
@@ -129,7 +128,7 @@ def run_experiments(args):
         restart_mcperf_agents(clients_info)
 
         # Start mcperf load
-        mcperf_results = run_mcperf_load(
+        _ = run_mcperf_load(
             clients_info,
             memcached_ip,
             exp_dir

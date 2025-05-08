@@ -4,6 +4,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import argparse
+import os
 
 ## Colors (from main.tex)
 colors = {
@@ -16,7 +17,7 @@ colors = {
     "vips" : "#CC0A00",
 }
 
-## Path to the last experiment (hard-coded)
+## Path
 path = "../results/"
 
 
@@ -33,18 +34,17 @@ def get_launch_time(folder, run_number):
 
     times_df['job'] = times_df['job'].apply(lambda x: x.replace("parsec-", ""))
 
-
     return times_df
 
+
+# Get job duration in sec
 def get_time_interval(folder, run_number):
     with open(path + folder + '/' + run_number + "/parsec_times.txt" , "r") as file:
         duration = file.read()
     
-    # Find job names and their durations
     jobs = re.findall(r"Job:\s+([^\n]+)", duration)
     durations = re.findall(r"Job time:\s+([0-9:]+)", duration)
 
-    # Remove "memcached" or any non-parsec job if needed
     job_names = [j.replace("parsec-", "") for j in jobs if "parsec-" in j]
 
     # Convert durations to seconds
@@ -55,7 +55,6 @@ def get_time_interval(folder, run_number):
     durations_sec = [to_seconds(d) for d in durations]
     durations_ms = [d * 1000 for d in durations_sec]
 
-    # Create DataFrame
     df = pd.DataFrame({
         "job": job_names,
         "duration_ms": durations_ms
@@ -63,12 +62,14 @@ def get_time_interval(folder, run_number):
 
     return df
 
+
 ## Make the graph
 def export_graph(folder, run_number):
     # Export the columns p95, ts_start and ts_end
     result_path = path + folder + '/' + run_number + "/mcperf_results_local.txt"
     header = """type avg std min p5 p10 p50 p67 p75 p80 p85 p90 p95 p99 p999 p9999 QPS target ts_start ts_end"""
     column_names = header.split()
+
     latencies_df = pd.read_csv(result_path, sep=r'\s+', engine='python')
     latencies_df.columns = column_names
 
@@ -93,10 +94,10 @@ def export_graph(folder, run_number):
         ncols=1,
         figsize=(12, 6),
         sharex=True,
-        gridspec_kw={'height_ratios': [5, 2]}  # Top plot taller than bottom
+        gridspec_kw={'height_ratios': [5, 2]}
     )
 
-    # --- Bar plot for p95 latency ---
+    # Bar plot for p95 latency
     ax1.bar(
         p95_latencies['ts_start'],
         p95_latencies['p95'],
@@ -110,8 +111,9 @@ def export_graph(folder, run_number):
     ax1.grid(which='minor', linestyle=':', alpha=0.3)
     ax1.minorticks_on()
 
+
     spacing = 2
-    # --- Job duration horizontal bars ---
+    # Job duration horizontal bars
     for i, row in job_interval_df.iterrows():
         color = colors.get(row['job'], '#000000')
         ax2.hlines(
@@ -138,7 +140,9 @@ def export_graph(folder, run_number):
     ax2.tick_params(axis='x', which='both', direction='out', top=True)
 
     plt.tight_layout()
-    plt.savefig("p95_latency_plot_" + run_number + ".png", dpi=300)
+    os.makedirs(folder, exist_ok=True)
+    file_path = os.path.join(folder, "p95_latency_plot_" + run_number + ".png")
+    plt.savefig(file_path, dpi=300)
     plt.close()
 
 
