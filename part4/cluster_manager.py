@@ -122,7 +122,7 @@ def get_memcached_ip(ssh_key_path):
         print(f"[ERROR] Failed to get memcached IP: {str(e)}")
         return None
 
-def deploy_memcached(thread_count = 1, memory_limit = 1024, cpuset = None):
+def deploy_memcached(thread_count = 2, memory_limit = 1024):
     """
     Deploys and configures memcached directly on the specified VM.
     This function SSHes into the memcached server VM, installs memcached,
@@ -205,35 +205,34 @@ def deploy_memcached(thread_count = 1, memory_limit = 1024, cpuset = None):
         f"echo '-t {thread_count}' | sudo tee -a /etc/memcached.conf\""
     )
 
-    # Optionally pin to specific cores
-    if cpuset:
-        # Append cpuset to systemd config override
-        override = (
-            "[Service]\n"
-            f"ExecStart=\n"
-            f"ExecStart=/usr/bin/taskset -c {cpuset} "
-            f"/usr/bin/memcached -u memcache -m {memory_limit} "
-            f"-p 11211 -t {thread_count}\n"
-        )
-        # Write override file
-        run_command(
-            base_ssh +
-            " \"printf '%s' '" + override.replace("'", "'\"'\"'") +
-            "' | sudo tee /etc/systemd/system/memcached.service.d/"
-            "override.conf\""
-        )
-        # Reload systemd units
-        run_command(base_ssh + " \"sudo systemctl daemon-reload\"")
+    # # Optionally pin to specific cores
+    # if cpuset:
+    #     # Append cpuset to systemd config override
+    #     override = (
+    #         "[Service]\n"
+    #         f"ExecStart=\n"
+    #         f"ExecStart=/usr/bin/taskset -c {cpuset} "
+    #         f"/usr/bin/memcached -u memcache -m {memory_limit} "
+    #         f"-p 11211 -t {thread_count}\n"
+    #     )
+    #     # Write override file
+    #     run_command(
+    #         base_ssh +
+    #         " \"printf '%s' '" + override.replace("'", "'\"'\"'") +
+    #         "' | sudo tee /etc/systemd/system/memcached.service.d/"
+    #         "override.conf\""
+    #     )
+    #     # Reload systemd units
+    #     run_command(base_ssh + " \"sudo systemctl daemon-reload\"")
 
-    # Restart memcached
+    # # Restart memcached
     run_command(base_ssh + " \"sudo systemctl restart memcached\"")
 
     # Wait until memcached is listening on port 11211
     time.sleep(5)
     print(
         f"[STATUS] deploy_memcached: memcached installed & started on " + 
-        f"{node_type} ({ip}) with {thread_count} threads, {memory_limit}MB " +
-        f"memory, and cpuset {cpuset}"
+        f"{node_type} ({ip}) with {thread_count} threads, {memory_limit}MB "
     )
     return ip
 
@@ -246,4 +245,4 @@ if __name__ == "__main__":
     setup_cluster(state_store, cluster_config_yaml)
     
     # # Deploy memcached
-    memcached_ip = deploy_memcached(thread_count=2, memory_limit=2048)
+    memcached_ip = deploy_memcached(thread_count=2, memory_limit=1024)

@@ -13,8 +13,8 @@ if __name__ == "__main__":
     
     # # Deploy memcached
     # memcached_ip = deploy_memcached(
+    #     thread_count=2,
     #     memory_limit=1024,
-    #     thread_count=4,
     # )
 
     memcached_ip = get_memcached_ip(ssh_key_path)
