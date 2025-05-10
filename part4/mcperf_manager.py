@@ -287,8 +287,8 @@ def run_mcperf_load(
         clients_info,
         memcached_ip,
         output_dir,
-        scan = "30000:30500:5",
-        duration = 10
+        scan="30000:30500:5",
+        duration=10
     ):
     """
     Generates and runs the mcperf load test, saving results locally.
@@ -297,8 +297,7 @@ def run_mcperf_load(
     1) Creates an experiment directory if needed.
     2) Writes a remote start_load.sh script with the desired mcperf command.
     3) Copies the script to client-measure and makes it executable.
-    4) SSHes into client-measure to run the script, redirecting stdout to a file
-       under output_dir.
+    4) SSHes into client-measure to run the script, redirecting stdout to a file.
 
     Parameters
     ----------
@@ -311,6 +310,7 @@ def run_mcperf_load(
         Local directory path where results and the script are stored.
     scan : str, optional
         mcperf --scan range, default "30000:30500:5".
+        Format: "start:end:step"
     duration : int, optional
         mcperf -t duration in seconds, default 10.
 
@@ -330,14 +330,16 @@ def run_mcperf_load(
     ssh_key = os.path.expanduser("~/.ssh/cloud-computing")
     agent_ip = clients_info["client_agent"]["internal_ip"]
     measure = clients_info["client_measure"]
-    remote_script = "start_load.sh"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    remote_script = f"start_load_{timestamp}.sh"
 
     # Build start_load.sh locally
     script_path = os.path.join(output_dir, remote_script)
     script_contents = f"""#!/bin/bash
         cd ~/memcache-perf-dynamic
-        ./mcperf -s {memcached_ip} -a {agent_ip} --noload \
-        -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 600 --qps_interval 2 --qps_min 5000 --qps_max 180000
+        ./mcperf -s {memcached_ip} -a {agent_ip} \\
+        --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t {duration} \\
+        --scan {scan}
     """
     with open(script_path, "w") as f:
         f.write(script_contents)
@@ -355,7 +357,7 @@ def run_mcperf_load(
     run_command(chmod, check=False)
 
     # Execute remote load in background via nohup, logging to remote file
-    remote_results = "~/mcperf_results_remote.txt"
+    remote_results = f"~/mcperf_results_{timestamp}.txt"
     ssh_run = (
         f"gcloud compute ssh --ssh-key-file {ssh_key} ubuntu@{measure['name']} "
         f"--zone europe-west1-b --command "
@@ -363,22 +365,33 @@ def run_mcperf_load(
     )
     run_command(ssh_run, check=False)
     print(
-        f"[STATUS] run_mcperf_load: detached mcperf load on {measure['name']}"
+        f"[STATUS] run_mcperf_load: started mcperf load on {measure['name']}"
     )
 
     # Tail remote results locally in background
-    results_file = os.path.join(output_dir, "mcperf_results_local.txt")
+    results_file = os.path.join(output_dir, f"mcperf_results_{timestamp}.txt")
     tail_cmd = (
         f"gcloud compute ssh --quiet --ssh-key-file {ssh_key} " +
         f"ubuntu@{measure['name']} --zone europe-west1-b --command \"tail -F "
         f"{remote_results}\" > {results_file} 2>/dev/null &"
     )
     run_command(tail_cmd, check=False)
-    print(f"[STATUS] run_mcperf_load: tailing remote results to {results_file}")
+    print(f"[STATUS] run_mcperf_load: tailing results to {results_file}")
 
-    print(
-        f"[STATUS] run_mcperf_load: mcperf load running, output saving to " + 
-        f"{results_file}"
+    # Calculate how long to wait for the mcperf test to complete
+    # For scan tests, we need to estimate based on the scan range and step
+    wait_time = 300
+    
+    print(f"[STATUS] run_mcperf_load: waiting for test to complete (~{wait_time} seconds)...")
+    time.sleep(wait_time)
+
+    # Copy the complete results file from remote to local
+    scp_results = (
+        f"gcloud compute scp --ssh-key-file {ssh_key} "
+        f"ubuntu@{measure['name']}:{remote_results} {results_file} "
+        f"--zone europe-west1-b"
     )
+    run_command(scp_results, check=False)
+    print(f"[STATUS] run_mcperf_load: copied complete results to {results_file}")
 
     return results_file

@@ -122,7 +122,7 @@ def get_memcached_ip(ssh_key_path):
         print(f"[ERROR] Failed to get memcached IP: {str(e)}")
         return None
 
-def deploy_memcached(thread_count = 2, memory_limit = 1024):
+def deploy_memcached(thread_count = 2, memory_limit = 1024, cpuset = "0,1"):
     """
     Deploys and configures memcached directly on the specified VM.
     This function SSHes into the memcached server VM, installs memcached,
@@ -132,12 +132,12 @@ def deploy_memcached(thread_count = 2, memory_limit = 1024):
     Parameters
     ----------
     thread_count : int
-        The number of memcached threads (to set -t). Default is 1.
+        The number of memcached threads (to set -t). Default is 2.
     memory_limit : int
         The memory limit for memcached in MB (to set -m). Default is 1024MB.
-    cpuset : str, optional
-        Comma-delimited list of CPU cores to pin memcached to via taskset before
-        service start. Default is None (no pinning).
+    cpuset : str
+        Comma-delimited list of CPU cores to pin memcached to via taskset.
+        Default is "0,1" (first two cores).
         
     Returns
     -------
@@ -205,34 +205,36 @@ def deploy_memcached(thread_count = 2, memory_limit = 1024):
         f"echo '-t {thread_count}' | sudo tee -a /etc/memcached.conf\""
     )
 
-    # # Optionally pin to specific cores
-    # if cpuset:
-    #     # Append cpuset to systemd config override
-    #     override = (
-    #         "[Service]\n"
-    #         f"ExecStart=\n"
-    #         f"ExecStart=/usr/bin/taskset -c {cpuset} "
-    #         f"/usr/bin/memcached -u memcache -m {memory_limit} "
-    #         f"-p 11211 -t {thread_count}\n"
-    #     )
-    #     # Write override file
-    #     run_command(
-    #         base_ssh +
-    #         " \"printf '%s' '" + override.replace("'", "'\"'\"'") +
-    #         "' | sudo tee /etc/systemd/system/memcached.service.d/"
-    #         "override.conf\""
-    #     )
-    #     # Reload systemd units
-    #     run_command(base_ssh + " \"sudo systemctl daemon-reload\"")
-
-    # # Restart memcached
+    # Set up core pinning via systemd override
+    override = (
+        "[Service]\n"
+        f"ExecStart=\n"
+        f"ExecStart=/usr/bin/taskset -c {cpuset} "
+        f"/usr/bin/memcached -u memcache -m {memory_limit} "
+        f"-l {ip} -p 11211 -t {thread_count}\n"
+    )
+    # Create override directory if it doesn't exist
+    run_command(
+        base_ssh + " \"sudo mkdir -p /etc/systemd/system/memcached.service.d/\""
+    )
+    # Write override file
+    run_command(
+        base_ssh +
+        " \"printf '%s' '" + override.replace("'", "'\"'\"'") +
+        "' | sudo tee /etc/systemd/system/memcached.service.d/"
+        "override.conf\""
+    )
+    # Reload systemd units and restart memcached
+    run_command(base_ssh + " \"sudo systemctl daemon-reload\"")
     run_command(base_ssh + " \"sudo systemctl restart memcached\"")
 
     # Wait until memcached is listening on port 11211
     time.sleep(5)
+    
     print(
         f"[STATUS] deploy_memcached: memcached installed & started on " + 
-        f"{node_type} ({ip}) with {thread_count} threads, {memory_limit}MB "
+        f"{node_type} ({ip}) with {thread_count} threads, {memory_limit}MB, " +
+        f"pinned to cores {cpuset}"
     )
     return ip
 

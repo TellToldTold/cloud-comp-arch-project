@@ -9,13 +9,13 @@ if __name__ == "__main__":
     ssh_key_path = os.path.expanduser("~/.ssh/cloud-computing")
 
     # Setup the cluster
-    # setup_cluster(state_store, cluster_config_yaml)
+    setup_cluster(state_store, cluster_config_yaml)
     
-    # # Deploy memcached
-    # memcached_ip = deploy_memcached(
-    #     thread_count=2,
-    #     memory_limit=1024,
-    # )
+    # Deploy memcached
+    memcached_ip = deploy_memcached(
+        thread_count=2,
+        memory_limit=1024,
+    )
 
     memcached_ip = get_memcached_ip(ssh_key_path)
 

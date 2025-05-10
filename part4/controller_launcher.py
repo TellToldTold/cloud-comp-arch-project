@@ -117,6 +117,7 @@ def launch_controller(node_name, ssh_key_path, memcached_ip):
         ssh_key_path (str): Path to the SSH key
         memcached_ip (str): Internal IP of the memcached server
     
+        
     Returns:
         bool: True if successful, False otherwise
     """
