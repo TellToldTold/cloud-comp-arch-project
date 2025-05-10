@@ -44,7 +44,7 @@ def get_memcached_all_thread_ids(pid: Optional[int] = None) -> List[str]:
         return []
 
 
-def get_memcached_thread_ids(pid: Optional[int] = None) -> List[str]:
+def get_memcached_worker_thread_ids(pid: Optional[int] = None) -> List[str]:
     """
     Get worker thread IDs (TIDs) for memcached.
     
@@ -86,7 +86,7 @@ def get_memcached_thread_affinity() -> Dict[str, List[int]]:
     if pid is None:
         return result
         
-    thread_ids = get_memcached_thread_ids(pid)
+    thread_ids = get_memcached_all_thread_ids(pid)
     
     for tid in thread_ids:
         try:
