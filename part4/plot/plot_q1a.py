@@ -2,16 +2,22 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
+import glob
 import argparse
 import os
 
-path = "../results/"
+path = "../part4_task1_results/"
 
 colors = ["red", "blue", "green", "orange"]
 
-def get_p95_latencies(folder_path, run_number):
-    result_path = folder_path + run_number + "/mcperf_results_local.txt"
+def get_p95_latencies(folder_path, run):
+    file_list = glob.glob(os.path.join(folder_path + run, "mcperf_results*.txt"))
 
+    if len(file_list) == 0:
+        raise Exception("No txt file starting with mcperf_results* found.")
+
+    result_path = file_list[0]
+        
     header = """type avg std min p5 p10 p50 p67 p75 p80 p85 p90 p95 p99 p999 p9999 QPS target ts_start ts_end"""
     column_names = header.split()
 
@@ -31,9 +37,9 @@ def export_plot(folder):
     for T in range(1,3):
         for C in range(1,3):
     
-            p95_run1 = get_p95_latencies(folder_path, f"{T}_{C}_run_1")
-            p95_run2 = get_p95_latencies(folder_path, f"{T}_{C}_run_2")
-            p95_run3 = get_p95_latencies(folder_path, f"{T}_{C}_run_3")
+            p95_run1 = get_p95_latencies(folder_path, f"{T}_{C}/run_1")
+            p95_run2 = get_p95_latencies(folder_path, f"{T}_{C}/run_2")
+            p95_run3 = get_p95_latencies(folder_path, f"{T}_{C}/run_3")
 
             combined = pd.concat([p95_run1, p95_run2, p95_run3], axis=1)
 
