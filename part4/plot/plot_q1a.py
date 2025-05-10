@@ -3,7 +3,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 import glob
-import argparse
 import os
 
 path = "../part4_task1_results/"
@@ -11,6 +10,7 @@ path = "../part4_task1_results/"
 colors = ["red", "blue", "green", "orange"]
 
 def get_p95_latencies(folder_path, run):
+    print(folder_path + run)
     file_list = glob.glob(os.path.join(folder_path + run, "mcperf_results*.txt"))
 
     if len(file_list) == 0:
@@ -29,17 +29,19 @@ def get_p95_latencies(folder_path, run):
     return result_df[['p95', 'QPS']]
 
 
-def export_plot(folder):
-    folder_path = path + folder + '/'
+def export_plot():
+    folder_path = path
+
+    print(path)
 
     plt.figure(figsize=(10,5))
 
     for T in range(1,3):
         for C in range(1,3):
     
-            p95_run1 = get_p95_latencies(folder_path, f"{T}_{C}/run_1")
-            p95_run2 = get_p95_latencies(folder_path, f"{T}_{C}/run_2")
-            p95_run3 = get_p95_latencies(folder_path, f"{T}_{C}/run_3")
+            p95_run1 = get_p95_latencies(folder_path, f"T{T}_C{C}/run_1")
+            p95_run2 = get_p95_latencies(folder_path, f"T{T}_C{C}/run_2")
+            p95_run3 = get_p95_latencies(folder_path, f"T{T}_C{C}/run_3")
 
             combined = pd.concat([p95_run1, p95_run2, p95_run3], axis=1)
 
@@ -56,7 +58,7 @@ def export_plot(folder):
             combined['QPS_std'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].std(axis=1)
 
             plt.errorbar(combined['QPS_mean'], combined['p95_mean'], xerr=combined['QPS_std'], yerr=combined['p95_std'], 
-                    fmt='-o', capsize=5, label=f"T={T}, C={C}", color=colors[T+C-1])
+                    fmt='-o', capsize=5, label=f"T={T}, C={C}", color=colors[2*(T-1) + C - 1])
 
     # Labels and grid
     plt.xlabel("Achieved Queries per Second (QPS)")
@@ -66,18 +68,14 @@ def export_plot(folder):
     plt.legend()
     plt.tight_layout()
 
-    os.makedirs(folder, exist_ok=True)
-    file_path = os.path.join(folder, "p95_latency_plot" + ".png")
+    os.makedirs("task1", exist_ok=True)
+    file_path = os.path.join("task1", "p95_latency_plot" + ".png")
     plt.savefig(file_path, dpi=300)
 
     plt.close()
 
-def main(folder):
-    export_plot(folder)
+def main():
+    export_plot()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process runs from a specified folder.")
-    parser.add_argument("folder", help="Folder containing run subdirectories")
-    args = parser.parse_args()
-
-    main(args.folder)
+    main()
