@@ -45,7 +45,7 @@ def get_memcached_thread_ids(pid: Optional[int] = None) -> List[str]:
         return []
 
 
-def get_memcached_cpu_affinity() -> Dict[str, List[int]]:
+def get_memcached_thread_affinity() -> Dict[str, List[int]]:
     """
     Get the CPU affinity of all memcached threads.
     
@@ -91,6 +91,22 @@ def get_memcached_cpu_affinity() -> Dict[str, List[int]]:
     
     return result
 
+def get_memcached_affinity() -> List[int]:
+    """
+    Get the uniun of CPU affinity of all memcached threads.
+
+    Returns
+    -------
+    List[int]:
+        List of CPU core IDs that memcached threads are allowed to run on.
+    """
+    affinity = set()
+    thread_affinity = get_memcached_thread_affinity()
+    for tid, cores in thread_affinity.items():
+        for core in cores:
+            affinity.add(core)
+
+    return list(affinity)
 
 def get_memcached_cpu_percent() -> Dict[str, Tuple[float, int]]:
     """
