@@ -20,17 +20,15 @@ def main():
     # Define memcached configurations to test
     # Format: [(thread_count, core_count, core_list), ...]
     memcached_configs = [
-        (1, 1, "0"),       # T=1, C=1 (core 0)
-        (1, 2, "0,1"),     # T=1, C=2 (cores 0,1)
         (2, 1, "0"),       # T=2, C=1 (core 0)
         (2, 2, "0,1"),     # T=2, C=2 (cores 0,1)
     ]
     
     # Number of runs per configuration
-    runs_per_config = 3
+    runs_per_config = 1
     
     # Create output directory structure
-    base_output_dir = "part4_task1_results"
+    base_output_dir = "part4_task1_d_results"
     os.makedirs(base_output_dir, exist_ok=True)
     
     print("Setting up and running memcached benchmarks...")
