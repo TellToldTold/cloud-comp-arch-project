@@ -49,9 +49,10 @@ def main():
     try:
         # Get local IP (memcached IP)
         memcached_ip = get_local_ip()       
-        print(memcached_ip)
+        print(f"memcached_ip: {memcached_ip}")
 
         # Set initial memcached CPU affinity to core 0
+        print(f"Setting memcached affinity to core 0")
         set_memcached_affinity([0])
 
         # Check initial memcached thread CPU affinity
@@ -61,6 +62,7 @@ def main():
 
         # Get union of CPU affinity of all memcached threads
         memcached_cores = get_memcached_affinity()
+        print(f"memcached_cores: {memcached_cores}")
 
         # Log start of memcached
         # TODO: Check if get_memcached_thread_ids actually returns the correct number of threads
@@ -68,7 +70,48 @@ def main():
         num_threads = len(memcached_thread_ids)
         logger.job_start(Job.MEMCACHED, memcached_cores, num_threads)
         
+        # All available cores
+        all_cores = list(range(os.cpu_count()))
+
+        # Cores available for batch jobs (not used by memcached)
+        batch_cores = [core for core in all_cores if core not in memcached_cores]
         
+        # Run all batch jobs sequentially
+        for job_name in BATCH_JOBS:
+            print(f"Running job: {job_name}...")
+
+            # Run the batch job
+            container = run_batch_job(job_name, batch_cores, len(batch_cores))
+            if not container:
+                print("Failed to start job")
+                continue
+
+            # Log job start
+            logger.job_start(Job(job_name), batch_cores, len(batch_cores))
+            
+            # Wait for the job to finish
+            while is_container_running(job_name):
+                time.sleep(1)
+            
+            # Check if the job completed successfully
+            if is_container_completed(job_name):
+                print(f"Job {job_name} completed successfully.")
+                logger.job_end(Job(job_name))
+            elif is_container_exited(job_name):
+                print(f"Job {job_name} exited with error.")
+                logger.job_end(Job(job_name))
+            else:
+                print(f"Job {job_name} is still running or has an unknown state.")
+
+            # Clean up the container (just to be sure)
+            if is_container_exited(container):
+                try:
+                    container.remove()
+                except Exception as e:
+                    print(f"Error removing container: {str(e)}")
+
+        # All jobs completed
+        print("All batch jobs completed.")
     
     except KeyboardInterrupt:
         print("Controller interrupted")

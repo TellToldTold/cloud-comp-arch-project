@@ -395,3 +395,137 @@ def run_mcperf_load(
     print(f"[STATUS] run_mcperf_load: copied complete results to {results_file}")
 
     return results_file
+
+def run_mcperf_dynamic_load(
+        clients_info,
+        memcached_ip,
+        output_dir,
+        duration = 10,
+        qps_interval = 10,
+        qps_min = 5000,
+        qps_max = 180000,
+        qps_seed = None
+    ):
+    """
+    Generates and runs the dynamic mcperf load test for Part 4 questions 2, 3,
+    and 4, saving results locally.
+
+    This function:
+    1) Creates an experiment directory if needed.
+    2) Writes a remote start_load.sh script with the desired mcperf command.
+    3) Copies the script to client-measure and makes it executable.
+    4) SSHes into client-measure to run the script, redirecting stdout to a file.
+
+    Parameters
+    ----------
+    clients_info : dict
+        Contains 'client_agent', 'client_measure' with dicts
+        holding 'name' and 'internal_ip'.
+    memcached_ip : str
+        The IP address of the memcached server.
+    output_dir : str
+        Local directory path where results and the script are stored.
+    duration : int, optional
+        mcperf -t duration in seconds, default 10.
+    qps_interval : int, optional
+        Interval for QPS changes in seconds, default 10.
+    qps_min : int, optional
+        Minimum QPS value, default 5000.
+    qps_max : int, optional
+        Maximum QPS value, default 180000.
+    qps_seed : int or None, optional
+        Seed for random QPS generation, default None (random seed).
+
+    Returns
+    -------
+    str or None
+        Path to the local results file, or None on failure.
+    """
+    if not memcached_ip:
+        print("[ERROR] run_mcperf_dynamic_load: No memcached IP provided")
+        return None
+
+    ssh_key = os.path.expanduser("~/.ssh/cloud-computing")
+
+    # Setup
+    os.makedirs(output_dir, exist_ok=True)
+    ssh_key = os.path.expanduser("~/.ssh/cloud-computing")
+    agent_ip = clients_info["client_agent"]["internal_ip"]
+    measure = clients_info["client_measure"]
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    remote_script = f"start_load_{timestamp}.sh"
+
+    # Build start_load.sh locally
+    script_path = os.path.join(output_dir, remote_script)
+    script_contents = f"""#!/bin/bash
+        cd ~/memcache-perf-dynamic
+        ./mcperf -s {memcached_ip} -a {agent_ip} \\
+        --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t {duration} \\
+        --qps_interval {qps_interval} --qps_min {qps_min} --qps_max {qps_max} \\
+    """
+    if qps_seed is not None:
+        script_contents += f"--qps_seed {qps_seed}"
+        
+    with open(script_path, "w") as f:
+        f.write(script_contents)
+
+    # Copy and prepare on client-measure
+    scp = (
+        f"gcloud compute scp --ssh-key-file {ssh_key} {script_path} "
+        f"ubuntu@{measure['name']}:~ --zone europe-west1-b"
+    )
+    run_command(scp, check=False)
+    chmod = (
+        f"gcloud compute ssh --ssh-key-file {ssh_key} ubuntu@{measure['name']} "
+        f"--zone europe-west1-b --command \"chmod +x ~/{remote_script}\""
+    )
+    run_command(chmod, check=False)
+
+    # Execute remote load in background via nohup, logging to remote file
+    remote_results = f"~/mcperf_results_{timestamp}.txt"
+    ssh_run = (
+        f"gcloud compute ssh --ssh-key-file {ssh_key} ubuntu@{measure['name']} "
+        f"--zone europe-west1-b --command "
+        f"\"nohup ~/{remote_script} > {remote_results} 2>&1 &\""
+    )
+    run_command(ssh_run, check=False)
+    print(
+        f"[STATUS] run_mcperf_dynamic_load: started mcperf load on "
+        f"{measure['name']}"
+    )
+
+    # Tail remote results locally in background
+    results_file = os.path.join(output_dir, f"mcperf_results_{timestamp}.txt")
+    tail_cmd = (
+        f"gcloud compute ssh --quiet --ssh-key-file {ssh_key} " +
+        f"ubuntu@{measure['name']} --zone europe-west1-b --command \"tail -F "
+        f"{remote_results}\" > {results_file} 2>/dev/null &"
+    )
+    run_command(tail_cmd, check=False)
+    print(
+        f"[STATUS] run_mcperf_dynamic_load: tailing results to {results_file}"
+    )
+
+    # Calculate how long to wait for the mcperf test to complete
+    # For scan tests, we need to estimate based on the scan range and step
+    wait_time = 300
+    
+    print(
+        f"[STATUS] run_mcperf_dynamic_load: waiting for test to complete "
+        f"(~{wait_time} seconds)..."
+    )
+    time.sleep(wait_time)
+
+    # Copy the complete results file from remote to local
+    scp_results = (
+        f"gcloud compute scp --ssh-key-file {ssh_key} "
+        f"ubuntu@{measure['name']}:{remote_results} {results_file} "
+        f"--zone europe-west1-b"
+    )
+    run_command(scp_results, check=False)
+    print(
+        f"[STATUS] run_mcperf_dynamic_load: copied complete results to "
+        f"{results_file}"
+    )
+
+    return results_file
