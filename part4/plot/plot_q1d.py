@@ -43,7 +43,7 @@ def export_plot(folder, C):
     ax1.tick_params(axis='y', labelcolor=color)
     ax1.set_xticks(x_axis[::2])
 
-    plt.axhline(y=800, color='r', linestyle='dotted')
+    plt.axhline(y=800, color='black', linestyle='dotted')
 
     ax2 = ax1.twinx()  # instantiate a second Axes that shares the same x-axis
 
