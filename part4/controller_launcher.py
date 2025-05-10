@@ -6,9 +6,12 @@ import subprocess
 from pathlib import Path
 from utils import run_command
 from cluster_manager import get_node_name, get_memcached_ip
-from mcperf_manager import setup_mcperf_agents, preload, start_load_agent, restart_mcperf_agent, run_mcperf_load, stop_mcperf_agents
+from mcperf_manager import (
+    setup_mcperf_agents, preload, start_load_agent, restart_mcperf_agent,
+    run_mcperf_dynamic_load, stop_mcperf_agents
+)
 
-def setup_remote_node(node_name, ssh_key_path):
+def setup_remote_node(node_name, ssh_key_path, scheduler_script):
     """
     Copy the controller files to the remote node and set them up.
     
@@ -30,19 +33,16 @@ def setup_remote_node(node_name, ssh_key_path):
         
         # List of files to copy
         files_to_copy = [
-            "scheduler_logger.py",
-            "resource_monitor.py",
-            "container_manager.py",
-            "memcached_manager.py",
-            "scheduler_controller.py",
-            "test_scheduler.py",
-            "setup_scheduler.sh",
-            "utils.py"
+            "scheduler_logger.py", "resource_monitor.py", "container_manager.py",
+            "memcached_manager.py", f"{scheduler_script}", "test_scheduler.py",
+            "setup_scheduler.sh", "utils.py"
         ]
         
         # Copy each file to the remote node
         for file in files_to_copy:
-            local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "node_scripts", file)
+            local_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), "node_scripts", file
+            )
             if os.path.exists(local_path):
                 print(f"[STATUS] Copying {file} to remote node...")
                 run_command(
@@ -57,7 +57,9 @@ def setup_remote_node(node_name, ssh_key_path):
         print("[STATUS] Setting up noninteractive environment on remote node...")
         run_command(
             f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} "
-            f"--zone europe-west1-b --command \"echo 'Dpkg::Options \\\"--force-confold\\\";' | sudo tee /etc/apt/apt.conf.d/local > /dev/null\""
+            f"--zone europe-west1-b --command \"echo 'Dpkg::Options "
+            f"\\\"--force-confold\\\";' | sudo tee /etc/apt/apt.conf.d/local > "
+            f"/dev/null\""
         )
         
         # Make the setup script executable and run it with noninteractive frontend
@@ -65,7 +67,8 @@ def setup_remote_node(node_name, ssh_key_path):
         run_command(
             f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} "
             f"--zone europe-west1-b --command \"cd ~/dynamic_scheduler && "
-            f"chmod +x setup_scheduler.sh && DEBIAN_FRONTEND=noninteractive sudo -E ./setup_scheduler.sh\""
+            f"chmod +x setup_scheduler.sh && DEBIAN_FRONTEND=noninteractive "
+            f"sudo -E ./setup_scheduler.sh\""
         )
         
         print("[STATUS] Remote node setup complete!")
@@ -113,8 +116,14 @@ def launch_controller(
         )
         
         print(f"[STATUS] Controller launched in screen session 'controller'")
-        print(f"[INFO] To attach to the controller session, ssh to the node and run: screen -r controller")
-        print(f"[INFO] To detach from the session without stopping it, press Ctrl+A followed by D")
+        print(
+            f"[INFO] To attach to the controller session, ssh to the node and run: "
+            f"screen -r controller"
+        )
+        print(
+            f"[INFO] To detach from the session without stopping it, press Ctrl+A "
+            f"followed by D"
+        )
         
         return True
     
@@ -122,7 +131,6 @@ def launch_controller(
         print(f"[ERROR] Failed to launch controller: {str(e)}")
         return False
 
-# TODO: RE-IMPLEMENT THIS SHIT BECAUSE THIS IS JUST CHAT-GPT RN
 def stop_controller(node_name, ssh_key_path):
     """
     Stop the running controller on the remote node.
@@ -140,7 +148,8 @@ def stop_controller(node_name, ssh_key_path):
         # Kill the screen session
         run_command(
             f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} "
-            f"--zone europe-west1-b --command \"screen -X -S controller quit || true\""
+            f"--zone europe-west1-b --command \"screen -X -S controller quit || "
+            f"true\""
         )
         
         print(f"[STATUS] Controller stopped")
@@ -153,19 +162,48 @@ def stop_controller(node_name, ssh_key_path):
 
 def main():
     """Main function to parse arguments and execute commands."""
-    parser = argparse.ArgumentParser(description="Launch and manage the dynamic scheduler controller")
+    parser = argparse.ArgumentParser(
+        description="Launch and manage the dynamic scheduler controller"
+    )
     
-    # Action to perform (the only required argument)
-    parser.add_argument("--action", choices=["setup", "launch", "stop", "logs", "mcperf-setup", "mcperf-run", "mcperf-stop"], required=True,
-                        help="Action to perform: setup the node, launch controller, stop controller, get logs, setup mcperf, run mcperf benchmark, or stop mcperf")
+    # Action to perform
+    parser.add_argument(
+        "--action", 
+        choices=[
+            "setup", "launch", "stop", "logs", 
+            "mcperf-setup", "mcperf-run", "mcperf-stop"
+        ], 
+        required=True,
+        help=(
+            "Action to perform: setup the node, launch controller, stop "
+            "controller, get logs, setup mcperf, run mcperf benchmark, or "
+            "stop mcperf"
+        )
+    )
+
+    parser.add_argument(
+        "--scheduler-script", 
+        required=True,
+        help="Scheduler script to run."
+    )
+
+    parser.add_argument(
+        "--qps-seed",
+        type=int,
+        help="Seed for random QPS generation. Leave empty for random QPS.",
+    )
     
     # Optional arguments
-    parser.add_argument("--ssh-key", default="~/.ssh/cloud-computing", 
-                        help="Path to SSH key (default: ~/.ssh/cloud-computing)")
-    parser.add_argument("--output-dir", default="logs", 
-                        help="Directory to save logs to (default: logs)")
-    parser.add_argument("--force-install", action="store_true",
-                        help="Force reinstallation of mcperf (default: False)")
+    parser.add_argument(
+        "--ssh-key", 
+        default="~/.ssh/cloud-computing", 
+        help="Path to SSH key (default: ~/.ssh/cloud-computing)"
+    )
+    parser.add_argument(
+        "--output-dir", 
+        default="logs", 
+        help="Directory to save logs to (default: logs)"
+    )
     
     args = parser.parse_args()
     
@@ -175,26 +213,52 @@ def main():
     # Auto-discover node name
     node_name = get_node_name("memcache-server")
     if not node_name:
-        print("[ERROR] Could not auto-discover memcached node. Cannot continue.")
+        print(
+            "[ERROR] Could not auto-discover memcached node. Cannot continue."
+        )
         return
     
     # Perform the requested action
     if args.action == "setup":
-        setup_remote_node(node_name, ssh_key_path)
+        setup_remote_node(node_name, ssh_key_path, args.scheduler_script)
         
     elif args.action == "launch":
         # Get memcached IP for information purposes only
         memcached_ip = get_memcached_ip(ssh_key_path)
         if memcached_ip:
             print(f"[INFO] Memcached is running at IP: {memcached_ip}")
+
+            print(f"[STATUS] Setting up mcperf...")
+            clients_info = setup_mcperf_agents()
+
+            print(f"[STATUS] Preloading memcached...")
+            preload(clients_info, memcached_ip)
+
+            print(f"[STATUS] Starting load agent...")
+            start_load_agent(clients_info)
+
+            print(f"[STATUS] Running dynamic mcperf load...")
+            run_mcperf_dynamic_load(
+                clients_info,
+                memcached_ip,
+                args.output_dir,
+                qps_seed = args.qps_seed
+            )
+
+            print(f"[STATUS] Launching scheduler controller...")
             launch_controller(node_name, ssh_key_path, memcached_ip)
+        else:
+            print(
+                "[ERROR] Could not get memcached IP. Cannot launch controller."
+            )
     
     elif args.action == "stop":
+        print(f"[STATUS] Stopping mcperf agents...")
+        stop_mcperf_agents()
+
+        print(f"[STATUS] Stopping scheduler controller...")
         stop_controller(node_name, ssh_key_path)
-    
-    # elif args.action == "logs":
-    #     get_controller_logs(node_name, ssh_key_path, args.output_dir)
     
 
 if __name__ == "__main__":
-    main() 
+    main()
