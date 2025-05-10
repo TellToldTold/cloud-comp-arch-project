@@ -6,7 +6,8 @@ import argparse
 import os
 import numpy as np
 
-path = "../results/"
+path = "../part4_task1_d_results/"
+
 
 def get_p95_latencies(folder_path, run_number):
     result_path = folder_path + run_number + "/mcperf_results_local.txt"
@@ -22,18 +23,18 @@ def get_p95_latencies(folder_path, run_number):
     return result_df[['p95', 'QPS']]
 
 
-def export_plot(folder, C):
-    folder_path = path + folder + '/'
+def export_plot(C):
     
-    #p95_df = get_p95_latencies(folder_path, f"{C}_core")
+    #p95_df = get_p95_latencies(path, f"{C}_core")
 
     x_axis = np.arange(0, 230000, 5000)
 
     fig, ax1 = plt.subplots()
 
     color = 'tab:red'
-    ax1.set_xlabel('Achieved Queries per Second (QPS) for ' + f"{C} cores")
+    ax1.set_xlabel('Achieved Queries per Second (QPS)')
     ax1.set_ylabel('95th Percentile Latency (µs)', color=color)
+
 
     data1_x_values = np.array([4948, 9940, 14978, 19984, 25062, 30035, 35013, 40030, 45048, 50008, 55153, 60195, 64936, 70183, 74811, 75987])
     
@@ -55,21 +56,18 @@ def export_plot(folder, C):
     ax2.set_ylim(0, 100)
 
 
+    plt.title("95th Percentile Memcached Latency vs. CPU Utilization for " + f"{C} {"core" if C == 1 else "cores"}")
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
 
-    os.makedirs(folder, exist_ok=True)
-    file_path = os.path.join(folder, "p95_latency_and_cpu_utilization_for_" + f"{C}_core" + ".png")
+    os.makedirs("task1_d", exist_ok=True)
+    file_path = os.path.join("task1_d", "p95_latency_and_cpu_utilization_for_" + f"{C}_core" + ".png")
     plt.savefig(file_path, dpi=300)
 
     plt.close()
 
-def main(folder):
-    export_plot(folder, C=1)
-    export_plot(folder, C=2)
+def main():
+    export_plot(C=1)
+    export_plot(C=2)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process runs from a specified folder.")
-    parser.add_argument("folder", help="Folder containing run subdirectories")
-    args = parser.parse_args()
-
-    main(args.folder)
+    main()
