@@ -400,7 +400,7 @@ def run_mcperf_dynamic_load(
         clients_info,
         memcached_ip,
         output_dir,
-        duration = 10,
+        duration = 1800,
         qps_interval = 10,
         qps_min = 5000,
         qps_max = 180000,
@@ -426,7 +426,7 @@ def run_mcperf_dynamic_load(
     output_dir : str
         Local directory path where results and the script are stored.
     duration : int, optional
-        mcperf -t duration in seconds, default 10.
+        mcperf -t duration in seconds, default 1800.
     qps_interval : int, optional
         Interval for QPS changes in seconds, default 10.
     qps_min : int, optional
