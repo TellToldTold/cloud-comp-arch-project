@@ -75,6 +75,7 @@ def setup_remote_node(node_name, ssh_key_path):
         print(f"[ERROR] Failed to set up remote node: {str(e)}")
         return False
 
+
 def launch_controller(node_name, ssh_key_path, memcached_ip):
     """
     Launch the scheduler controller on the remote node.
@@ -109,32 +110,6 @@ def launch_controller(node_name, ssh_key_path, memcached_ip):
         print(f"[ERROR] Failed to launch controller: {str(e)}")
         return False
 
-def stop_controller(node_name, ssh_key_path):
-    """
-    Stop the running controller on the remote node.
-    
-    Args:
-        node_name (str): The name of the remote node
-        ssh_key_path (str): Path to the SSH key
-    
-    Returns:
-        bool: True if successful, False otherwise
-    """
-    try:
-        print(f"[STATUS] Stopping controller on remote node...")
-        
-        # Kill the screen session
-        run_command(
-            f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} "
-            f"--zone europe-west1-b --command \"screen -X -S controller quit || true\""
-        )
-        
-        print(f"[STATUS] Controller stopped")
-        return True
-    
-    except subprocess.CalledProcessError as e:
-        print(f"[ERROR] Failed to stop controller: {str(e)}")
-        return False
 
 
 def main():
