@@ -108,23 +108,36 @@ def setup_remote_node(node_name, ssh_key_path):
 #         print(f"[ERROR] Failed to ensure 'screen' is installed: {str(e)}")
 #         return False
 
-def launch_controller(node_name, ssh_key_path, memcached_ip):
+def launch_controller(
+        node_name,
+        ssh_key_path,
+        memcached_ip,
+        scheduler_script
+    ):
     """
     Launch the scheduler controller on the remote node.
     
-    Args:
-        node_name (str): The name of the remote node
-        ssh_key_path (str): Path to the SSH key
-        memcached_ip (str): Internal IP of the memcached server
-    
+    Args
+    ----
+    node_name (str):
+        The name of the remote node
+    ssh_key_path (str):
+        Path to the SSH key
+    memcached_ip (str):
+        Internal IP of the memcached server
+    scheduler_script (str):
+        The name of the scheduler script, e.g., "scheduler_controller.py"
         
-    Returns:
-        bool: True if successful, False otherwise
+    Returns
+    -------
+    bool:
+        True if successful, False otherwise
     """
     try:
-        scheduler_script = "scheduler_controller.py"
-        
-        print(f"[STATUS] Launching controller on remote node with script {scheduler_script}...")
+        print(
+            f"[STATUS] Launching controller on remote node with script " 
+            f"{scheduler_script}..."
+        )
         # Run the controller directly
         run_command(
             f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} "
@@ -142,6 +155,7 @@ def launch_controller(node_name, ssh_key_path, memcached_ip):
         print(f"[ERROR] Failed to launch controller: {str(e)}")
         return False
 
+# TODO: RE-IMPLEMENT THIS SHIT BECAUSE THIS IS JUST CHAT-GPT RN
 def stop_controller(node_name, ssh_key_path):
     """
     Stop the running controller on the remote node.
