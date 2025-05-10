@@ -49,8 +49,11 @@ def get_memcached_cpu_affinity() -> Dict[str, List[int]]:
     """
     Get the CPU affinity of all memcached threads.
     
-    Returns:
-        Dict[str, List[int]]: Dictionary mapping thread IDs to list of CPU cores they're allowed to run on
+    Returns
+    -------
+    Dict[str, List[int]]:
+        Dictionary mapping thread IDs to list of CPU cores they're allowed
+        to run on.
     """
     result = {}
     pid = get_memcached_pid()
@@ -93,8 +96,10 @@ def get_memcached_cpu_percent() -> Dict[str, Tuple[float, int]]:
     """
     Get the CPU usage percentage of memcached threads using pidstat.
     
-    Returns:
-        Dict[str, float]: Dictionary mapping thread IDs to CPU usage percentage (0-100% per core)
+    Returns
+    -------
+    Dict[str, float]:
+        Dictionary mapping thread IDs to CPU usage percentage (0-100% per core)
     """
     pid = get_memcached_pid()
     if pid is None:
@@ -151,8 +156,10 @@ def set_memcached_affinity(cores: List[int], pid: Optional[int] = None) -> Dict[
         cores (List[int]): List of CPU core IDs to use
         pid (Optional[int]): Specific memcached PID to bind, or None to auto-detect
     
-    Returns:
-        Dict[str, bool]: Dictionary mapping thread IDs to success status
+    Returns
+    -------
+    Dict[str, bool]:
+        Dictionary mapping thread IDs to success status
     """
     results = {}
     
