@@ -75,39 +75,6 @@ def setup_remote_node(node_name, ssh_key_path):
         print(f"[ERROR] Failed to set up remote node: {str(e)}")
         return False
 
-# def ensure_screen_installed(node_name, ssh_key_path):
-#     """
-#     Ensure the 'screen' utility is installed on the remote node.
-    
-#     Args:
-#         node_name (str): The name of the remote node
-#         ssh_key_path (str): Path to the SSH key
-    
-#     Returns:
-#         bool: True if screen is installed, False otherwise
-#     """
-#     try:
-#         # Check if screen is installed
-#         check_cmd = f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} " \
-#                     f"--zone europe-west1-b --command \"which screen\""
-        
-#         result = run_command(check_cmd, check=False, capture_output=True)
-        
-#         if not result or 'not found' in result.lower():
-#             print("[STATUS] 'screen' is not installed, installing now...")
-#             install_cmd = f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} " \
-#                          f"--zone europe-west1-b --command \"DEBIAN_FRONTEND=noninteractive sudo apt-get update && DEBIAN_FRONTEND=noninteractive sudo apt-get install -y screen\""
-#             run_command(install_cmd)
-#             print("[STATUS] 'screen' installed successfully")
-#         else:
-#             print("[STATUS] 'screen' is already installed")
-        
-#         return True
-    
-#     except subprocess.CalledProcessError as e:
-#         print(f"[ERROR] Failed to ensure 'screen' is installed: {str(e)}")
-#         return False
-
 def launch_controller(
         node_name,
         ssh_key_path,
@@ -183,71 +150,6 @@ def stop_controller(node_name, ssh_key_path):
         print(f"[ERROR] Failed to stop controller: {str(e)}")
         return False
 
-# def get_controller_logs(node_name, ssh_key_path, output_dir="logs"):
-#     """
-#     Retrieve the controller logs from the remote node.
-    
-#     Args:
-#         node_name (str): The name of the remote node
-#         ssh_key_path (str): Path to the SSH key
-#         output_dir (str): Directory to save logs to
-    
-#     Returns:
-#         bool: True if successful, False otherwise
-#     """
-#     try:
-#         # Create output directory if it doesn't exist
-#         os.makedirs(output_dir, exist_ok=True)
-        
-#         print(f"[STATUS] Retrieving controller logs from remote node...")
-        
-#         # List all log files on the remote node
-#         log_files = run_command(
-#             f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} "
-#             f"--zone europe-west1-b --command \"ls -1 ~/dynamic_scheduler/log*.txt 2>/dev/null || echo ''\"",
-#             capture_output=True
-#         )
-        
-#         if not log_files:
-#             print("[WARNING] No log files found on remote node")
-#             return False
-        
-#         # Copy each log file to the output directory
-#         for log_file in log_files.splitlines():
-#             if not log_file:  # Skip empty lines
-#                 continue
-                
-#             log_name = os.path.basename(log_file)
-#             output_path = os.path.join(output_dir, log_name)
-            
-#             print(f"[STATUS] Copying log file {log_name}...")
-#             run_command(
-#                 f"gcloud compute scp --ssh-key-file {ssh_key_path} "
-#                 f"ubuntu@{node_name}:{log_file} {output_path} "
-#                 f"--zone europe-west1-b"
-#             )
-        
-#         print(f"[STATUS] Logs retrieved to {output_dir}/")
-#         return True
-    
-#     except subprocess.CalledProcessError as e:
-#         print(f"[ERROR] Failed to retrieve logs: {str(e)}")
-#         return False
-
-#     """
-#     Stop all running mcperf processes.
-    
-#     Returns:
-#         bool: True if successful, False otherwise
-#     """
-#     try:
-#         print("[STATUS] Stopping all mcperf processes...")
-#         stop_mcperf_agents()
-#         print("[STATUS] mcperf processes stopped")
-#         return True
-#     except Exception as e:
-#         print(f"[ERROR] Failed to stop mcperf processes: {str(e)}")
-#         return False
 
 def main():
     """Main function to parse arguments and execute commands."""
