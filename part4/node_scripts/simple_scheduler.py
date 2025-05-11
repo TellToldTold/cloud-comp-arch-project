@@ -9,7 +9,10 @@ from container_manager import (
     run_batch_job, 
     is_container_running, 
     is_container_completed,
-    is_container_exited
+    is_container_exited,
+    get_all_containers,
+    stop_container,
+    remove_container
 )
 from memcached_manager import (
     get_memcached_affinity,
@@ -35,10 +38,24 @@ def main():
     logger = SchedulerLogger(scheduler_name = "simple_sequential")
     
     try:
+        # Clean up any existing containers
+        print("Cleaning up existing containers...")
+        existing_containers = get_all_containers()
+        for container in existing_containers:
+            container_name = container.name
+            if container_name.startswith("parsec_"):
+                job_name = container_name[len("parsec_"):]
+                print(f"Stopping and removing container: {container_name}")
+                stop_container(container, job_name)
+                remove_container(container, job_name, force=True)
+            else:
+                print(f"Stopping and removing container: {container_name}")
+                container.stop(timeout=10)
+                container.remove(force=True)
+
         # Set initial memcached CPU affinity to core 0
         print(f"Setting memcached affinity to core 0")
         set_memcached_affinity([0])
-
 
         # Get union of CPU affinity of all memcached threads
         memcached_cores = get_memcached_affinity()

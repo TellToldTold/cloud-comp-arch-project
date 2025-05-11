@@ -3,7 +3,7 @@
 import os
 from cluster_manager import get_node_name, deploy_memcached
 from mcperf_manager import setup_mcperf_agents, preload, start_load_agent, run_mcperf_dynamic_load, stop_mcperf_agents
-from controller_launcher import setup_remote_node, launch_controller
+from part4.controller_manager import setup_remote_node, launch_controller
 
 def main():
     """
@@ -61,26 +61,26 @@ def main():
     print("Starting mcperf load agent...")
     start_load_agent(clients_info)
     
-    # Run dynamic mcperf load in background
-    print("Starting dynamic mcperf load...")
-    results_file = run_mcperf_dynamic_load(
-        clients_info,
-        memcached_ip,
-        output_dir,
-        duration=180
-    )
-    
-    print(f"mcperf load running, results: {results_file}")
-    
     # Setup remote node with scheduler files
     print(f"Setting up remote node with scheduler files...")
     if not setup_remote_node(node_name, ssh_key_path, scheduler_script):
         print("ERROR: Failed to set up remote node")
         return
     
+    # Run dynamic mcperf load in background
+    print("Starting dynamic mcperf load...")
+    results_file = run_mcperf_dynamic_load(
+        clients_info,
+        memcached_ip,
+        output_dir,
+        duration=300
+    )
+    
+    print(f"mcperf load running, results: {results_file}")
+    
     # Launch the controller on the remote node
     print(f"Launching controller with script: {scheduler_script}")
-    if not launch_controller(node_name, ssh_key_path, memcached_ip, scheduler_script):
+    if not launch_controller(node_name, ssh_key_path, scheduler_script):
         print("ERROR: Failed to launch controller")
         return
     

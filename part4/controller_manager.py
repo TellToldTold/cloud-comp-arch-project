@@ -5,11 +5,8 @@ import os
 import subprocess
 from pathlib import Path
 from utils import run_command
-from cluster_manager import get_node_name, get_memcached_ip
-from mcperf_manager import (
-    setup_mcperf_agents, preload, start_load_agent, restart_mcperf_agent,
-    run_mcperf_dynamic_load, stop_mcperf_agents
-)
+from cluster_manager import get_node_name
+
 
 def setup_remote_node(node_name, ssh_key_path, scheduler_script):
     """
@@ -131,7 +128,6 @@ def copy_files_only(node_name, ssh_key_path, scheduler_script):
 def launch_controller(
         node_name,
         ssh_key_path,
-        memcached_ip,
         scheduler_script
     ):
     """
@@ -172,30 +168,6 @@ def launch_controller(
         print(f"[ERROR] Failed to launch controller: {str(e)}")
         return False
 
-def stop_controller(node_name, ssh_key_path):
-    """
-    Stop the scheduler controller on the remote node.
-    
-    Args:
-        node_name (str): The name of the remote node
-        ssh_key_path (str): Path to the SSH key
-        
-    Returns:
-        bool: True if successful, False otherwise
-    """
-    try:
-        print(f"[STATUS] Stopping controller on remote node...")
-        run_command(
-            f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} "
-            f"--zone europe-west1-b --command \"sudo pkill -f 'python3 .*scheduler.*'\""
-        )
-        print(f"[STATUS] Controller stopped!")
-        return True
-    
-    except subprocess.CalledProcessError as e:
-        print(f"[ERROR] Failed to stop controller: {str(e)}")
-        return False
-
 def main():
     """Main function to parse arguments and execute commands."""
     parser = argparse.ArgumentParser(
@@ -206,9 +178,7 @@ def main():
     parser.add_argument(
         "--action", 
         choices=[
-            "setup", "launch", "stop", "logs", 
-            "mcperf-setup", "mcperf-run", "mcperf-stop",
-            "copy-files"
+            "setup", "launch", "copy-files"
         ], 
         required=True,
         help=(
@@ -223,23 +193,12 @@ def main():
         required=True,
         help="Scheduler script to run."
     )
-
-    parser.add_argument(
-        "--qps-seed",
-        type=int,
-        help="Seed for random QPS generation. Leave empty for random QPS.",
-    )
     
     # Optional arguments
     parser.add_argument(
         "--ssh-key", 
         default="~/.ssh/cloud-computing", 
         help="Path to SSH key (default: ~/.ssh/cloud-computing)"
-    )
-    parser.add_argument(
-        "--output-dir", 
-        default="logs", 
-        help="Directory to save logs to (default: logs)"
     )
     
     args = parser.parse_args()
@@ -263,42 +222,8 @@ def main():
         copy_files_only(node_name, ssh_key_path, args.scheduler_script)
         
     elif args.action == "launch":
-        # Get memcached IP for information purposes only
-        memcached_ip = get_memcached_ip(ssh_key_path)
-        if memcached_ip:
-            print(f"[INFO] Memcached is running at IP: {memcached_ip}")
+        launch_controller(node_name, ssh_key_path, args.scheduler_script)
 
-            print(f"[STATUS] Setting up mcperf...")
-            clients_info = setup_mcperf_agents()
-
-            print(f"[STATUS] Preloading memcached...")
-            preload(clients_info, memcached_ip)
-
-            print(f"[STATUS] Starting load agent...")
-            start_load_agent(clients_info)
-
-            print(f"[STATUS] Running dynamic mcperf load...")
-            run_mcperf_dynamic_load(
-                clients_info,
-                memcached_ip,
-                args.output_dir,
-                qps_seed = args.qps_seed
-            )
-
-            print(f"[STATUS] Launching scheduler controller...")
-            launch_controller(node_name, ssh_key_path, memcached_ip, args.scheduler_script)
-        else:
-            print(
-                "[ERROR] Could not get memcached IP. Cannot launch controller."
-            )
-    
-    elif args.action == "stop":
-        print(f"[STATUS] Stopping mcperf agents...")
-        stop_mcperf_agents()
-
-        print(f"[STATUS] Stopping scheduler controller...")
-        stop_controller(node_name, ssh_key_path)
-    
 
 if __name__ == "__main__":
     main()
