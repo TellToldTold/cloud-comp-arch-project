@@ -10,7 +10,6 @@ path = "../part4_task1_results/"
 colors = ["red", "blue", "green", "orange"]
 
 def get_p95_latencies(folder_path, run):
-    print(folder_path + run)
     file_list = glob.glob(os.path.join(folder_path + run, "mcperf_results*.txt"))
 
     if len(file_list) == 0:
