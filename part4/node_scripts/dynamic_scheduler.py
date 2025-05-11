@@ -42,7 +42,7 @@ def main():
     
     try:
         # Set initial memcached CPU affinity to core 0
-        print("Setting initial memcached affinity to core 0")
+        print("[STATUS] Setting initial memcached affinity to core 0")
         memcached_cores = [0]
         set_memcached_affinity(memcached_cores)
         
@@ -56,16 +56,16 @@ def main():
         
         # Initial batch cores (all except core 0)
         batch_cores = [core for core in all_cores if core not in memcached_cores]
-        print(f"Initial batch_cores: {batch_cores}")
+        print(f"[STATUS] Initial batch_cores: {batch_cores}")
         
         # Run all batch jobs sequentially
         for job_name in BATCH_JOBS:
-            print(f"Running job: {job_name}...")
+            print(f"[STATUS] Running job: {job_name}...")
             
             # Run the batch job
             container = run_batch_job(job_name, batch_cores, len(batch_cores))
             if not container:
-                print(f"Failed to start job {job_name}")
+                print(f"[ERROR] Failed to start job {job_name}")
                 continue
             
             # Log job start
@@ -76,37 +76,41 @@ def main():
                 # Check CPU usage on core 0
                 cpu_usage = get_cpu_usage_per_core()
                 core0_usage = cpu_usage[0]
-                print(f"Core 0 usage: {core0_usage:.1f}%")
+                print(f"[STATUS] Core 0 usage: {core0_usage:.1f}%")
                 
                 # Check if we need to adjust core allocation
                 if len(memcached_cores) == 1 and core0_usage > HIGH_THRESHOLD:
                     # Scale up memcached to 2 cores (0 and 1)
-                    print("High memcached usage detected, scaling up to 2 cores")
+                    print("[STATUS] High memcached usage detected, scaling up to 2 cores")
                     memcached_cores = [0, 1]
                     set_memcached_affinity(memcached_cores)
+
+                    # Log the change
+                    logger.job_update(Job.MEMCACHED, memcached_cores, num_threads)
                     
                     # Update batch job to use remaining cores
                     batch_cores = [core for core in all_cores if core not in memcached_cores]
-                    print(f"Updating batch cores to: {batch_cores}")
+                    print(f"[STATUS] Updating batch cores to: {batch_cores}")
                     update_container_cores(container, batch_cores, job_name)
                     
-                    # Log the changes
-                    logger.job_update(Job.MEMCACHED, memcached_cores, num_threads)
+                    # Log the change
                     logger.job_update(Job(job_name), batch_cores, len(batch_cores))
                 
                 elif len(memcached_cores) == 2 and core0_usage < LOW_THRESHOLD:
                     # Scale down memcached to 1 core (0)
-                    print("Low memcached usage detected, scaling down to 1 core")
+                    print("[STATUS] Low memcached usage detected, scaling down to 1 core")
                     memcached_cores = [0]
                     set_memcached_affinity(memcached_cores)
+
+                    # Log the change
+                    logger.job_update(Job.MEMCACHED, memcached_cores, num_threads)
                     
                     # Update batch job to use remaining cores
                     batch_cores = [core for core in all_cores if core not in memcached_cores]
-                    print(f"Updating batch cores to: {batch_cores}")
+                    print(f"[STATUS] Updating batch cores to: {batch_cores}")
                     update_container_cores(container, batch_cores, job_name)
                     
-                    # Log the changes
-                    logger.job_update(Job.MEMCACHED, memcached_cores, num_threads)
+                    # Log the change
                     logger.job_update(Job(job_name), batch_cores, len(batch_cores))
                 
                 # Wait before checking again
@@ -114,28 +118,28 @@ def main():
             
             # Check if the job completed successfully
             if is_container_completed(job_name):
-                print(f"Job {job_name} completed successfully.")
+                print(f"[STATUS] Job {job_name} completed successfully.")
                 logger.job_end(Job(job_name))
             elif is_container_exited(job_name):
-                print(f"Job {job_name} exited with error.")
+                print(f"[STATUS] Job {job_name} exited with error.")
                 logger.job_end(Job(job_name))
             else:
-                print(f"Job {job_name} is still running or has an unknown state.")
+                print(f"[STATUS] Job {job_name} is still running or has an unknown state.")
             
             # Clean up the container
             if is_container_exited(container):
                 try:
                     container.remove()
                 except Exception as e:
-                    print(f"Error removing container: {str(e)}")
+                    print(f"[STATUS] Error removing container: {str(e)}")
         
         # All jobs completed
-        print("All batch jobs completed.")
+        print("[STATUS] All batch jobs completed.")
     
     except KeyboardInterrupt:
-        print("Controller interrupted")
+        print("[STATUS] Controller interrupted")
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"[STATUS] Error: {str(e)}")
     finally:
         # End the scheduler
         logger.end()
