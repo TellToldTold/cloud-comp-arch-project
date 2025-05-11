@@ -84,10 +84,7 @@ def main():
         print("ERROR: Failed to launch controller")
         return
     
-    print("Setup complete")
-    print(f"Memcached: {memcached_ip}")
     print(f"mcperf results: {results_file}")
-    print(f"Controller running on: {node_name}")
 
 if __name__ == "__main__":
     main() 

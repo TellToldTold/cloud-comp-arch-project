@@ -116,6 +116,7 @@ def get_memcached_thread_affinity() -> Dict[str, List[int]]:
     
     return result
 
+
 def get_memcached_affinity() -> List[int]:
     """
     Get the uniun of CPU affinity of all memcached threads.
@@ -132,6 +133,7 @@ def get_memcached_affinity() -> List[int]:
             affinity.add(core)
 
     return list(affinity)
+
 
 def get_memcached_cpu_percent() -> Dict[str, Tuple[float, int]]:
     """

@@ -70,14 +70,29 @@ install_docker() {
     fi
 }
 
-# Install netcat (for memcached stats)
-install_netcat() {
-    print_section "Installing netcat"
-    # Install netcat-openbsd instead of the virtual netcat package
-    sudo apt-get install -y netcat-openbsd
-    echo "Netcat installed successfully."
+# Pull required Docker images
+pull_docker_images() {
+    print_section "Pulling Docker images"
+    
+    # List of images to pull
+    local images=(
+        "anakli/cca:parsec_blackscholes"
+        "anakli/cca:parsec_canneal"
+        "anakli/cca:parsec_dedup"
+        "anakli/cca:parsec_ferret"
+        "anakli/cca:parsec_freqmine"
+        "anakli/cca:splash2x_radix"
+        "anakli/cca:parsec_vips"
+    )
+    
+    # Pull each image
+    for image in "${images[@]}"; do
+        echo "Pulling $image..."
+        docker pull $image
+    done
+    
+    echo "All Docker images pulled successfully."
 }
-
 
 # Main function
 main() {
@@ -85,8 +100,7 @@ main() {
     
     install_python_deps
     install_docker
-    install_netcat
-    
+    pull_docker_images
 }
 
 # Run the main function
