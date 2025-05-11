@@ -17,7 +17,7 @@ from memcached_manager import (
     get_memcached_affinity,
     set_memcached_affinity,
     get_memcached_cpu_percent,
-    get_memcached_thread_ids
+    get_memcached_all_thread_ids
 )
 from resource_monitor import get_cpu_usage_per_core
 from scheduler_logger import SchedulerLogger, Job
@@ -66,7 +66,7 @@ def main():
 
         # Log start of memcached
         # TODO: Check if get_memcached_thread_ids actually returns the correct number of threads
-        memcached_thread_ids = get_memcached_thread_ids()
+        memcached_thread_ids = get_memcached_all_thread_ids()
         num_threads = len(memcached_thread_ids)
         logger.job_start(Job.MEMCACHED, memcached_cores, num_threads)
         

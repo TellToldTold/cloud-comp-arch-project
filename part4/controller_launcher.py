@@ -34,7 +34,7 @@ def setup_remote_node(node_name, ssh_key_path, scheduler_script):
         # List of files to copy
         files_to_copy = [
             "scheduler_logger.py", "resource_monitor.py", "container_manager.py",
-            "memcached_manager.py", f"{scheduler_script}", "test_scheduler.py",
+            "memcached_manager.py", f"{scheduler_script}",
             "setup_scheduler.sh", "utils.py"
         ]
         
@@ -112,7 +112,7 @@ def launch_controller(
         run_command(
             f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} "
             f"--zone europe-west1-b --command \"cd ~/dynamic_scheduler && "
-            f"python3 {scheduler_script}\""
+            f"sudo python3 {scheduler_script}\""
         )
         
         print(f"[STATUS] Controller launched in screen session 'controller'")
@@ -130,35 +130,6 @@ def launch_controller(
     except subprocess.CalledProcessError as e:
         print(f"[ERROR] Failed to launch controller: {str(e)}")
         return False
-
-def stop_controller(node_name, ssh_key_path):
-    """
-    Stop the running controller on the remote node.
-    
-    Args:
-        node_name (str): The name of the remote node
-        ssh_key_path (str): Path to the SSH key
-    
-    Returns:
-        bool: True if successful, False otherwise
-    """
-    try:
-        print(f"[STATUS] Stopping controller on remote node...")
-        
-        # Kill the screen session
-        run_command(
-            f"gcloud compute ssh --ssh-key-file {ssh_key_path} ubuntu@{node_name} "
-            f"--zone europe-west1-b --command \"screen -X -S controller quit || "
-            f"true\""
-        )
-        
-        print(f"[STATUS] Controller stopped")
-        return True
-    
-    except subprocess.CalledProcessError as e:
-        print(f"[ERROR] Failed to stop controller: {str(e)}")
-        return False
-
 
 def main():
     """Main function to parse arguments and execute commands."""
@@ -246,7 +217,7 @@ def main():
             )
 
             print(f"[STATUS] Launching scheduler controller...")
-            launch_controller(node_name, ssh_key_path, memcached_ip)
+            launch_controller(node_name, ssh_key_path, memcached_ip, args.scheduler_script)
         else:
             print(
                 "[ERROR] Could not get memcached IP. Cannot launch controller."

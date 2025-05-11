@@ -502,29 +502,10 @@ def run_mcperf_dynamic_load(
         f"{remote_results}\" > {results_file} 2>/dev/null &"
     )
     run_command(tail_cmd, check=False)
-    print(
-        f"[STATUS] run_mcperf_dynamic_load: tailing results to {results_file}"
-    )
+    print(f"[STATUS] run_mcperf_dynamic_load: tailing remote results to {results_file}")
 
-    # Calculate how long to wait for the mcperf test to complete
-    # For scan tests, we need to estimate based on the scan range and step
-    wait_time = 300
-    
     print(
-        f"[STATUS] run_mcperf_dynamic_load: waiting for test to complete "
-        f"(~{wait_time} seconds)..."
-    )
-    time.sleep(wait_time)
-
-    # Copy the complete results file from remote to local
-    scp_results = (
-        f"gcloud compute scp --ssh-key-file {ssh_key} "
-        f"ubuntu@{measure['name']}:{remote_results} {results_file} "
-        f"--zone europe-west1-b"
-    )
-    run_command(scp_results, check=False)
-    print(
-        f"[STATUS] run_mcperf_dynamic_load: copied complete results to "
+        f"[STATUS] run_mcperf_dynamic_load: mcperf load running, output saving to " + 
         f"{results_file}"
     )
 
