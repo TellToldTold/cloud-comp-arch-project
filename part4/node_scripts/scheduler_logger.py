@@ -15,6 +15,7 @@ class Job(Enum):
     FREQMINE = "freqmine"
     RADIX = "radix"
     VIPS = "vips"
+    ALL = "all"
 
 
 class SchedulerLogger:

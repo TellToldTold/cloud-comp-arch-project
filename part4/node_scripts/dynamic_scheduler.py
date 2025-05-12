@@ -2,8 +2,7 @@
 
 import time
 import os
-import sys
-from typing import List, Dict, Optional, Set
+from typing import Dict, Optional
 from container_manager import (
     run_batch_job, 
     is_container_running, 
@@ -19,6 +18,7 @@ from memcached_manager import (
 )
 from resource_monitor import get_cpu_usage_per_core
 from scheduler_logger import SchedulerLogger, Job
+from jobs_timer import JobsTimer
 
 # List of batch jobs to run
 BATCH_JOBS = [
@@ -37,6 +37,9 @@ LOW_THRESHOLD = 50.0   # When to scale down memcached cores
 
 def main():
     """Main function to run the dynamic scheduler controller."""
+    # Initialize jobs timer
+    timer = JobsTimer()
+
     # Initialize logger
     logger = SchedulerLogger(scheduler_name = "dynamic_scheduler")
     
@@ -67,6 +70,9 @@ def main():
             if not container:
                 print(f"[ERROR] Failed to start job {job_name}")
                 continue
+
+            # Record start time of job
+            timer.start(job_name)
             
             # Log job start
             logger.job_start(Job(job_name), batch_cores, len(batch_cores))
@@ -115,31 +121,52 @@ def main():
                 
                 # Wait before checking again
                 time.sleep(2)
+
+            # Job finished, stop the timer
+            timer.stop(job_name)
             
+            # Log end of job
+            logger.job_end(Job(job_name))
+
+            # Log the total time taken for the job
+            job_time = timer.get_job_time(job_name)
+            logger.custom_event(
+                Job(job_name),
+                f"Execution time: {job_time:.2f} seconds"
+            )
+
             # Check if the job completed successfully
-            if is_container_completed(job_name):
+            if is_container_completed(container):
                 print(f"[STATUS] Job {job_name} completed successfully.")
-                logger.job_end(Job(job_name))
-            elif is_container_exited(job_name):
-                print(f"[STATUS] Job {job_name} exited with error.")
-                logger.job_end(Job(job_name))
+            elif is_container_exited(container):
+                print(f"[ERROR] Job {job_name} exited with error.")
             else:
-                print(f"[STATUS] Job {job_name} is still running or has an unknown state.")
+                print(
+                    f"[STATUS] Job {job_name} is not running but has an "
+                    f"unknown state."
+                )
             
             # Clean up the container
             if is_container_exited(container):
                 try:
                     container.remove()
                 except Exception as e:
-                    print(f"[STATUS] Error removing container: {str(e)}")
+                    print(f"[ERROR] Error removing container: {str(e)}")
         
         # All jobs completed
         print("[STATUS] All batch jobs completed.")
+
+        # Log total execution time
+        total_time = timer.get_total_time()
+        logger.custom_event(
+            Job.ALL,
+            f"Total execution time: {total_time:.2f} seconds"
+        )
     
     except KeyboardInterrupt:
         print("[STATUS] Controller interrupted")
     except Exception as e:
-        print(f"[STATUS] Error: {str(e)}")
+        print(f"[ERROR] {str(e)}")
     finally:
         # End the scheduler
         logger.end()
