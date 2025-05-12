@@ -46,9 +46,6 @@ def run_batch_job(
         Optional[Container]: Docker container object if successful, None otherwise
     """
     try:
-        # Map job_name to Job enum
-        job_enum = getattr(Job, job_name.upper())
-        
         # Define image mapping
         image_mapping = {
             'blackscholes': 'anakli/cca:parsec_blackscholes',
@@ -69,14 +66,17 @@ def run_batch_job(
             return None
         
         # Format the command to run the PARSEC benchmark
-        command = f"./run -a run -S {('splash2x' if job_name.lower() == 'radix' else 'parsec')} -p {job_name.lower()} -i native -n {threads}"
-        
+        if job_name.lower() == 'radix':
+            command = f"./run -a run -S splash2x -p {job_name.lower()} -i native -n {threads}"
+        else:
+            command = f"./run -a run -S parsec -p {job_name.lower()} -i native -n {threads}"
+            
         # Run the container
         container = client.containers.run(
             image=image,
             command=command,
             detach=True,
-            name=f"parsec_{job_name.lower()}",
+            name=f"{job_name.lower()}",
             cpuset_cpus=cpuset
         )
         
@@ -130,8 +130,7 @@ def get_container_cores(container: Union[Container, str]) -> Optional[List[int]]
 
 def update_container_cores(
     container: Union[Container, str], 
-    cores: List[int], 
-    job_name: str
+    cores: List[int]
 ) -> bool:
     """
     Update the CPU cores assigned to a container.
@@ -152,9 +151,6 @@ def update_container_cores(
             if not container:
                 return False
         
-        # Map job_name to Job enum
-        job_enum = getattr(Job, job_name.upper())
-        
         # Format the list of cores as a Docker-compatible string
         cpuset = ','.join(map(str, cores))
         
@@ -163,11 +159,11 @@ def update_container_cores(
         
         return True
     except Exception as e:
-        print(f"Error updating cores for {job_name}: {str(e)}")
+        print(f"Error updating cores: {str(e)}")
         return False
 
 
-def pause_container(container: Union[Container, str], job_name: str) -> bool:
+def pause_container(container: Union[Container, str]) -> bool:
     """
     Pause a running container.
     
@@ -186,26 +182,21 @@ def pause_container(container: Union[Container, str], job_name: str) -> bool:
             if not container:
                 return False
         
-        # Map job_name to Job enum
-        job_enum = getattr(Job, job_name.upper())
-        
         # Pause the container
         container.pause()
         
         return True
     except Exception as e:
-        print(f"Error pausing job {job_name}: {str(e)}")
+        print(f"Error pausing job: {str(e)}")
         return False
 
 
-def unpause_container(container: Union[Container, str], job_name: str) -> bool:
+def unpause_container(container: Union[Container, str]) -> bool:
     """
     Unpause a paused container.
     
     Args:
         container (Union[Container, str]): Docker container object or container ID/name
-        job_name (str): Name of the job
-        logger (SchedulerLogger): Logger to log job events
     
     Returns:
         bool: True if successful, False otherwise
@@ -216,20 +207,20 @@ def unpause_container(container: Union[Container, str], job_name: str) -> bool:
             container = get_container_by_id_or_name(container)
             if not container:
                 return False
+            
+            # Map job_name to Job enum
+            job_enum = getattr(Job, job_name.upper())
         
-        # Map job_name to Job enum
-        job_enum = getattr(Job, job_name.upper())
-        
-        # Unpause the container
+            # Unpause the container
         container.unpause()
         
         return True
     except Exception as e:
-        print(f"Error unpausing job {job_name}: {str(e)}")
+        print(f"Error unpausing job: {str(e)}")
         return False
 
 
-def stop_container(container: Union[Container, str], job_name: str) -> bool:
+def stop_container(container: Union[Container, str]) -> bool:
     """
     Stop a running container.
     
@@ -247,20 +238,16 @@ def stop_container(container: Union[Container, str], job_name: str) -> bool:
             container = get_container_by_id_or_name(container)
             if not container:
                 return False
-        
-        # Map job_name to Job enum
-        job_enum = getattr(Job, job_name.upper())
-        
         # Stop the container
         container.stop(timeout=10)  # Allow 10 seconds for graceful shutdown
         
         return True
     except Exception as e:
-        print(f"Error stopping job {job_name}: {str(e)}")
+        print(f"Error stopping job: {str(e)}")
         return False
 
 
-def remove_container(container: Union[Container, str], job_name: str, force: bool = False) -> bool:
+def remove_container(container: Union[Container, str], force: bool = False) -> bool:
     """
     Remove a container.
     
@@ -280,15 +267,12 @@ def remove_container(container: Union[Container, str], job_name: str, force: boo
             if not container:
                 return False
         
-        # Map job_name to Job enum
-        job_enum = getattr(Job, job_name.upper())
-        
         # Remove the container
         container.remove(force=force)
         
         return True
     except Exception as e:
-        print(f"Error removing job {job_name}: {str(e)}")
+        print(f"Error removing job: {str(e)}")
         return False
 
 
@@ -335,6 +319,29 @@ def is_container_running(container: Union[Container, str]) -> bool:
         
         container.reload()  # Refresh container state
         return container.status == 'running'
+    except Exception:
+        return False
+
+
+def is_container_completed(container: Union[Container, str]) -> bool:
+    """
+    Check if a container has completed its execution.
+    
+    Args:
+        container (Union[Container, str]): Docker container object or container ID/name
+    
+    Returns:
+        bool: True if completed, False otherwise
+    """
+    try:
+        # Get Container object if a string was provided
+        if isinstance(container, str):
+            container = get_container_by_id_or_name(container)
+            if not container:
+                return False
+        
+        container.reload()  # Refresh container state
+        return container.status == 'exited' and container.attrs['State']['ExitCode'] == 0
     except Exception:
         return False
 

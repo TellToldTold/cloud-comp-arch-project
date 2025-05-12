@@ -8,13 +8,17 @@ from container_manager import (
     is_container_running, 
     is_container_completed,
     is_container_exited,
-    update_container_cores
+    update_container_cores,
+    get_all_containers,
+    stop_container,
+    remove_container
 )
 from memcached_manager import (
     get_memcached_affinity,
     set_memcached_affinity,
     get_memcached_worker_thread_ids,
     get_memcached_cpu_percent
+
 )
 from resource_monitor import get_cpu_usage_per_core
 from scheduler_logger import SchedulerLogger, Job
@@ -44,6 +48,13 @@ def main():
     logger = SchedulerLogger(scheduler_name = "dynamic_scheduler")
     
     try:
+        print("Cleaning up existing containers...")
+        existing_containers = get_all_containers()
+        for container in existing_containers:
+            stop_container(container)
+            remove_container(container)
+
+
         # Set initial memcached CPU affinity to core 0
         print("[STATUS] Setting initial memcached affinity to core 0")
         memcached_cores = [0]
@@ -78,7 +89,7 @@ def main():
             logger.job_start(Job(job_name), batch_cores, len(batch_cores))
             
             # Wait for the job to finish, monitoring memcached CPU usage
-            while is_container_running(job_name):
+            while is_container_running(container):
                 # Check CPU usage on core 0
                 cpu_usage = get_cpu_usage_per_core()
                 core0_usage = cpu_usage[0]
@@ -92,15 +103,15 @@ def main():
                     set_memcached_affinity(memcached_cores)
 
                     # Log the change
-                    logger.job_update(Job.MEMCACHED, memcached_cores, num_threads)
+                    logger.update_cores(Job.MEMCACHED, memcached_cores)
                     
                     # Update batch job to use remaining cores
                     batch_cores = [core for core in all_cores if core not in memcached_cores]
                     print(f"[STATUS] Updating batch cores to: {batch_cores}")
-                    update_container_cores(container, batch_cores, job_name)
+                    update_container_cores(container, batch_cores)
                     
                     # Log the change
-                    logger.job_update(Job(job_name), batch_cores, len(batch_cores))
+                    logger.update_cores(Job(job_name), batch_cores)
                 
                 elif len(memcached_cores) == 2 and core0_usage < LOW_THRESHOLD:
                     # Scale down memcached to 1 core (0)
@@ -109,15 +120,15 @@ def main():
                     set_memcached_affinity(memcached_cores)
 
                     # Log the change
-                    logger.job_update(Job.MEMCACHED, memcached_cores, num_threads)
+                    logger.update_cores(Job.MEMCACHED, memcached_cores)
                     
                     # Update batch job to use remaining cores
                     batch_cores = [core for core in all_cores if core not in memcached_cores]
                     print(f"[STATUS] Updating batch cores to: {batch_cores}")
-                    update_container_cores(container, batch_cores, job_name)
+                    update_container_cores(container, batch_cores)
                     
                     # Log the change
-                    logger.job_update(Job(job_name), batch_cores, len(batch_cores))
+                    logger.update_cores(Job(job_name), batch_cores)
                 
                 # Wait before checking again
                 time.sleep(2)

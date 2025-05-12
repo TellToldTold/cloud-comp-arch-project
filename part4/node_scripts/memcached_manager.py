@@ -19,31 +19,6 @@ def get_memcached_pid() -> Optional[int]:
     return None
 
 
-def get_memcached_all_thread_ids(pid: Optional[int] = None) -> List[str]:
-    """
-    Get all thread IDs (TIDs) for memcached including main thread.
-    
-    Args:
-        pid (Optional[int]): Process ID of memcached, or None to auto-detect
-    
-    Returns:
-        List[str]: List of all thread IDs as strings
-    """
-    if pid is None:
-        pid = get_memcached_pid()
-        
-    if pid is None:
-        return []
-        
-    try:
-        ps_cmd = f"ps -L -p {pid} -o tid | grep -v TID"
-        output = subprocess.check_output(ps_cmd, shell=True, universal_newlines=True)
-        return [tid.strip() for tid in output.splitlines() if tid.strip()]
-    except subprocess.SubprocessError as e:
-        print(f"Error getting thread IDs for PID {pid}: {str(e)}")
-        return []
-
-
 def get_memcached_worker_thread_ids(pid: Optional[int] = None) -> List[str]:
     """
     Get worker thread IDs (TIDs) for memcached.
@@ -70,69 +45,44 @@ def get_memcached_worker_thread_ids(pid: Optional[int] = None) -> List[str]:
         return []
 
 
-def get_memcached_thread_affinity() -> Dict[str, List[int]]:
-    """
-    Get the CPU affinity of all memcached threads.
-    
-    Returns
-    -------
-    Dict[str, List[int]]:
-        Dictionary mapping thread IDs to list of CPU cores they're allowed
-        to run on.
-    """
-    result = {}
-    pid = get_memcached_pid()
-    
-    if pid is None:
-        return result
-        
-    thread_ids = get_memcached_all_thread_ids(pid)
-    
-    for tid in thread_ids:
-        try:
-            # Use taskset to get the affinity of each thread
-            output = subprocess.check_output(['taskset', '-pc', tid], 
-                                          stderr=subprocess.PIPE, 
-                                          universal_newlines=True)
-            
-            # Parse the output to extract the CPU list
-            # Example output: "pid 12345's current affinity list: 0-3"
-            if 'affinity list:' in output:
-                affinity_str = output.split('affinity list:')[1].strip()
-                cores = []
-                
-                # Parse the CPU list format (can be "0,1,2" or "0-3" or a mix)
-                for part in affinity_str.split(','):
-                    if '-' in part:
-                        start, end = map(int, part.split('-'))
-                        cores.extend(range(start, end + 1))
-                    else:
-                        cores.append(int(part))
-                        
-                result[tid] = cores
-        except (subprocess.CalledProcessError, ValueError) as e:
-            print(f"Error getting affinity for thread {tid}: {str(e)}")
-            continue
-    
-    return result
-
 
 def get_memcached_affinity() -> List[int]:
     """
-    Get the uniun of CPU affinity of all memcached threads.
+    Get the CPU affinity of the memcached process.
 
     Returns
     -------
     List[int]:
-        List of CPU core IDs that memcached threads are allowed to run on.
+        List of CPU core IDs that memcached is allowed to run on.
     """
-    affinity = set()
-    thread_affinity = get_memcached_thread_affinity()
-    for tid, cores in thread_affinity.items():
-        for core in cores:
-            affinity.add(core)
-
-    return list(affinity)
+    pid = get_memcached_pid()
+    if pid is None:
+        return []
+        
+    try:
+        # Use taskset to get the affinity of the main process
+        output = subprocess.check_output(['taskset', '-pc', str(pid)], 
+                                      stderr=subprocess.PIPE, 
+                                      universal_newlines=True)
+        
+        # Parse the output to extract the CPU list
+        if 'affinity list:' in output:
+            affinity_str = output.split('affinity list:')[1].strip()
+            cores = []
+            
+            # Parse the CPU list format (can be "0,1,2" or "0-3" or a mix)
+            for part in affinity_str.split(','):
+                if '-' in part:
+                    start, end = map(int, part.split('-'))
+                    cores.extend(range(start, end + 1))
+                else:
+                    cores.append(int(part))
+                    
+            return cores
+    except (subprocess.CalledProcessError, ValueError) as e:
+        print(f"Error getting affinity for process {pid}: {str(e)}")
+    
+    return []
 
 
 def get_memcached_cpu_percent() -> Dict[str, Tuple[float, int]]:
@@ -189,43 +139,31 @@ def get_memcached_cpu_percent() -> Dict[str, Tuple[float, int]]:
         return {}
 
 
-def set_memcached_affinity(cores: List[int], pid: Optional[int] = None) -> Dict[str, bool]:
+def set_memcached_affinity(cores: List[int], pid: Optional[int] = None) -> bool:
     """
-    Set CPU affinity for all threads of a memcached process.
+    Set CPU affinity for all threads of a memcached process using taskset -a.
     
     Args:
         cores (List[int]): List of CPU core IDs to use
         pid (Optional[int]): Specific memcached PID to bind, or None to auto-detect
     
     Returns:
-        Dict[str, bool]: Dictionary mapping thread IDs to success status
+        bool: True if successful, False otherwise
     """
-    results = {}
-    
     if pid is None:
         pid = get_memcached_pid()
         
     if pid is None:
-        return results
+        return False
     
     try:
         # Format cores for taskset
         cores_str = ','.join(map(str, cores))
         
-        # Get all thread IDs for this process
-        thread_ids = get_memcached_all_thread_ids(pid)
-        
-        for tid in thread_ids:
-            try:
-                # Set affinity using taskset for each thread
-                subprocess.check_call(['taskset', '-pc', cores_str, tid], 
-                                      stderr=subprocess.PIPE)  # Suppress stderr
-                results[tid] = True
-            except subprocess.CalledProcessError as e:
-                print(f"Error setting affinity for thread {tid}: {str(e)}")
-                results[tid] = False
-        
-        return results
+        # Set affinity using taskset with -a to apply to all threads
+        subprocess.check_call(['taskset', '-a', '-pc', cores_str, str(pid)], 
+                              stderr=subprocess.PIPE)  # Suppress stderr
+        return True
     except Exception as e:
         print(f"Error in set_memcached_affinity: {str(e)}")
-        return {tid: False for tid in get_memcached_all_thread_ids(pid) or []}
+        return False

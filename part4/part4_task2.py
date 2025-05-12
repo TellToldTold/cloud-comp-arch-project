@@ -3,7 +3,7 @@
 import os
 from cluster_manager import get_node_name, deploy_memcached
 from mcperf_manager import setup_mcperf_agents, preload, start_load_agent, run_mcperf_dynamic_load, stop_mcperf_agents
-from part4.controller_manager import setup_remote_node, launch_controller
+from controller_manager import copy_files_only, launch_controller
 
 def main():
     """
@@ -12,11 +12,11 @@ def main():
     Assumes the cluster is already running.
     """
     # Hardcoded configuration
-    scheduler_script = "simple_scheduler.py"
+    scheduler_script = "dynamic_scheduler.py"
     ssh_key_path = os.path.expanduser("~/.ssh/cloud-computing")
     output_dir = "part4_task2_results"
     memcached_threads = 2
-    memcached_cores = "0,1"
+    memcached_cores = "0"
     memcached_memory = 1024
     
     # Create output directory
@@ -63,7 +63,7 @@ def main():
     
     # Setup remote node with scheduler files
     print(f"Setting up remote node with scheduler files...")
-    if not setup_remote_node(node_name, ssh_key_path, scheduler_script):
+    if not copy_files_only(node_name, ssh_key_path):
         print("ERROR: Failed to set up remote node")
         return
     
@@ -73,7 +73,7 @@ def main():
         clients_info,
         memcached_ip,
         output_dir,
-        duration=300
+        duration=900
     )
     
     print(f"mcperf load running, results: {results_file}")

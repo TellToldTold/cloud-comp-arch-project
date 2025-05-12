@@ -8,7 +8,7 @@ from utils import run_command
 from cluster_manager import get_node_name
 
 
-def setup_remote_node(node_name, ssh_key_path, scheduler_script):
+def setup_remote_node(node_name, ssh_key_path):
     """
     Copy the controller files to the remote node and set them up.
     
@@ -28,27 +28,14 @@ def setup_remote_node(node_name, ssh_key_path, scheduler_script):
             f"--zone europe-west1-b --command \"mkdir -p ~/dynamic_scheduler\""
         )
         
-        # List of files to copy
-        files_to_copy = [
-            "scheduler_logger.py", "resource_monitor.py", "container_manager.py",
-            "memcached_manager.py", f"{scheduler_script}",
-            "setup_scheduler.sh", "utils.py"
-        ]
-        
-        # Copy each file to the remote node
-        for file in files_to_copy:
-            local_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), "node_scripts", file
-            )
-            if os.path.exists(local_path):
-                print(f"[STATUS] Copying {file} to remote node...")
-                run_command(
-                    f"gcloud compute scp --ssh-key-file {ssh_key_path} "
-                    f"{local_path} ubuntu@{node_name}:~/dynamic_scheduler/ "
-                    f"--zone europe-west1-b"
-                )
-            else:
-                print(f"[WARNING] File {file} not found, skipping...")
+        # Copy all files from node_scripts directory
+        node_scripts_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "node_scripts")
+        print(f"[STATUS] Copying all files from {node_scripts_dir} to remote node...")
+        run_command(
+            f"gcloud compute scp --ssh-key-file {ssh_key_path} "
+            f"{node_scripts_dir}/* ubuntu@{node_name}:~/dynamic_scheduler/ "
+            f"--zone europe-west1-b"
+        )
         
         # Create dpkg config to prevent interactive prompts
         print("[STATUS] Setting up noninteractive environment on remote node...")
@@ -75,14 +62,13 @@ def setup_remote_node(node_name, ssh_key_path, scheduler_script):
         print(f"[ERROR] Failed to set up remote node: {str(e)}")
         return False
 
-def copy_files_only(node_name, ssh_key_path, scheduler_script):
+def copy_files_only(node_name, ssh_key_path):
     """
     Copy only the controller files to the remote node without running setup scripts.
     
     Args:
         node_name (str): The name of the remote node
         ssh_key_path (str): Path to the SSH key
-        scheduler_script (str): The name of the scheduler script
     
     Returns:
         bool: True if successful, False otherwise
@@ -96,27 +82,14 @@ def copy_files_only(node_name, ssh_key_path, scheduler_script):
             f"--zone europe-west1-b --command \"mkdir -p ~/dynamic_scheduler\""
         )
         
-        # List of files to copy
-        files_to_copy = [
-            "scheduler_logger.py", "resource_monitor.py", "container_manager.py",
-            "memcached_manager.py", f"{scheduler_script}",
-            "setup_scheduler.sh", "utils.py"
-        ]
-        
-        # Copy each file to the remote node
-        for file in files_to_copy:
-            local_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), "node_scripts", file
-            )
-            if os.path.exists(local_path):
-                print(f"[STATUS] Copying {file} to remote node...")
-                run_command(
-                    f"gcloud compute scp --ssh-key-file {ssh_key_path} "
-                    f"{local_path} ubuntu@{node_name}:~/dynamic_scheduler/ "
-                    f"--zone europe-west1-b"
-                )
-            else:
-                print(f"[WARNING] File {file} not found, skipping...")
+        # Copy all files from node_scripts directory
+        node_scripts_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "node_scripts")
+        print(f"[STATUS] Copying all files from {node_scripts_dir} to remote node...")
+        run_command(
+            f"gcloud compute scp --ssh-key-file {ssh_key_path} "
+            f"{node_scripts_dir}/* ubuntu@{node_name}:~/dynamic_scheduler/ "
+            f"--zone europe-west1-b"
+        )
         
         print("[STATUS] File copying complete!")
         return True
@@ -139,8 +112,6 @@ def launch_controller(
         The name of the remote node
     ssh_key_path (str):
         Path to the SSH key
-    memcached_ip (str):
-        Internal IP of the memcached server
     scheduler_script (str):
         The name of the scheduler script, e.g., "scheduler_controller.py"
         
@@ -190,8 +161,8 @@ def main():
 
     parser.add_argument(
         "--scheduler-script", 
-        required=True,
-        help="Scheduler script to run."
+        required=False,
+        help="Scheduler script to run (required for launch action)."
     )
     
     # Optional arguments
@@ -216,12 +187,15 @@ def main():
     
     # Perform the requested action
     if args.action == "setup":
-        setup_remote_node(node_name, ssh_key_path, args.scheduler_script)
+        setup_remote_node(node_name, ssh_key_path)
         
     elif args.action == "copy-files":
-        copy_files_only(node_name, ssh_key_path, args.scheduler_script)
+        copy_files_only(node_name, ssh_key_path)
         
     elif args.action == "launch":
+        if not args.scheduler_script:
+            print("[ERROR] --scheduler-script is required for launch action")
+            return
         launch_controller(node_name, ssh_key_path, args.scheduler_script)
 
 

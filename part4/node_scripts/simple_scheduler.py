@@ -42,49 +42,42 @@ def main():
         print("Cleaning up existing containers...")
         existing_containers = get_all_containers()
         for container in existing_containers:
-            container_name = container.name
-            if container_name.startswith("parsec_"):
-                job_name = container_name[len("parsec_"):]
-                print(f"Stopping and removing container: {container_name}")
-                stop_container(container, job_name)
-                remove_container(container, job_name, force=True)
-            else:
-                print(f"Stopping and removing container: {container_name}")
-                container.stop(timeout=10)
-                container.remove(force=True)
+            stop_container(container)
+            remove_container(container)
 
-        # Set initial memcached CPU affinity to core 0
-        print(f"Setting memcached affinity to core 0")
-        set_memcached_affinity([0])
+        # Set memcached CPU affinity to cores 0-1
+        memcached_cores = [0, 1]
+        print(f"Setting memcached affinity to cores {memcached_cores}")
+        set_memcached_affinity(memcached_cores)
 
-        # Get union of CPU affinity of all memcached threads
-        memcached_cores = get_memcached_affinity()
-        print(f"memcached_cores: {memcached_cores}")
+        # Verify memcached cores
+        actual_memcached_cores = get_memcached_affinity()
+        print(f"memcached_cores: {actual_memcached_cores}")
 
         # Log start of memcached
         memcached_thread_ids = get_memcached_worker_thread_ids()
-        num_threads = len(memcached_thread_ids)
-        logger.job_start(Job.MEMCACHED, memcached_cores, num_threads)
+        num_memcached_threads = len(memcached_thread_ids)
+        logger.job_start(Job.MEMCACHED, memcached_cores, num_memcached_threads)
         
-        # All available cores
-        all_cores = list(range(os.cpu_count()))
-
-        # Cores available for batch jobs (not used by memcached)
-        batch_cores = [core for core in all_cores if core not in memcached_cores]
+        # Set batch job cores to 2-3
+        batch_cores = [2, 3]
         print(f"batch_cores: {batch_cores}")
 
         # Run all batch jobs sequentially
         for job_name in BATCH_JOBS:
             print(f"Running job: {job_name}...")
 
+            # Always use 2 threads for batch jobs
+            num_threads = 2
+                
             # Run the batch job
-            container = run_batch_job(job_name, batch_cores, len(batch_cores))
+            container = run_batch_job(job_name, batch_cores, num_threads)
             if not container:
                 print("Failed to start job")
                 continue
 
             # Log job start
-            logger.job_start(Job(job_name), batch_cores, len(batch_cores))
+            logger.job_start(Job(job_name), batch_cores, num_threads)
             
             # Wait for the job to finish
             while is_container_running(job_name):
