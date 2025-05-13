@@ -102,8 +102,9 @@ def main():
         for job_name in BATCH_JOBS:
             print(f"[STATUS] Running job: {job_name}...")
             
-            # Run the batch job
-            container = run_batch_job(job_name, batch_cores, len(batch_cores))
+            # Start the batch job with specified cores and 4 threads
+            num_threads = 4
+            container = run_batch_job(job_name, batch_cores, num_threads)
             if not container:
                 print(f"[ERROR] Failed to start job {job_name}")
                 continue
@@ -112,7 +113,7 @@ def main():
             timer.start(job_name)
             
             # Log job start
-            logger.job_start(Job(job_name), batch_cores, len(batch_cores))
+            logger.job_start(Job(job_name), batch_cores, num_threads)
             
             # Wait for the job to finish, monitoring memcached CPU usage
             while is_container_running(container):
@@ -173,7 +174,7 @@ def main():
             job_time = timer.get_job_time(job_name)
             logger.custom_event(
                 Job(job_name),
-                f"Execution time: {job_time:.2f} seconds"
+                f"execution_time_{job_time:.2f}_seconds"
             )
 
             # Check if the job completed successfully
@@ -201,7 +202,7 @@ def main():
         total_time = timer.get_total_time()
         logger.custom_event(
             Job.ALL,
-            f"Total execution time: {total_time:.2f} seconds"
+            f"total_execution_time_{total_time:.2f}_seconds"
         )
     
     except KeyboardInterrupt:
