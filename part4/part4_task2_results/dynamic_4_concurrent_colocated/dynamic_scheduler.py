@@ -199,20 +199,23 @@ def main():
                     logger.custom_event(Job.MEMCACHED, "removed_from_core1")
                 
                 elif core0_usage > HIGH_THRESHOLD:
-                    for i, (job_name, container, job_cores) in enumerate(running_jobs):
-                        if 1 in job_cores:
-                            log_message(f"Moving job {job_name} off core 1")
-                            new_cores = [2, 3]
-                            update_container_cores(container, new_cores)
-                            running_jobs[i] = (job_name, container, new_cores)
-                            
-                            # Log the change
-                            logger.update_cores(Job(job_name), new_cores)
-                            logger.custom_event(Job(job_name), "moved_off_core1")
-                            
-                            # Update state if this was the first job moved
-                            current_state = MEMCACHED_DEDICATED_TWO_CORES
-                            break
+                    # Still high usage while colocated, move jobs off core 1 one by one
+                    if len(running_jobs) > 0 and [1] in [job[2] for job in running_jobs]:
+                        # Find first job that's using core 1
+                        for i, (job_name, container, job_cores) in enumerate(running_jobs):
+                            if 1 in job_cores:
+                                log_message(f"Moving job {job_name} off core 1")
+                                new_cores = [2, 3]
+                                update_container_cores(container, new_cores)
+                                running_jobs[i] = (job_name, container, new_cores)
+                                
+                                # Log the change
+                                logger.update_cores(Job(job_name), new_cores)
+                                logger.custom_event(Job(job_name), "moved_off_core1")
+                                
+                                # Update state if this was the first job moved
+                                current_state = MEMCACHED_DEDICATED_TWO_CORES
+                                break
             
             elif current_state == MEMCACHED_DEDICATED_TWO_CORES and core0_usage < LOW_THRESHOLD:
                 # Scale back to colocated state

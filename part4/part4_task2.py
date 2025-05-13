@@ -73,7 +73,7 @@ def main():
         clients_info,
         memcached_ip,
         output_dir,
-        duration=900
+        duration=1000
     )
     
     print(f"mcperf load running, results: {results_file}")

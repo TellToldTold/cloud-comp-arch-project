@@ -12,7 +12,7 @@ def get_cpu_usage_per_core() -> List[float]:
         List[float]: List of CPU usage percentages for each core (0-100%).
     """
     # Get CPU usage with a small interval (0.1s) for more accurate instantaneous reading
-    return psutil.cpu_percent(interval=0.1, percpu=True)
+    return psutil.cpu_percent(interval=0.8, percpu=True)
 
 
 def get_total_cpu_usage() -> float:
