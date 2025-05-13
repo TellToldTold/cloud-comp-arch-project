@@ -2,7 +2,8 @@
 
 import time
 import os
-from typing import Dict, Optional
+from typing import Dict, Optional, List
+import datetime
 from container_manager import (
     run_batch_job, 
     is_container_running, 
@@ -38,6 +39,31 @@ BATCH_JOBS = [
 # Thresholds for CPU usage
 HIGH_THRESHOLD = 90.0  # When to scale up memcached cores
 LOW_THRESHOLD = 50.0   # When to scale down memcached cores
+
+def save_cpu_usage(cpu_usage: List[float], filename: str = "cpu_usage_log.csv"):
+    """
+    Save CPU usage per core to a CSV file with timestamps.
+    
+    Args:
+        cpu_usage (List[float]): List of CPU usage percentages per core
+        filename (str): Name of the file to save to
+    """
+    # Get current time
+    timestamp = time.time()
+    datetime_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+    
+    # Check if file exists to add header
+    file_exists = os.path.isfile(filename)
+    
+    with open(filename, 'a') as f:
+        # Write header if file doesn't exist
+        if not file_exists:
+            header = "timestamp,datetime," + ",".join([f"core_{i}" for i in range(len(cpu_usage))])
+            f.write(header + "\n")
+        
+        # Write data
+        data = f"{timestamp},{datetime_str}," + ",".join([f"{usage:.2f}" for usage in cpu_usage])
+        f.write(data + "\n")
 
 def main():
     """Main function to run the dynamic scheduler controller."""
@@ -92,6 +118,10 @@ def main():
             while is_container_running(container):
                 # Check CPU usage on core 0
                 cpu_usage = get_cpu_usage_per_core()
+                
+                # Save CPU usage to file
+                save_cpu_usage(cpu_usage)
+                
                 core0_usage = cpu_usage[0]
                 print(f"[STATUS] Core 0 usage: {core0_usage:.1f}%")
                 
