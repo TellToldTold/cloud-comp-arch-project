@@ -223,7 +223,6 @@ def main():
                         n_threads = 2
                         if next_job == 'dedup':
                             n_threads = 3
-                            
                         log_message(f"Starting next regular job: {next_job} with {n_threads} threads on cores {cores_to_use}")
                         next_container = run_batch_job(next_job, cores_to_use, n_threads)
                         
