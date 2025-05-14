@@ -37,9 +37,9 @@ BATCH_JOBS = [
 
 # Thresholds for CPU usage
 HIGH_THRESHOLD_SINGLE_CORE = 85.0  # Moving from ONLY_CORE0 to COLOCATED
-LOW_THRESHOLD_SINGLE_CORE = 50.0   # Moving from COLOCATED to ONLY_CORE0
-HIGH_THRESHOLD_TWO_CORES = 85.0  # Moving from COLOCATED to DEDICATED_TWO_CORES
-LOW_THRESHOLD_TWO_CORES = 35.0   # Moving from DEDICATED_TWO_CORES to COLOCATED
+LOW_THRESHOLD_SINGLE_CORE = 55.0   # Moving from COLOCATED to ONLY_CORE0
+HIGH_THRESHOLD_TWO_CORES = 75.0  # Moving from COLOCATED to DEDICATED_TWO_CORES
+LOW_THRESHOLD_TWO_CORES = 50.0   # Moving from DEDICATED_TWO_CORES to COLOCATED
 
 # Colocation states
 MEMCACHED_ONLY_CORE0 = "memcached_only_core0"           # Memcached on core 0, containers on 2
@@ -223,7 +223,6 @@ def main():
                         n_threads = 2
                         if next_job == 'dedup':
                             n_threads = 3
-                            
                         log_message(f"Starting next regular job: {next_job} with {n_threads} threads on cores {cores_to_use}")
                         next_container = run_batch_job(next_job, cores_to_use, n_threads)
                         
@@ -239,12 +238,6 @@ def main():
         
         # All jobs completed
         log_message("All batch jobs completed.")
-
-        log_message("Setting final memcached affinity to cores 0,1")
-        memcached_cores = [0, 1]
-        set_memcached_affinity(memcached_cores)
-        logger.update_cores(Job.MEMCACHED, memcached_cores)
-        logger.custom_event(Job.MEMCACHED, "final_state_two_cores")
 
         # Log total execution time
         total_time = timer.get_total_time()
