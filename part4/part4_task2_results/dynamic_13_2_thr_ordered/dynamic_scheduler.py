@@ -36,10 +36,10 @@ BATCH_JOBS = [
 
 
 # Thresholds for CPU usage
-HIGH_THRESHOLD_SINGLE_CORE = 85.0  # Moving from ONLY_CORE0 to COLOCATED
-LOW_THRESHOLD_SINGLE_CORE = 55.0   # Moving from COLOCATED to ONLY_CORE0
-HIGH_THRESHOLD_TWO_CORES = 75.0  # Moving from COLOCATED to DEDICATED_TWO_CORES
-LOW_THRESHOLD_TWO_CORES = 50.0   # Moving from DEDICATED_TWO_CORES to COLOCATED
+HIGH_THRESHOLD_SINGLE_CORE = 92.0  # Moving from ONLY_CORE0 to COLOCATED
+LOW_THRESHOLD_SINGLE_CORE = 60.0   # Moving from COLOCATED to ONLY_CORE0
+HIGH_THRESHOLD_TWO_CORES = 85.0  # Moving from COLOCATED to DEDICATED_TWO_CORES
+LOW_THRESHOLD_TWO_CORES = 65.0   # Moving from DEDICATED_TWO_CORES to COLOCATED
 
 # Colocation states
 MEMCACHED_ONLY_CORE0 = "memcached_only_core0"           # Memcached on core 0, containers on 2
@@ -221,8 +221,8 @@ def main():
                             cores_to_use = [2,3]
                             
                         n_threads = 2
-                        if next_job == 'dedup':
-                            n_threads = 3
+                        if next_job == 'canneal':
+                            n_threads = 4
                         log_message(f"Starting next regular job: {next_job} with {n_threads} threads on cores {cores_to_use}")
                         next_container = run_batch_job(next_job, cores_to_use, n_threads)
                         
