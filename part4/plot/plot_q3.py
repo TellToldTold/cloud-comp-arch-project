@@ -102,7 +102,7 @@ def extract_start_end(logger_df):
 
     filtered_df = logger_df[(logger_df['task'] == 'memcached') & (logger_df['type'].isin(['start', 'update_cores']))]
     filtered_df = filtered_df.sort_values(by="timestamp_ms")
-    filtered_df['cores'] = filtered_df['cores'].apply(lambda x: len(x))
+    filtered_df['cores'] = filtered_df['cores'].apply(lambda x: 3 - len(x))
     filtered_df = filtered_df[['cores', 'timestamp_ms']]
     filtered_df['duration'] = filtered_df['timestamp_ms'].shift(-1) - filtered_df['timestamp_ms']
     filtered_df['duration'] = filtered_df['duration'] / 1000
