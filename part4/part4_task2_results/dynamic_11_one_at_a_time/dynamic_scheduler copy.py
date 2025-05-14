@@ -66,7 +66,7 @@ def log_message(message, log_file=OUTPUT_LOG_FILE):
 
 def main():
     with open(OUTPUT_LOG_FILE, 'w') as f:
-        f.write(f"Dynamic ONE AT A TIME Scheduler started at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Dynamic Scheduler started at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write("=" * 80 + "\n\n")
     
     # Initialize jobs timer
@@ -152,23 +152,18 @@ def main():
                     logger.custom_event(Job.MEMCACHED, "removed_from_core1")
                 
                 elif core0_usage > HIGH_THRESHOLD_TWO_CORES:
-                    # Move regular jobs to core 2 only if they're using core 1
                     for i, (job_name, container, job_cores, threads) in enumerate(running_jobs):
-                        if job_cores[0] == 1:
-                            log_message(f"Moving job {job_name} off core 1")
-                            new_cores = [2, 3]
-                            update_container_cores(container, new_cores)
-                            running_jobs[i] = (job_name, container, new_cores, threads)
-                                
-                            # Log the change
-                            logger.update_cores(Job(job_name), new_cores)
-                            logger.custom_event(Job(job_name), "moved_off_core1")
-                            break
+                        log_message(f"Moving job {job_name} off core 1")
+                        new_cores = [2, 3]
+                        update_container_cores(container, new_cores)
+                        running_jobs[i] = (job_name, container, new_cores, threads)
                         
-                        # Update state if no more batch jobs on core 1
-                    if all(job_cores[0] != 1 for _, _, job_cores, _ in running_jobs):
+                        # Log the change
+                        logger.update_cores(Job(job_name), new_cores)
+                        logger.custom_event(Job(job_name), "moved_off_core1")
+                        
+                        # Update state
                         current_state = MEMCACHED_DEDICATED_TWO_CORES
-
             
             elif current_state == MEMCACHED_DEDICATED_TWO_CORES and core0_usage < LOW_THRESHOLD_TWO_CORES:
                 # Scale back to colocated state
@@ -176,16 +171,14 @@ def main():
                 
                 # Move regular jobs back to use core 1 and 2
                 for i, (job_name, container, job_cores, threads) in enumerate(running_jobs):
+                    log_message(f"Moving job {job_name} on core 1")
+                    new_cores = [1,2,3]
+                    update_container_cores(container, new_cores)
+                    running_jobs[i] = (job_name, container, new_cores, threads)
                     
-                    if is_container_running(container):
-                        log_message(f"Moving job {job_name} on core 1")
-                        new_cores = [1,2,3]
-                        update_container_cores(container, new_cores)
-                        running_jobs[i] = (job_name, container, new_cores, threads)
-                        
-                        # Log the change
-                        logger.update_cores(Job(job_name), new_cores)
-                        logger.custom_event(Job(job_name), "expanded_to_core1")
+                    # Log the change
+                    logger.update_cores(Job(job_name), new_cores)
+                    logger.custom_event(Job(job_name), "expanded_to_core1")
                 
                 # Update state
                 current_state = MEMCACHED_COLOCATED

@@ -1,0 +1,173 @@
+2025-05-13T09:58:46.074967 start scheduler
+2025-05-13T09:58:46.138053 start memcached [0] 2
+2025-05-13T09:58:46.359982 start blackscholes [1,2,3] 4
+2025-05-13T09:58:46.584661 start canneal [1,2,3] 4
+2025-05-13T09:59:06.983962 update_cores memcached [0,1]
+2025-05-13T09:59:06.984001 custom memcached colocated_with_jobs_on_core1
+2025-05-13T09:59:08.321778 update_cores blackscholes [2,3]
+2025-05-13T09:59:08.321819 custom blackscholes moved_off_core1
+2025-05-13T09:59:26.654472 update_cores blackscholes [1,2,3]
+2025-05-13T09:59:26.654501 custom blackscholes returned_to_core1
+2025-05-13T09:59:27.981533 update_cores memcached [0]
+2025-05-13T09:59:27.981579 custom memcached removed_from_core1
+2025-05-13T09:59:47.592238 update_cores memcached [0,1]
+2025-05-13T09:59:47.592275 custom memcached colocated_with_jobs_on_core1
+2025-05-13T09:59:48.935592 update_cores blackscholes [2,3]
+2025-05-13T09:59:48.935623 custom blackscholes moved_off_core1
+2025-05-13T10:00:07.278904 update_cores blackscholes [1,2,3]
+2025-05-13T10:00:07.278932 custom blackscholes returned_to_core1
+2025-05-13T10:00:08.611310 update_cores memcached [0]
+2025-05-13T10:00:08.611350 custom memcached removed_from_core1
+2025-05-13T10:00:16.475295 update_cores memcached [0,1]
+2025-05-13T10:00:16.475351 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:00:17.823267 update_cores blackscholes [2,3]
+2025-05-13T10:00:17.823307 custom blackscholes moved_off_core1
+2025-05-13T10:00:20.912779 end blackscholes
+2025-05-13T10:00:20.912836 custom blackscholes execution_time_94.55_seconds
+2025-05-13T10:00:21.523092 start dedup [2,3] 4
+2025-05-13T10:00:38.155696 update_cores dedup [1,2,3]
+2025-05-13T10:00:38.155728 custom dedup returned_to_core1
+2025-05-13T10:00:39.482456 update_cores memcached [0]
+2025-05-13T10:00:39.482490 custom memcached removed_from_core1
+2025-05-13T10:00:50.225501 end dedup
+2025-05-13T10:00:50.225578 custom dedup execution_time_28.70_seconds
+2025-05-13T10:00:50.945563 start ferret [1,2,3] 4
+2025-05-13T10:00:52.270412 update_cores memcached [0,1]
+2025-05-13T10:00:52.270452 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:00:53.650349 update_cores canneal [2,3]
+2025-05-13T10:00:53.650380 custom canneal moved_off_core1
+2025-05-13T10:00:56.289970 update_cores canneal [1,2,3]
+2025-05-13T10:00:56.290000 custom canneal returned_to_core1
+2025-05-13T10:00:57.614143 update_cores memcached [0]
+2025-05-13T10:00:57.614177 custom memcached removed_from_core1
+2025-05-13T10:01:06.771370 update_cores memcached [0,1]
+2025-05-13T10:01:06.771414 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:01:17.236493 update_cores memcached [0]
+2025-05-13T10:01:17.236529 custom memcached removed_from_core1
+2025-05-13T10:01:56.448624 update_cores memcached [0,1]
+2025-05-13T10:01:56.448660 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:01:57.792840 update_cores canneal [2,3]
+2025-05-13T10:01:57.792868 custom canneal moved_off_core1
+2025-05-13T10:02:29.204463 update_cores canneal [1,2,3]
+2025-05-13T10:02:29.204494 custom canneal returned_to_core1
+2025-05-13T10:02:31.840534 update_cores memcached [0]
+2025-05-13T10:02:31.840567 custom memcached removed_from_core1
+2025-05-13T10:02:33.169317 update_cores memcached [0,1]
+2025-05-13T10:02:33.169351 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:02:34.493628 update_cores memcached [0]
+2025-05-13T10:02:34.493663 custom memcached removed_from_core1
+2025-05-13T10:02:35.819966 update_cores memcached [0,1]
+2025-05-13T10:02:35.820014 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:02:37.145891 update_cores memcached [0]
+2025-05-13T10:02:37.145923 custom memcached removed_from_core1
+2025-05-13T10:02:46.314148 update_cores memcached [0,1]
+2025-05-13T10:02:46.314183 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:02:47.664885 update_cores canneal [2,3]
+2025-05-13T10:02:47.664931 custom canneal moved_off_core1
+2025-05-13T10:02:55.508905 end canneal
+2025-05-13T10:02:55.508947 custom canneal execution_time_248.92_seconds
+2025-05-13T10:02:55.839792 start freqmine [2,3] 4
+2025-05-13T10:03:16.795777 update_cores freqmine [1,2,3]
+2025-05-13T10:03:16.795805 custom freqmine returned_to_core1
+2025-05-13T10:03:18.119987 update_cores memcached [0]
+2025-05-13T10:03:18.120020 custom memcached removed_from_core1
+2025-05-13T10:03:27.286551 update_cores memcached [0,1]
+2025-05-13T10:03:27.286590 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:03:29.923652 update_cores memcached [0]
+2025-05-13T10:03:29.923701 custom memcached removed_from_core1
+2025-05-13T10:03:31.247821 update_cores memcached [0,1]
+2025-05-13T10:03:31.247863 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:03:33.899451 update_cores memcached [0]
+2025-05-13T10:03:33.899484 custom memcached removed_from_core1
+2025-05-13T10:03:35.224271 update_cores memcached [0,1]
+2025-05-13T10:03:35.224316 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:03:36.551586 update_cores memcached [0]
+2025-05-13T10:03:36.551620 custom memcached removed_from_core1
+2025-05-13T10:03:47.016497 update_cores memcached [0,1]
+2025-05-13T10:03:47.016536 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:03:48.357890 update_cores ferret [2,3]
+2025-05-13T10:03:48.357934 custom ferret moved_off_core1
+2025-05-13T10:04:09.301571 update_cores ferret [1,2,3]
+2025-05-13T10:04:09.301601 custom ferret returned_to_core1
+2025-05-13T10:04:10.627426 update_cores memcached [0]
+2025-05-13T10:04:10.627461 custom memcached removed_from_core1
+2025-05-13T10:04:17.176308 update_cores memcached [0,1]
+2025-05-13T10:04:17.176341 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:04:18.529623 update_cores ferret [2,3]
+2025-05-13T10:04:18.529653 custom ferret moved_off_core1
+2025-05-13T10:04:51.226283 update_cores ferret [1,2,3]
+2025-05-13T10:04:51.226342 custom ferret returned_to_core1
+2025-05-13T10:04:52.556771 update_cores memcached [0]
+2025-05-13T10:04:52.556806 custom memcached removed_from_core1
+2025-05-13T10:05:17.399456 update_cores memcached [0,1]
+2025-05-13T10:05:17.399495 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:05:18.745653 update_cores ferret [2,3]
+2025-05-13T10:05:18.745682 custom ferret moved_off_core1
+2025-05-13T10:05:46.221678 update_cores ferret [1,2,3]
+2025-05-13T10:05:46.221709 custom ferret returned_to_core1
+2025-05-13T10:05:47.545915 update_cores memcached [0]
+2025-05-13T10:05:47.545947 custom memcached removed_from_core1
+2025-05-13T10:06:37.197093 update_cores memcached [0,1]
+2025-05-13T10:06:37.197135 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:06:38.549144 update_cores ferret [2,3]
+2025-05-13T10:06:38.549490 custom ferret moved_off_core1
+2025-05-13T10:06:51.623194 end ferret
+2025-05-13T10:06:51.623258 custom ferret execution_time_360.68_seconds
+2025-05-13T10:06:52.135399 start radix [2,3] 4
+2025-05-13T10:07:39.247588 update_cores radix [1,2,3]
+2025-05-13T10:07:39.247641 custom radix returned_to_core1
+2025-05-13T10:07:40.576179 update_cores memcached [0]
+2025-05-13T10:07:40.576263 custom memcached removed_from_core1
+2025-05-13T10:07:44.503023 end radix
+2025-05-13T10:07:44.503059 custom radix execution_time_52.37_seconds
+2025-05-13T10:07:44.842749 start vips [1,2,3] 4
+2025-05-13T10:07:47.475169 update_cores memcached [0,1]
+2025-05-13T10:07:47.475207 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:07:48.830062 update_cores freqmine [2,3]
+2025-05-13T10:07:48.830092 custom freqmine moved_off_core1
+2025-05-13T10:08:07.831129 update_cores freqmine [1,2,3]
+2025-05-13T10:08:07.831159 custom freqmine returned_to_core1
+2025-05-13T10:08:09.158514 update_cores memcached [0]
+2025-05-13T10:08:09.158550 custom memcached removed_from_core1
+2025-05-13T10:08:17.013424 update_cores memcached [0,1]
+2025-05-13T10:08:17.013458 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:08:18.367967 update_cores freqmine [2,3]
+2025-05-13T10:08:18.368001 custom freqmine moved_off_core1
+2025-05-13T10:09:00.246592 update_cores freqmine [1,2,3]
+2025-05-13T10:09:00.246622 custom freqmine returned_to_core1
+2025-05-13T10:09:01.575781 update_cores memcached [0]
+2025-05-13T10:09:01.575831 custom memcached removed_from_core1
+2025-05-13T10:09:06.824712 update_cores memcached [0,1]
+2025-05-13T10:09:06.824758 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:09:08.184528 update_cores freqmine [2,3]
+2025-05-13T10:09:08.184565 custom freqmine moved_off_core1
+2025-05-13T10:09:27.229094 update_cores freqmine [1,2,3]
+2025-05-13T10:09:27.229125 custom freqmine returned_to_core1
+2025-05-13T10:09:27.832283 end vips
+2025-05-13T10:09:27.832342 custom vips execution_time_102.99_seconds
+2025-05-13T10:09:29.609199 update_cores memcached [0]
+2025-05-13T10:09:29.609247 custom memcached removed_from_core1
+2025-05-13T10:09:37.450795 update_cores memcached [0,1]
+2025-05-13T10:09:37.450831 custom memcached colocated_with_jobs_on_core1
+2025-05-13T10:09:38.795894 update_cores freqmine [2,3]
+2025-05-13T10:09:38.795925 custom freqmine moved_off_core1
+2025-05-13T10:09:40.131783 update_cores freqmine [1,2,3]
+2025-05-13T10:09:40.131822 custom freqmine returned_to_core1
+2025-05-13T10:09:41.492723 update_cores freqmine [2,3]
+2025-05-13T10:09:41.492757 custom freqmine moved_off_core1
+2025-05-13T10:09:42.829011 update_cores freqmine [1,2,3]
+2025-05-13T10:09:42.829048 custom freqmine returned_to_core1
+2025-05-13T10:09:44.167258 update_cores freqmine [2,3]
+2025-05-13T10:09:44.167314 custom freqmine moved_off_core1
+2025-05-13T10:09:45.506216 update_cores freqmine [1,2,3]
+2025-05-13T10:09:45.506335 custom freqmine returned_to_core1
+2025-05-13T10:09:46.849828 update_cores freqmine [2,3]
+2025-05-13T10:09:46.849868 custom freqmine moved_off_core1
+2025-05-13T10:09:57.307600 update_cores freqmine [1,2,3]
+2025-05-13T10:09:57.307629 custom freqmine returned_to_core1
+2025-05-13T10:09:58.632061 update_cores memcached [0]
+2025-05-13T10:09:58.632097 custom memcached removed_from_core1
+2025-05-13T10:10:07.870774 end freqmine
+2025-05-13T10:10:07.870796 custom freqmine execution_time_432.03_seconds
+2025-05-13T10:10:08.415825 custom all total_execution_time_681.51_seconds
+2025-05-13T10:10:08.415842 end scheduler
