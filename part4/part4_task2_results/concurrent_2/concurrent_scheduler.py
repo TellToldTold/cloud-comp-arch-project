@@ -27,25 +27,26 @@ from jobs_timer import JobsTimer
 
 # List of batch jobs to run
 BATCH_JOBS = [
-    "canneal", 
-    "blackscholes",
-    "vips",
-    "radix",
+    "freqmine",
+    "ferret",
     "dedup", 
+    "vips",
+    "canneal",
+    "blackscholes",
+    "radix",
 ]
 
 
 # Thresholds for CPU usage
-HIGH_THRESHOLD_SINGLE_CORE = 92.0  # Moving from ONLY_CORE0 to COLOCATED
-LOW_THRESHOLD_SINGLE_CORE = 60.0   # Moving from COLOCATED to ONLY_CORE0
-HIGH_THRESHOLD_TWO_CORES = 85.0  # Moving from COLOCATED to DEDICATED_TWO_CORES
-LOW_THRESHOLD_TWO_CORES = 65.0   # Moving from DEDICATED_TWO_CORES to COLOCATED
+HIGH_THRESHOLD_SINGLE_CORE = 90.0  # Moving from ONLY_CORE0 to COLOCATED
+LOW_THRESHOLD_SINGLE_CORE = 50.0   # Moving from COLOCATED to ONLY_CORE0
+HIGH_THRESHOLD_TWO_CORES = 80.0  # Moving from COLOCATED to DEDICATED_TWO_CORES
+LOW_THRESHOLD_TWO_CORES = 50.0   # Moving from DEDICATED_TWO_CORES to COLOCATED
 
 # Colocation states
 MEMCACHED_ONLY_CORE0 = "memcached_only_core0"           # Memcached on core 0, containers on 2
 MEMCACHED_COLOCATED = "memcached_colocated"             # Memcached on cores 0,1, containers on 2
 MEMCACHED_DEDICATED_TWO_CORES = "memcached_two_cores"   # Memcached on cores 0,1, containers on 2
-SPECIAL_JOBS_COMPLETED = "special_jobs_completed"       # Special jobs done, use core 3 for regular jobs
 
 # Output log file
 OUTPUT_LOG_FILE = "dynamic_scheduler_output.log"
@@ -66,7 +67,7 @@ def log_message(message, log_file=OUTPUT_LOG_FILE):
 
 def main():
     with open(OUTPUT_LOG_FILE, 'w') as f:
-        f.write(f"Dynamic ONE AT A TIME Scheduler started at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Dynamic Scheduler started at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write("=" * 80 + "\n\n")
     
     # Initialize jobs timer
@@ -89,7 +90,7 @@ def main():
         
         logger.job_start(Job.MEMCACHED, memcached_cores, 2)
         
-        # Initial regular job cores - just core 2
+        # Initial batch job cores - cores 1, 2, 3
         batch_cores = [1, 2, 3]
         log_message(f"Initial batch_cores: {batch_cores}")
         
@@ -98,26 +99,24 @@ def main():
         
         # Keep track of running jobs and their containers
         running_jobs = []  # List of (job_name, container, cores, threads) tuples
-        job_queue = list(BATCH_JOBS)  # Copy the regular jobs list
         
-        log_message(f"Starting Freqmine with 2 threads on cores {batch_cores}")
-        freqmine_container = run_batch_job('freqmine', batch_cores, 2)
+        for job_name in BATCH_JOBS:
+            log_message(f"Starting {job_name} with 2 threads on cores {batch_cores}")
+            container = run_batch_job(job_name, batch_cores, 2)
+            
+            timer.start(job_name)
+            logger.job_start(Job(job_name), batch_cores, 2)
+            running_jobs.append((job_name, container, batch_cores, 2))
+            log_message(f"Job {job_name} started successfully")
+            
+            # Small delay between job starts to avoid resource contention during startup
+            time.sleep(0.1)
         
-        timer.start('freqmine')
-        logger.job_start(Job('freqmine'), batch_cores, 2)
-        running_jobs.append(('freqmine', freqmine_container, batch_cores, 2))
-        log_message(f"Special job freqmine started successfully")
-        
-        log_message(f"Starting ferret with 2 threads on cores {batch_cores}")
-        ferret_container = run_batch_job('ferret', batch_cores, 2)
-    
-        timer.start('ferret')
-        logger.job_start(Job('ferret'), batch_cores, 2)
-        running_jobs.append(('ferret', ferret_container, batch_cores, 2))
-        log_message(f"Special job ferret started successfully")
+        # Jobs that have been moved off core 1
+        jobs_moved_off_core1 = []
     
         # Main monitoring loop
-        while running_jobs or job_queue:
+        while running_jobs:
             # Check CPU usage on core 0
             cpu_usage = get_cpu_usage_per_core()
             
@@ -152,41 +151,56 @@ def main():
                     logger.custom_event(Job.MEMCACHED, "removed_from_core1")
                 
                 elif core0_usage > HIGH_THRESHOLD_TWO_CORES:
-                    # Move regular jobs to core 2 only if they're using core 1
+                    # Move one job off core 1
                     for i, (job_name, container, job_cores, threads) in enumerate(running_jobs):
+                        # Skip jobs that have already been moved
+                        if job_name in jobs_moved_off_core1:
+                            continue
+                            
                         log_message(f"Moving job {job_name} off core 1")
                         new_cores = [2, 3]
                         update_container_cores(container, new_cores)
                         running_jobs[i] = (job_name, container, new_cores, threads)
-                            
+                        
                         # Log the change
                         logger.update_cores(Job(job_name), new_cores)
                         logger.custom_event(Job(job_name), "moved_off_core1")
                         
-                        # Update state if no more batch jobs on core 1
-                    current_state = MEMCACHED_DEDICATED_TWO_CORES
-
+                        # Mark this job as moved
+                        jobs_moved_off_core1.append(job_name)
+                        
+                        # If all jobs are moved off core 1, update state
+                        if len(jobs_moved_off_core1) == len(running_jobs):
+                            current_state = MEMCACHED_DEDICATED_TWO_CORES
+                            
+                        # Only move one job at a time
+                        break
             
             elif current_state == MEMCACHED_DEDICATED_TWO_CORES and core0_usage < LOW_THRESHOLD_TWO_CORES:
                 # Scale back to colocated state
                 log_message("Low memcached usage detected, returning to colocated state")
                 
-                # Move regular jobs back to use core 1 and 2
-                for i, (job_name, container, job_cores, threads) in enumerate(running_jobs):
+                # Move one job back to use core 1
+                if jobs_moved_off_core1:
+                    job_to_move = jobs_moved_off_core1.pop()
                     
-                    log_message(f"Moving job {job_name} on core 1")
-                    new_cores = [1,2,3]
-                    update_container_cores(container, new_cores)
-                    running_jobs[i] = (job_name, container, new_cores, threads)
-                    
-                    # Log the change
-                    logger.update_cores(Job(job_name), new_cores)
-                    logger.custom_event(Job(job_name), "expanded_to_core1")
+                    for i, (job_name, container, job_cores, threads) in enumerate(running_jobs):
+                        if job_name == job_to_move:
+                            log_message(f"Moving job {job_name} back to core 1")
+                            new_cores = [1, 2, 3]
+                            update_container_cores(container, new_cores)
+                            running_jobs[i] = (job_name, container, new_cores, threads)
+                            
+                            # Log the change
+                            logger.update_cores(Job(job_name), new_cores)
+                            logger.custom_event(Job(job_name), "expanded_to_core1")
+                            break
                 
-                # Update state
-                current_state = MEMCACHED_COLOCATED
+                # Update state if there are jobs on core 1 again
+                if not jobs_moved_off_core1:
+                    current_state = MEMCACHED_COLOCATED
             
-            # Check for completed jobs and start new ones
+            # Check for completed jobs
             i = 0
             
             while i < len(running_jobs):
@@ -196,6 +210,10 @@ def main():
                     # Job completed, remove from running jobs
                     log_message(f"Job {job_name} completed")
                     running_jobs.pop(i)
+                    
+                    # Remove from jobs_moved_off_core1 list if it's there
+                    if job_name in jobs_moved_off_core1:
+                        jobs_moved_off_core1.remove(job_name)
                     
                     # Stop the timer and log completion
                     timer.stop(job_name)
@@ -212,24 +230,6 @@ def main():
                             container.remove()
                         except Exception as e:
                             log_message(f"Error removing container: {str(e)}")
-                    
-                    # If it was a special job, start the next special job if available
-                    if job_queue:
-                        next_job = job_queue.pop(0)
-                        cores_to_use = [1,2,3]
-                        if current_state == MEMCACHED_DEDICATED_TWO_CORES:
-                            cores_to_use = [2,3]
-                            
-                        n_threads = 2
-                        if next_job == 'canneal':
-                            n_threads = 4
-                        log_message(f"Starting next regular job: {next_job} with {n_threads} threads on cores {cores_to_use}")
-                        next_container = run_batch_job(next_job, cores_to_use, n_threads)
-                        
-                        timer.start(next_job)
-                        logger.job_start(Job(next_job), cores_to_use, n_threads)
-                        running_jobs.append((next_job, next_container, cores_to_use, n_threads))
-                        log_message(f"Job {next_job} started successfully")
                 else:
                     i += 1
             

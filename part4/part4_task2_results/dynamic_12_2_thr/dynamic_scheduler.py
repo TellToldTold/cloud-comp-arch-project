@@ -27,19 +27,19 @@ from jobs_timer import JobsTimer
 
 # List of batch jobs to run
 BATCH_JOBS = [
-    "canneal", 
+    "canneal",
     "blackscholes",
-    "vips",
-    "radix",
     "dedup", 
+    "radix",
+    "vips"
 ]
 
 
 # Thresholds for CPU usage
-HIGH_THRESHOLD_SINGLE_CORE = 92.0  # Moving from ONLY_CORE0 to COLOCATED
-LOW_THRESHOLD_SINGLE_CORE = 60.0   # Moving from COLOCATED to ONLY_CORE0
-HIGH_THRESHOLD_TWO_CORES = 85.0  # Moving from COLOCATED to DEDICATED_TWO_CORES
-LOW_THRESHOLD_TWO_CORES = 65.0   # Moving from DEDICATED_TWO_CORES to COLOCATED
+HIGH_THRESHOLD_SINGLE_CORE = 90.0  # Moving from ONLY_CORE0 to COLOCATED
+LOW_THRESHOLD_SINGLE_CORE = 50.0   # Moving from COLOCATED to ONLY_CORE0
+HIGH_THRESHOLD_TWO_CORES = 80.0  # Moving from COLOCATED to DEDICATED_TWO_CORES
+LOW_THRESHOLD_TWO_CORES = 60.0   # Moving from DEDICATED_TWO_CORES to COLOCATED
 
 # Colocation states
 MEMCACHED_ONLY_CORE0 = "memcached_only_core0"           # Memcached on core 0, containers on 2

@@ -27,19 +27,19 @@ from jobs_timer import JobsTimer
 
 # List of batch jobs to run
 BATCH_JOBS = [
-    "canneal", 
     "blackscholes",
-    "vips",
-    "radix",
+    "canneal", 
     "dedup", 
+    "radix",
+    "vips"
 ]
 
 
 # Thresholds for CPU usage
-HIGH_THRESHOLD_SINGLE_CORE = 92.0  # Moving from ONLY_CORE0 to COLOCATED
-LOW_THRESHOLD_SINGLE_CORE = 60.0   # Moving from COLOCATED to ONLY_CORE0
-HIGH_THRESHOLD_TWO_CORES = 85.0  # Moving from COLOCATED to DEDICATED_TWO_CORES
-LOW_THRESHOLD_TWO_CORES = 65.0   # Moving from DEDICATED_TWO_CORES to COLOCATED
+HIGH_THRESHOLD_SINGLE_CORE = 88.0  # When to scale up memcached cores
+LOW_THRESHOLD_SINGLE_CORE = 50.0   # When to scale down memcached cores
+HIGH_THRESHOLD_TWO_CORES = 75.0  # When to scale up memcached cores
+LOW_THRESHOLD_TWO_CORES = 50.0   # When to scale down memcached cores
 
 # Colocation states
 MEMCACHED_ONLY_CORE0 = "memcached_only_core0"           # Memcached on core 0, containers on 2
@@ -66,7 +66,7 @@ def log_message(message, log_file=OUTPUT_LOG_FILE):
 
 def main():
     with open(OUTPUT_LOG_FILE, 'w') as f:
-        f.write(f"Dynamic ONE AT A TIME Scheduler started at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Dynamic Scheduler started at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write("=" * 80 + "\n\n")
     
     # Initialize jobs timer
@@ -90,7 +90,7 @@ def main():
         logger.job_start(Job.MEMCACHED, memcached_cores, 2)
         
         # Initial regular job cores - just core 2
-        batch_cores = [1, 2, 3]
+        batch_cores = [1,2, 3]
         log_message(f"Initial batch_cores: {batch_cores}")
         
         # Track current colocation state
@@ -154,18 +154,19 @@ def main():
                 elif core0_usage > HIGH_THRESHOLD_TWO_CORES:
                     # Move regular jobs to core 2 only if they're using core 1
                     for i, (job_name, container, job_cores, threads) in enumerate(running_jobs):
-                        log_message(f"Moving job {job_name} off core 1")
-                        new_cores = [2, 3]
-                        update_container_cores(container, new_cores)
-                        running_jobs[i] = (job_name, container, new_cores, threads)
+                        if 1 in job_cores:
+                            log_message(f"Moving job {job_name} off core 1")
+                            new_cores = [2, 3]
+                            update_container_cores(container, new_cores)
+                            running_jobs[i] = (job_name, container, new_cores, threads)
                             
-                        # Log the change
-                        logger.update_cores(Job(job_name), new_cores)
-                        logger.custom_event(Job(job_name), "moved_off_core1")
-                        
-                        # Update state if no more batch jobs on core 1
-                    current_state = MEMCACHED_DEDICATED_TWO_CORES
-
+                            # Log the change
+                            logger.update_cores(Job(job_name), new_cores)
+                            logger.custom_event(Job(job_name), "moved_off_core1")
+                            
+                            # Update state
+                            current_state = MEMCACHED_DEDICATED_TWO_CORES
+                            break
             
             elif current_state == MEMCACHED_DEDICATED_TWO_CORES and core0_usage < LOW_THRESHOLD_TWO_CORES:
                 # Scale back to colocated state
@@ -174,14 +175,15 @@ def main():
                 # Move regular jobs back to use core 1 and 2
                 for i, (job_name, container, job_cores, threads) in enumerate(running_jobs):
                     
-                    log_message(f"Moving job {job_name} on core 1")
-                    new_cores = [1,2,3]
-                    update_container_cores(container, new_cores)
-                    running_jobs[i] = (job_name, container, new_cores, threads)
-                    
-                    # Log the change
-                    logger.update_cores(Job(job_name), new_cores)
-                    logger.custom_event(Job(job_name), "expanded_to_core1")
+                    if is_container_running(container):
+                        log_message(f"Moving job {job_name} on core 1")
+                        new_cores = [1,2,3]
+                        update_container_cores(container, new_cores)
+                        running_jobs[i] = (job_name, container, new_cores, threads)
+                        
+                        # Log the change
+                        logger.update_cores(Job(job_name), new_cores)
+                        logger.custom_event(Job(job_name), "expanded_to_core1")
                 
                 # Update state
                 current_state = MEMCACHED_COLOCATED
@@ -220,15 +222,12 @@ def main():
                         if current_state == MEMCACHED_DEDICATED_TWO_CORES:
                             cores_to_use = [2,3]
                             
-                        n_threads = 2
-                        if next_job == 'canneal':
-                            n_threads = 4
-                        log_message(f"Starting next regular job: {next_job} with {n_threads} threads on cores {cores_to_use}")
-                        next_container = run_batch_job(next_job, cores_to_use, n_threads)
+                        log_message(f"Starting next regular job: {next_job} with 2 threads on cores {cores_to_use}")
+                        next_container = run_batch_job(next_job, cores_to_use, 4)
                         
                         timer.start(next_job)
-                        logger.job_start(Job(next_job), cores_to_use, n_threads)
-                        running_jobs.append((next_job, next_container, cores_to_use, n_threads))
+                        logger.job_start(Job(next_job), cores_to_use, 4)
+                        running_jobs.append((next_job, next_container, cores_to_use, 4))
                         log_message(f"Job {next_job} started successfully")
                 else:
                     i += 1

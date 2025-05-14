@@ -73,7 +73,7 @@ def main():
         clients_info,
         memcached_ip,
         output_dir,
-        duration=1000,
+        duration=780,
         qps_seed=2333
     )
     
