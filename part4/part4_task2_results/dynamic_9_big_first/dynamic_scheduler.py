@@ -90,7 +90,7 @@ def main():
         logger.job_start(Job.MEMCACHED, memcached_cores, 2)
         
         # Initial regular job cores - just core 2
-        batch_cores = [1, 2, 3]
+        batch_cores = [1,2, 3]
         log_message(f"Initial batch_cores: {batch_cores}")
         
         # Track current colocation state
@@ -154,18 +154,19 @@ def main():
                 elif core0_usage > HIGH_THRESHOLD_TWO_CORES:
                     # Move regular jobs to core 2 only if they're using core 1
                     for i, (job_name, container, job_cores, threads) in enumerate(running_jobs):
-                        log_message(f"Moving job {job_name} off core 1")
-                        new_cores = [2, 3]
-                        update_container_cores(container, new_cores)
-                        running_jobs[i] = (job_name, container, new_cores, threads)
-                        
-                        # Log the change
-                        logger.update_cores(Job(job_name), new_cores)
-                        logger.custom_event(Job(job_name), "moved_off_core1")
-                        
-                        # Update state
-                        current_state = MEMCACHED_DEDICATED_TWO_CORES
-                        break
+                        if 1 in job_cores:
+                            log_message(f"Moving job {job_name} off core 1")
+                            new_cores = [2, 3]
+                            update_container_cores(container, new_cores)
+                            running_jobs[i] = (job_name, container, new_cores, threads)
+                            
+                            # Log the change
+                            logger.update_cores(Job(job_name), new_cores)
+                            logger.custom_event(Job(job_name), "moved_off_core1")
+                            
+                            # Update state
+                            current_state = MEMCACHED_DEDICATED_TWO_CORES
+                            break
             
             elif current_state == MEMCACHED_DEDICATED_TWO_CORES and core0_usage < LOW_THRESHOLD_TWO_CORES:
                 # Scale back to colocated state
