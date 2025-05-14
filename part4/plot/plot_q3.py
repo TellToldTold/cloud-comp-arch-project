@@ -141,49 +141,52 @@ def get_p95_latencies(result_path):
 
 def export_plot_A(p95_df, cpu_df, folder, run_number, include_cpu=False):
     fig, ax1 = plt.subplots(figsize=(12, 6))
+
+    # Calculate bar positions
+    bar_width = 3.5  # Width of each bar
+    spacing = 3.0    # Space between pairs of bars
     
-    # X-axis: Time in seconds
-    x = p95_df['start_time']
+    # Create positions for each pair of bars
+    positions = np.arange(len(p95_df)) * (2 * bar_width + spacing)
+    
+    # Define nicer colors
+    latency_color = '#c9184a'  # Light red
+    qps_color = '#38a3a5'      # Light blue
     
     # Left Y-Axis: Latency
     ax1.set_xlabel("Time (s)")
-    ax1.set_ylabel("95th Percentile Latency (µs)", color='tab:red')
-    latency_line = ax1.plot(
-        x,
+    ax1.set_ylabel("95th Percentile Latency (µs)")
+    latency_bars = ax1.bar(
+        positions,  # Left bar position
         p95_df['p95'],
-        'o-',  # Circle markers with lines
-        color='tab:red',
-        label="Latency",
+        width=bar_width,
+        color=latency_color,
         alpha=0.8,
-        linewidth=1.5,
-        markersize=4,
+        label="Latency",
         zorder=2
     )
-    ax1.tick_params(axis='y', labelcolor='tab:red')
+    ax1.tick_params(axis='y')
     
-    # Set reasonable y-limits for latency
-    latency_max = p95_df['p95'].max() * 1.1  # 10% headroom
-    ax1.set_ylim(0, latency_max)
+    # Adjust x-ticks to show time in seconds
+    # Map bar positions to actual time values
+    time_labels = p95_df['start_time'].values
+    # Use a subset of positions for readability
+    tick_indices = np.linspace(0, len(positions)-1, 10, dtype=int)
+    ax1.set_xticks(positions[tick_indices])
+    ax1.set_xticklabels([f"{time_labels[i]:.0f}" for i in tick_indices])
 
     # Right Y-Axis: QPS
     ax2 = ax1.twinx()
-    ax2.set_ylabel("Achieved QPS", color='tab:blue')
-    qps_line = ax2.plot(
-        x,
+    ax2.set_ylabel("Achieved QPS")
+    qps_bars = ax2.bar(
+        positions + bar_width,  # Right bar position
         p95_df['QPS'],
-        's-',  # Square markers with lines
-        color='tab:blue',
+        width=bar_width,
+        color=qps_color,
         label="QPS",
-        alpha=0.8,
-        linewidth=1.5,
-        markersize=4,
         zorder=1 
     )
-    ax2.tick_params(axis='y', labelcolor='tab:blue')
-    
-    # Set reasonable y-limits for QPS
-    qps_max = p95_df['QPS'].max() * 1.1  # 10% headroom
-    ax2.set_ylim(0, qps_max)
+    ax2.tick_params(axis='y')
     
     # Third Y-Axis: CPU Usage (conditional)
     ax3 = None
@@ -204,10 +207,9 @@ def export_plot_A(p95_df, cpu_df, folder, run_number, include_cpu=False):
         print(f"Total CPU data points: {len(cpu_df)}")
         
         # Plot all CPU data points directly with semi-transparency
-        cpu_line = ax3.plot(
+        ax3.plot(
             cpu_df['relative_time'], 
             cpu_df['cpu_usage'], 
-            '-',  # Line only, no markers due to high density
             color='tab:green', 
             linewidth=1.0,  # Thinner line
             alpha=0.4,      # Semi-transparent
@@ -226,14 +228,13 @@ def export_plot_A(p95_df, cpu_df, folder, run_number, include_cpu=False):
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])  # Room for title
 
     # Create combined legend
-    lines = latency_line + qps_line
-    labels = ["Latency", "QPS"]
-    
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    lines3, labels3 = [], []
     if ax3:
-        lines += cpu_line
-        labels.append("CPU Usage")
+        lines3, labels3 = ax3.get_legend_handles_labels()
     
-    fig.legend(lines, labels, loc='upper right', bbox_to_anchor=(0.99, 0.99), framealpha=0.9)
+    ax1.legend(lines1 + lines2 + lines3, labels1 + labels2 + labels3, loc='upper left', bbox_to_anchor=(0, 1))
 
     # Save plot
     os.makedirs(folder, exist_ok=True)
