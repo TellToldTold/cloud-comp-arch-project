@@ -96,50 +96,63 @@ def get_p95_latencies(result_path):
 
     interval_str = re.search(r'\((.*?)\)', interval_line).group(1)
     intervals = list(map(int, interval_str.split(',')))
-    if len(intervals) != 100:
-        raise ValueError(f"Expected 100 intervals, found {len(intervals)}.")
+    if len(intervals) != 78:
+        raise ValueError(f"Expected 78 intervals, found {len(intervals)}.")
     
     # Addition Times
     times = [timestamp_start]
-    for interval in intervals[:-1]:  # skip last to keep 100 total values
-        times.append(times[-1] + interval)
+    for _ in intervals[:-1]:  # skip last to keep 78 total values
+        times.append(times[-1] + 100000)
 
     
     read_lines = [line for line in lines if line.strip().startswith('read')]
 
-    if len(read_lines) != 100:
-        raise ValueError(f"Expected 100 'read' lines, found {len(read_lines)}.")
+    if len(read_lines) != 78:
+        raise ValueError(f"Expected 78 'read' lines, found {len(read_lines)}.")
 
     column_names = """type avg std min p5 p10 p50 p67 p75 p80 p85 p90 p95 p99 p999 p9999 QPS target""".split()
 
     data_str = ''.join(read_lines)
     result_df = pd.read_csv(StringIO(data_str), sep=r'\s+', names=column_names)
-    result_df["time"] = times
+    result_df["start_time"] = times
+    result_df["start_time"] = result_df["start_time"] - timestamp_start
 
-    return result_df[['p95', 'QPS', 'time']]
+    return result_df[['p95', 'QPS', 'start_time']]
 
 
 def export_plot_A(p95_df, folder, run_number):
     fig, ax1 = plt.subplots(figsize=(12, 6))
 
+    x = p95_df['start_time']
+
     # Left Y-Axis: Latency
     ax1.set_xlabel("Time (s)")
     ax1.set_ylabel("95th Percentile Latency (µs)")
     ax1.bar(
-        p95_df['time'],
+        x,
         p95_df['p95'],
-        width=100000,
+        width=90000,
         align='edge',
         color='tab:red',
-        label="Latency"
+        label="Latency",
+        alpha=0.8,
+        zorder=2
     )
     ax1.tick_params(axis='y')
 
     # Right Y-Axis: QPS
     ax2 = ax1.twinx()
     ax2.set_ylabel("Achieved QPS")
-    ax2.scatter(p95_df["time"], p95_df["QPS"], color='tab:blue', s=30, label="Latency")
-    ax2.plot(p95_df["time"], p95_df["QPS"], color='tab:blue', label="QPS")
+    ax2.bar(
+        x,
+        p95_df['QPS'],
+        width=90000,
+        align='edge',
+        color='tab:blue',
+        label="QPS",
+        alpha=0.6,
+        zorder=1 
+    )
     ax2.tick_params(axis='y')
 
     # Grid and layout
@@ -147,12 +160,14 @@ def export_plot_A(p95_df, folder, run_number):
     fig.suptitle(f"{run_number.replace("run_", "")}A: 95th Percentile Latency vs QPS", fontsize=14)
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])  # Room for title
 
+    ax1.legend(loc='upper left', bbox_to_anchor=(0, 1))
+    ax2.legend(loc='upper left', bbox_to_anchor=(0, 0.95))
+
     # Save plot
     os.makedirs(folder, exist_ok=True)
     file_path = os.path.join(folder, run_number.replace("run_", "") + "A" + ".png")
     plt.savefig(file_path, dpi=300)
     plt.close()
-
 
 def export_plot_B(p95_df, folder, run_number):
 
