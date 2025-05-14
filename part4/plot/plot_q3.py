@@ -65,6 +65,8 @@ def get_logger_df(logger_path):
     for col in ['threads', 'time']:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors='coerce')
+
+    df["timestamp_ms"] = pd.to_datetime(df["timestamp"]).astype("int64") // 10**6
     return df
 
 def get_cpu_usage_df(scheduler_path):
@@ -82,6 +84,22 @@ def get_cpu_usage_df(scheduler_path):
                 data.append({'unix_timestamp': unix_time, 'cpu_usage': usage})
     
     return pd.DataFrame(data)
+
+def extract_start_end(logger_df):
+    filtered_df = logger_df[logger_df['type'].isin(['start', 'end']) & (logger_df['task'] != 'memcached')]
+    filtered_df = filtered_df.sort_values(by="timestamp_ms")
+
+    # Separate start and end events
+    starts = filtered_df[filtered_df["type"] == "start"][["task", "timestamp_ms"]].rename(columns={"timestamp_ms": "start"})
+    ends = filtered_df[filtered_df["type"] == "end"][["task", "timestamp_ms"]].rename(columns={"timestamp_ms": "end"})
+
+    # Merge on task
+    task_times = pd.merge(starts, ends, on="task")
+    task_times['duration'] = task_times['end'] - task_times['start']
+    start_time = task_times.loc[0, 'start']
+    task_times['start'] = task_times['start'] - start_time
+    task_times['end'] = task_times['end'] - start_time
+    return task_times
 
 def get_mcperf_path(folder_path):
     file_list = glob.glob(os.path.join(folder_path, "mcperf_results*.txt"))
@@ -139,8 +157,12 @@ def get_p95_latencies(result_path):
     return result_df[['p95', 'QPS', 'start_time', 'unix_timestamp']]
 
 
-def export_plot_A(p95_df, cpu_df, folder, run_number, include_cpu=False):
-    fig, ax1 = plt.subplots(figsize=(12, 6))
+def export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu=False):
+    fig, (ax1, ax2) = plt.subplots(nrows=2,
+        ncols=1,
+        figsize=(12, 6),
+        sharex=True,
+        gridspec_kw={'height_ratios': [5, 2]})
 
     # Calculate bar positions
     bar_width = 3.5  # Width of each bar
@@ -176,9 +198,9 @@ def export_plot_A(p95_df, cpu_df, folder, run_number, include_cpu=False):
     ax1.set_xticklabels([f"{time_labels[i]:.0f}" for i in tick_indices])
 
     # Right Y-Axis: QPS
-    ax2 = ax1.twinx()
-    ax2.set_ylabel("Achieved QPS")
-    qps_bars = ax2.bar(
+    ax1_2 = ax1.twinx()
+    ax1_2.set_ylabel("Achieved QPS")
+    qps_bars = ax1_2.bar(
         positions + bar_width,  # Right bar position
         p95_df['QPS'],
         width=bar_width,
@@ -186,7 +208,7 @@ def export_plot_A(p95_df, cpu_df, folder, run_number, include_cpu=False):
         label="QPS",
         zorder=1 
     )
-    ax2.tick_params(axis='y')
+    ax1_2.tick_params(axis='y')
     
     # Third Y-Axis: CPU Usage (conditional)
     ax3 = None
@@ -235,6 +257,34 @@ def export_plot_A(p95_df, cpu_df, folder, run_number, include_cpu=False):
         lines3, labels3 = ax3.get_legend_handles_labels()
     
     ax1.legend(lines1 + lines2 + lines3, labels1 + labels2 + labels3, loc='upper left', bbox_to_anchor=(0, 1))
+    ax1.legend(loc='upper left', bbox_to_anchor=(0, 1))
+
+    spacing = 2
+    # Job duration horizontal bars
+    for i, row in job_df.iterrows():
+        color = colors.get(row['task'], '#000000')
+        ax2.hlines(
+            y=i * spacing, xmin=row['start'], xmax=row['end'],
+            color=color, linewidth=6
+        )
+        ax2.text(
+            x=(row['start'] + row['end']) / 2,
+            y= i * spacing + 0.3,
+            s=row['task'],
+            ha='center',
+            va='bottom',
+            fontsize=8,
+            color=color
+        )
+
+    ax2.set_yticks([])
+    ax2.set_yticklabels([])
+    ax2.set_xlabel('Time (ms)')
+    ax2.set_ylabel('Jobs')
+    ax2.set_ylim(-1, spacing * len(job_df))
+    ax2.grid(True, axis='x', which='both', linestyle='--', alpha=0.5)
+    ax2.minorticks_on()
+    ax2.tick_params(axis='x', which='both', direction='out', top=True)
 
     # Save plot
     os.makedirs(folder, exist_ok=True)
@@ -289,7 +339,10 @@ def export_plots(folder, run_number, include_cpu=False):
         cpu_df = get_cpu_usage_df(folder_path + 'scheduler_out')
         print(cpu_df)
 
-    export_plot_A(p95_df, cpu_df, folder, run_number, include_cpu)
+    job_df = extract_start_end(logger_df)
+    print(job_df)
+
+    export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu)
     #export_plot_B(p95_df, folder, run_number)
 
 
