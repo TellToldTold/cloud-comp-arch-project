@@ -69,6 +69,22 @@ def get_logger_df(logger_path):
     df["timestamp_ms"] = pd.to_datetime(df["timestamp"]).astype("int64") // 10**6
     return df
 
+def get_cpu_usage_df(scheduler_path):
+    # Regular expression to extract CPU usage from scheduler_out
+    pattern = re.compile(r'\[(?P<datetime>[\d\-\:\ ]+)\s+\|\s+(?P<timestamp>[\d\.]+)\]\s+Core\s+0\s+usage:\s+(?P<usage>[\d\.]+)%')
+    
+    data = []
+    with open(scheduler_path, 'r') as file:
+        for line in file:
+            match = pattern.search(line)
+            if match:
+                timestamp_str = match.group('timestamp')
+                usage = float(match.group('usage'))
+                unix_time = float(timestamp_str)
+                data.append({'unix_timestamp': unix_time, 'cpu_usage': usage})
+    
+    return pd.DataFrame(data)
+
 def extract_start_end(logger_df):
     filtered_df = logger_df[logger_df['type'].isin(['start', 'end']) & (logger_df['task'] != 'memcached')]
     filtered_df = filtered_df.sort_values(by="timestamp_ms")
@@ -98,92 +114,150 @@ def get_p95_latencies(result_path):
     with open(result_path, 'r') as file:
         lines = file.readlines()
 
-    # Start Time
+    # Start and End Time
     timestamp_start = None
+    timestamp_end = None
     for line in lines:
         if line.strip().startswith("Timestamp start:"):
             timestamp_start = int(line.strip().split(":")[1].strip())
+        elif line.strip().startswith("Timestamp end:"):
+            timestamp_end = int(line.strip().split(":")[1].strip())
+        if timestamp_start is not None and timestamp_end is not None:
             break
-    if timestamp_start is None:
-        raise ValueError("Start timestamp not found.")
+            
+    if timestamp_start is None or timestamp_end is None:
+        raise ValueError("Start or end timestamp not found.")
 
-    # Interval Times
-    interval_line = next((l for l in lines if "Total number of intervals" in l), None)
-    if interval_line is None:
-        raise ValueError("Interval line not found.")
-
-    interval_str = re.search(r'\((.*?)\)', interval_line).group(1)
-    intervals = list(map(int, interval_str.split(',')))
-    if len(intervals) != 78:
-        raise ValueError(f"Expected 78 intervals, found {len(intervals)}.")
+    # Calculate total duration and interval size
+    total_duration_ms = timestamp_end - timestamp_start
+    num_intervals = 78  # As specified in the mcperf log
+    interval_ms = total_duration_ms / num_intervals
     
-    # Addition Times
-    times = [timestamp_start]
-    for _ in intervals[:-1]:  # skip last to keep 78 total values
-        times.append(times[-1] + 100000)
-
+    # Generate evenly spaced timestamps (in milliseconds)
+    timestamps_ms = [timestamp_start + i * interval_ms for i in range(num_intervals)]
     
+    # Convert to seconds for unix_timestamp (same scale as CPU usage data)
+    timestamps_s = [t / 1000.0 for t in timestamps_ms]
+    
+    # Read the performance data
     read_lines = [line for line in lines if line.strip().startswith('read')]
 
-    if len(read_lines) != 78:
-        raise ValueError(f"Expected 78 'read' lines, found {len(read_lines)}.")
+    if len(read_lines) != num_intervals:
+        raise ValueError(f"Expected {num_intervals} 'read' lines, found {len(read_lines)}.")
 
     column_names = """type avg std min p5 p10 p50 p67 p75 p80 p85 p90 p95 p99 p999 p9999 QPS target""".split()
 
     data_str = ''.join(read_lines)
     result_df = pd.read_csv(StringIO(data_str), sep=r'\s+', names=column_names)
-    result_df["start_time"] = times
-    result_df["start_time"] = result_df["start_time"] - timestamp_start
+    
+    # Add timestamps to the dataframe
+    result_df["unix_timestamp"] = timestamps_s  # Use seconds scale (e+9) to match CPU data
+    result_df["start_time"] = [(t - timestamp_start) / 1000.0 for t in timestamps_ms]  # Relative time in seconds
 
-    return result_df[['p95', 'QPS', 'start_time']]
+    return result_df[['p95', 'QPS', 'start_time', 'unix_timestamp']]
 
 
-def export_plot_A(p95_df, job_df, folder, run_number):
+def export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu=False):
     fig, (ax1, ax2) = plt.subplots(nrows=2,
         ncols=1,
         figsize=(12, 6),
         sharex=True,
         gridspec_kw={'height_ratios': [5, 2]})
 
-    x = p95_df['start_time']
-
+    # Calculate bar positions
+    bar_width = 3.5  # Width of each bar
+    spacing = 3.0    # Space between pairs of bars
+    
+    # Create positions for each pair of bars
+    positions = np.arange(len(p95_df)) * (2 * bar_width + spacing)
+    
+    # Define nicer colors
+    latency_color = '#c9184a'  # Light red
+    qps_color = '#38a3a5'      # Light blue
+    
     # Left Y-Axis: Latency
     ax1.set_xlabel("Time (s)")
     ax1.set_ylabel("95th Percentile Latency (µs)")
-    ax1.bar(
-        x,
+    latency_bars = ax1.bar(
+        positions,  # Left bar position
         p95_df['p95'],
-        width=90000,
-        align='edge',
-        color='tab:red',
-        label="Latency",
+        width=bar_width,
+        color=latency_color,
         alpha=0.8,
+        label="Latency",
         zorder=2
     )
     ax1.tick_params(axis='y')
+    
+    # Adjust x-ticks to show time in seconds
+    # Map bar positions to actual time values
+    time_labels = p95_df['start_time'].values
+    # Use a subset of positions for readability
+    tick_indices = np.linspace(0, len(positions)-1, 10, dtype=int)
+    ax1.set_xticks(positions[tick_indices])
+    ax1.set_xticklabels([f"{time_labels[i]:.0f}" for i in tick_indices])
 
     # Right Y-Axis: QPS
     ax1_2 = ax1.twinx()
     ax1_2.set_ylabel("Achieved QPS")
-    ax1_2.bar(
-        x,
+    qps_bars = ax1_2.bar(
+        positions + bar_width,  # Right bar position
         p95_df['QPS'],
-        width=90000,
-        align='edge',
-        color='tab:blue',
+        width=bar_width,
+        color=qps_color,
         label="QPS",
-        alpha=0.6,
         zorder=1 
     )
     ax1_2.tick_params(axis='y')
+    
+    # Third Y-Axis: CPU Usage (conditional)
+    ax3 = None
+    if include_cpu and not cpu_df.empty:
+        ax3 = ax1.twinx()
+        ax3.spines["right"].set_position(("axes", 1.1))  # Offset the right spine of ax3
+        ax3.set_ylabel("Core 0 CPU Usage (%)", color='tab:green')
+        
+        # Debug timestamp ranges
+        print(f"P95 timestamp range: {p95_df['unix_timestamp'].min()} to {p95_df['unix_timestamp'].max()}")
+        print(f"CPU timestamp range: {cpu_df['unix_timestamp'].min()} to {cpu_df['unix_timestamp'].max()}")
+        
+        # Convert CPU timestamps to relative time for plotting
+        # This aligns them with the p95 data's start_time
+        p95_start_time = p95_df['unix_timestamp'].min()
+        cpu_df['relative_time'] = cpu_df['unix_timestamp'] - p95_start_time
+        
+        print(f"Total CPU data points: {len(cpu_df)}")
+        
+        # Plot all CPU data points directly with semi-transparency
+        ax3.plot(
+            cpu_df['relative_time'], 
+            cpu_df['cpu_usage'], 
+            color='tab:green', 
+            linewidth=1.0,  # Thinner line
+            alpha=0.4,      # Semi-transparent
+            label="CPU Usage", 
+            zorder=3
+        )
+        ax3.tick_params(axis='y', labelcolor='tab:green')
+        ax3.set_ylim(0, 105)  # 0-105% for CPU usage
 
     # Grid and layout
     ax1.grid(True, linestyle='--', alpha=0.5)
-    fig.suptitle(f"{run_number.replace("run_", "")}A: 95th Percentile Latency vs QPS", fontsize=14)
+    
+    # Set title based on whether CPU is included
+    title_suffix = " vs CPU Usage" if include_cpu else ""
+    fig.suptitle(f"{run_number.replace('run_', '')}A: 95th Percentile Latency vs QPS{title_suffix}", fontsize=14)
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])  # Room for title
 
+    # Create combined legend
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    lines3, labels3 = [], []
+    if ax3:
+        lines3, labels3 = ax3.get_legend_handles_labels()
+    
+    ax1.legend(lines1 + lines2 + lines3, labels1 + labels2 + labels3, loc='upper left', bbox_to_anchor=(0, 1))
     ax1.legend(loc='upper left', bbox_to_anchor=(0, 1))
-    ax1_2.legend(loc='upper left', bbox_to_anchor=(0, 0.95))
 
     spacing = 2
     # Job duration horizontal bars
@@ -248,9 +322,7 @@ def export_plot_B(p95_df, folder, run_number):
     plt.close()
 
 
-def export_plots(folder, run_number):
-    #folder_path = path + folder + '/' + run_number + '/'
-
+def export_plots(folder, run_number, include_cpu=False):
     folder_path = path + folder + '/'
 
     mcperf_path = get_mcperf_path(folder_path)
@@ -260,22 +332,29 @@ def export_plots(folder, run_number):
 
     logger_df = get_logger_df(folder_path + 'logger_out')
     print(logger_df)
+    
+    # Get CPU usage data from scheduler_out if needed
+    cpu_df = pd.DataFrame()
+    if include_cpu:
+        cpu_df = get_cpu_usage_df(folder_path + 'scheduler_out')
+        print(cpu_df)
 
     job_df = extract_start_end(logger_df)
     print(job_df)
 
-    export_plot_A(p95_df, job_df, folder, run_number)
+    export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu)
     #export_plot_B(p95_df, folder, run_number)
 
 
-def main(folder):
-    export_plots(folder, "run_1")
+def main(folder, include_cpu=False):
+    export_plots(folder, "run_1", include_cpu)
     #export_plots(folder, "run_2")
     #export_plots(folder, "run_3")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process runs from a specified folder.")
     parser.add_argument("folder", help="Folder containing run subdirectories")
+    parser.add_argument("--cpu", action="store_true", help="Include CPU usage data from the plot")
     args = parser.parse_args()
-
-    main(args.folder)
+    
+    main(args.folder, args.cpu)
