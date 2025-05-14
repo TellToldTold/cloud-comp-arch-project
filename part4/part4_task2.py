@@ -12,7 +12,7 @@ def main():
     Assumes the cluster is already running.
     """
     # Hardcoded configuration
-    scheduler_script = "concurrent_scheduler.py"
+    scheduler_script = "dynamic_scheduler.py"
     ssh_key_path = os.path.expanduser("~/.ssh/cloud-computing")
     output_dir = "part4_task2_results"
     memcached_threads = 2
