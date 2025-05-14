@@ -163,8 +163,11 @@ def main():
                         logger.update_cores(Job(job_name), new_cores)
                         logger.custom_event(Job(job_name), "moved_off_core1")
                         
-                        # Update state
-                        current_state = MEMCACHED_DEDICATED_TWO_CORES
+                        # Update state if no more batch jobs on core 1
+                        if all(job_cores[0] != 1 for _, _, job_cores, _ in running_jobs):
+                            current_state = MEMCACHED_DEDICATED_TWO_CORES
+
+                        # Break after moving the first job to move jobs one by one
                         break
             
             elif current_state == MEMCACHED_DEDICATED_TWO_CORES and core0_usage < LOW_THRESHOLD_TWO_CORES:
