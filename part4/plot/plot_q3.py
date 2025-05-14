@@ -95,11 +95,20 @@ def extract_start_end(logger_df):
 
     # Merge on task
     task_times = pd.merge(starts, ends, on="task")
-    task_times['duration'] = task_times['end'] - task_times['start']
+    task_times['duration'] = (task_times['end'] - task_times['start']) / 1000
     start_time = task_times.loc[0, 'start']
-    task_times['start'] = task_times['start'] - start_time
-    task_times['end'] = task_times['end'] - start_time
-    return task_times
+    task_times['start'] = (task_times['start'] - start_time) / 1000
+    task_times['end'] = (task_times['end'] - start_time) / 1000
+
+    filtered_df = logger_df[(logger_df['task'] == 'memcached') & (logger_df['type'].isin(['start', 'update_cores']))]
+    filtered_df = filtered_df.sort_values(by="timestamp_ms")
+    filtered_df['cores'] = filtered_df['cores'].apply(lambda x: len(x))
+    filtered_df = filtered_df[['cores', 'timestamp_ms']]
+    filtered_df['duration'] = filtered_df['timestamp_ms'].shift(-1) - filtered_df['timestamp_ms']
+    filtered_df['duration'] = filtered_df['duration'] / 1000
+    filtered_df['timestamp_ms'] = (filtered_df['timestamp_ms'] - start_time) / 1000
+    return task_times, filtered_df
+
 
 def get_mcperf_path(folder_path):
     file_list = glob.glob(os.path.join(folder_path, "mcperf_results*.txt"))
@@ -176,7 +185,7 @@ def export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu=False)
     qps_color = '#38a3a5'      # Light blue
     
     # Left Y-Axis: Latency
-    ax1.set_xlabel("Time (s)")
+    ax1.set_xlabel('')
     ax1.set_ylabel("95th Percentile Latency (µs)")
     latency_bars = ax1.bar(
         positions,  # Left bar position
@@ -251,13 +260,12 @@ def export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu=False)
 
     # Create combined legend
     lines1, labels1 = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
+    lines2, labels2 = ax1_2.get_legend_handles_labels()
     lines3, labels3 = [], []
     if ax3:
         lines3, labels3 = ax3.get_legend_handles_labels()
     
     ax1.legend(lines1 + lines2 + lines3, labels1 + labels2 + labels3, loc='upper left', bbox_to_anchor=(0, 1))
-    ax1.legend(loc='upper left', bbox_to_anchor=(0, 1))
 
     spacing = 2
     # Job duration horizontal bars
@@ -292,33 +300,140 @@ def export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu=False)
     plt.savefig(file_path, dpi=300)
     plt.close()
 
-def export_plot_B(p95_df, folder, run_number):
+def export_plot_B(p95_df, cpu_df, job_df, memcached_df, folder, run_number, include_cpu):
 
-    x_axis = np.arange(0, 230000, 5000)
+    fig, (ax1, ax2) = plt.subplots(nrows=2,
+        ncols=1,
+        figsize=(12, 6),
+        sharex=True,
+        gridspec_kw={'height_ratios': [5, 2]})
 
-    fig, ax1 = plt.subplots()
-
-    color = 'tab:red'
-    ax1.set_xlabel('Time')  
-    ax1.set_ylabel('Number of CPU cores allocated to memcached', color=color)
-    ax1.plot(x_axis, data1, color=color)
-    ax1.tick_params(axis='y', labelcolor=color)
-
-    ax2 = ax1.twinx()  # instantiate a second Axes that shares the same x-axis
-
-    color = 'tab:blue'
-    ax2.set_ylabel('Achieved Queries per Second (QPS)', color=color)  # we already handled the x-label with ax1
-    ax2.plot(x_axis, data2, color=color)
-    ax2.tick_params(axis='y', labelcolor=color)
-
-    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    # Calculate bar positions
+    bar_width = 3.5  # Width of each bar
+    spacing = 3.0    # Space between pairs of bars
     
-    plt.show()
+    # Create positions for each pair of bars
+    positions = np.arange(len(p95_df)) * (2 * bar_width + spacing)
+    
+    # Define nicer colors
+    latency_color = '#c9184a'  # Light red
+    qps_color = '#38a3a5'      # Light blue
+    
+    # Left Y-Axis: Latency
+    ax1.set_xlabel('')
+    ax1.set_ylabel("Number of Cores allocated to memcached")
+    latency_bars = ax1.step(
+        memcached_df['timestamp_ms'],  # Left bar position
+        memcached_df['cores'],
+        color=latency_color,
+        alpha=0.8,
+        label="Memached cores",
+        zorder=2
+    )
+    ax1.tick_params(axis='y')
+    
+    # Adjust x-ticks to show time in seconds
+    # Map bar positions to actual time values
+    time_labels = p95_df['start_time'].values
+    # Use a subset of positions for readability
+    tick_indices = np.linspace(0, len(positions)-1, 10, dtype=int)
+    ax1.set_xticks(positions[tick_indices])
+    ax1.set_xticklabels([f"{time_labels[i]:.0f}" for i in tick_indices])
+    ax1.set_yticks([0, 1, 2])
+    ax1.set_yticklabels(['0', '1', '2'])
 
+    # Right Y-Axis: QPS
+    ax1_2 = ax1.twinx()
+    ax1_2.set_ylabel("Achieved QPS")
+    qps_bars = ax1_2.bar(
+        positions + bar_width,  # Right bar position
+        p95_df['QPS'],
+        width=bar_width,
+        color=qps_color,
+        label="QPS",
+        zorder=1 
+    )
+    ax1_2.tick_params(axis='y')
+    
+    # Third Y-Axis: CPU Usage (conditional)
+    ax3 = None
+    if include_cpu and not cpu_df.empty:
+        ax3 = ax1.twinx()
+        ax3.spines["right"].set_position(("axes", 1.1))  # Offset the right spine of ax3
+        ax3.set_ylabel("Core 0 CPU Usage (%)", color='tab:green')
+        
+        # Debug timestamp ranges
+        print(f"P95 timestamp range: {p95_df['unix_timestamp'].min()} to {p95_df['unix_timestamp'].max()}")
+        print(f"CPU timestamp range: {cpu_df['unix_timestamp'].min()} to {cpu_df['unix_timestamp'].max()}")
+        
+        # Convert CPU timestamps to relative time for plotting
+        # This aligns them with the p95 data's start_time
+        p95_start_time = p95_df['unix_timestamp'].min()
+        cpu_df['relative_time'] = cpu_df['unix_timestamp'] - p95_start_time
+        
+        print(f"Total CPU data points: {len(cpu_df)}")
+        
+        # Plot all CPU data points directly with semi-transparency
+        ax3.plot(
+            cpu_df['relative_time'], 
+            cpu_df['cpu_usage'], 
+            color='tab:green', 
+            linewidth=1.0,  # Thinner line
+            alpha=0.4,      # Semi-transparent
+            label="CPU Usage", 
+            zorder=3
+        )
+        ax3.tick_params(axis='y', labelcolor='tab:green')
+        ax3.set_ylim(0, 105)  # 0-105% for CPU usage
+
+    # Grid and layout
+    ax1.grid(True, linestyle='--', alpha=0.5)
+    
+    # Set title based on whether CPU is included
+    title_suffix = " vs CPU Usage" if include_cpu else ""
+    fig.suptitle(f"{run_number.replace('run_', '')}B: Number of Memcached Cores vs QPS{title_suffix}", fontsize=14)
+    fig.tight_layout(rect=[0, 0.03, 1, 0.95])  # Room for title
+
+    # Create combined legend
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax1_2.get_legend_handles_labels()
+    lines3, labels3 = [], []
+    if ax3:
+        lines3, labels3 = ax3.get_legend_handles_labels()
+    
+    ax1.legend(lines1 + lines2 + lines3, labels1 + labels2 + labels3, loc='upper left', bbox_to_anchor=(0, 1))
+
+    spacing = 2
+    # Job duration horizontal bars
+    for i, row in job_df.iterrows():
+        color = colors.get(row['task'], '#000000')
+        ax2.hlines(
+            y=i * spacing, xmin=row['start'], xmax=row['end'],
+            color=color, linewidth=6
+        )
+        ax2.text(
+            x=(row['start'] + row['end']) / 2,
+            y= i * spacing + 0.3,
+            s=row['task'],
+            ha='center',
+            va='bottom',
+            fontsize=8,
+            color=color
+        )
+
+    ax2.set_yticks([])
+    ax2.set_yticklabels([])
+    ax2.set_xlabel('Time (ms)')
+    ax2.set_ylabel('Jobs')
+    ax2.set_ylim(-1, spacing * len(job_df))
+    ax2.grid(True, axis='x', which='both', linestyle='--', alpha=0.5)
+    ax2.minorticks_on()
+    ax2.tick_params(axis='x', which='both', direction='out', top=True)
+
+    # Save plot
     os.makedirs(folder, exist_ok=True)
     file_path = os.path.join(folder, run_number.replace("run_", "") + "B" + ".png")
     plt.savefig(file_path, dpi=300)
-
     plt.close()
 
 
@@ -328,10 +443,8 @@ def export_plots(folder, run_number, include_cpu=False):
     mcperf_path = get_mcperf_path(folder_path)
     
     p95_df = get_p95_latencies(mcperf_path)
-    print(p95_df)
 
     logger_df = get_logger_df(folder_path + 'logger_out')
-    print(logger_df)
     
     # Get CPU usage data from scheduler_out if needed
     cpu_df = pd.DataFrame()
@@ -339,11 +452,10 @@ def export_plots(folder, run_number, include_cpu=False):
         cpu_df = get_cpu_usage_df(folder_path + 'scheduler_out')
         print(cpu_df)
 
-    job_df = extract_start_end(logger_df)
-    print(job_df)
+    job_df, memcached_df = extract_start_end(logger_df)
 
     export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu)
-    #export_plot_B(p95_df, folder, run_number)
+    export_plot_B(p95_df, cpu_df, job_df, memcached_df, folder, run_number, include_cpu)
 
 
 def main(folder, include_cpu=False):
