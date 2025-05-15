@@ -401,7 +401,7 @@ def run_mcperf_dynamic_load(
         memcached_ip,
         output_dir,
         duration = 1800,
-        qps_interval = 10,
+        qps_interval = 8,
         qps_min = 5000,
         qps_max = 180000,
         qps_seed = None
