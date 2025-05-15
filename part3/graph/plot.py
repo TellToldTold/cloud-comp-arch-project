@@ -17,6 +17,16 @@ colors = {
     "vips" : "#CC0A00",
 }
 
+machines = {
+    "blackscholes" : "nobe-b",
+    "canneal" : "node-d",
+    "dedup" : "node-b",
+    "ferret" : "node-d",
+    "freqmine" : "node-c",
+    "radix" : "node-a",
+    "vips" : "node-a",
+}
+
 ## Path
 path = "../results/"
 
@@ -123,7 +133,7 @@ def export_graph(folder, run_number):
         ax2.text(
             x=(row['start_time'] + row['end_time']) / 2,
             y= i * spacing + 0.3,
-            s=row['job'],
+            s=row['job'] + ' (' + machines.get(row['job'], '') + ')',
             ha='center',
             va='bottom',
             fontsize=8,
