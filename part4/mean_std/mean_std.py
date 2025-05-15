@@ -62,15 +62,16 @@ def extract_start_end(logger_df):
     # Merge on task
     task_times = pd.merge(starts, ends, on="task")
     task_times['duration'] = (task_times['end'] - task_times['start']) / 1000
-    start_time = task_times.loc[0, 'start']
-    task_times['start'] = (task_times['start'] - start_time) / 1000
-    task_times['end'] = (task_times['end'] - start_time) / 1000
+    task_times['start'] = task_times['start'] / 1000
+    task_times['end'] = task_times['end'] / 1000
 
-    return task_times
+    return task_times, task_times['start'].min(), task_times['end'].max()
 
 def get_time(task, run_number):
     logger_df = get_logger_df(f"../part4_task{task}_results/" + run_number + '/logger_out')
-    job_time = extract_start_end(logger_df)
+    job_time, min, max = extract_start_end(logger_df)
+
+    job_time.loc[-1] = ['Total', min, max, max - min]
 
     return job_time[['task', 'duration']]
 
