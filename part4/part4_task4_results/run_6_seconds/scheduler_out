@@ -1,0 +1,1123 @@
+2025-05-15T08:27:03.464989 start scheduler
+2025-05-15T08:27:03.478277 start memcached [0] 2
+2025-05-15T08:27:03.637907 start freqmine [1,2,3] 2
+2025-05-15T08:27:03.800649 start ferret [1,2,3] 2
+2025-05-15T08:27:10.051244 update_cores memcached [0,1]
+2025-05-15T08:27:10.051278 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:27:11.102183 update_cores freqmine [2,3]
+2025-05-15T08:27:11.102226 custom freqmine moved_off_core1
+2025-05-15T08:27:11.138122 update_cores ferret [2,3]
+2025-05-15T08:27:11.138159 custom ferret moved_off_core1
+2025-05-15T08:27:23.233718 update_cores freqmine [1,2,3]
+2025-05-15T08:27:23.233746 custom freqmine expanded_to_core1
+2025-05-15T08:27:23.273888 update_cores ferret [1,2,3]
+2025-05-15T08:27:23.273919 custom ferret expanded_to_core1
+2025-05-15T08:27:24.295302 update_cores memcached [0]
+2025-05-15T08:27:24.295334 custom memcached removed_from_core1
+2025-05-15T08:27:28.335054 update_cores memcached [0,1]
+2025-05-15T08:27:28.335098 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:27:29.381126 update_cores freqmine [2,3]
+2025-05-15T08:27:29.381168 custom freqmine moved_off_core1
+2025-05-15T08:27:29.414333 update_cores ferret [2,3]
+2025-05-15T08:27:29.414388 custom ferret moved_off_core1
+2025-05-15T08:29:14.147339 update_cores freqmine [1,2,3]
+2025-05-15T08:29:14.147369 custom freqmine expanded_to_core1
+2025-05-15T08:29:14.181801 update_cores ferret [1,2,3]
+2025-05-15T08:29:14.181829 custom ferret expanded_to_core1
+2025-05-15T08:29:15.208352 update_cores memcached [0]
+2025-05-15T08:29:15.208386 custom memcached removed_from_core1
+2025-05-15T08:29:22.265265 update_cores memcached [0,1]
+2025-05-15T08:29:22.265308 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:29:23.307318 update_cores freqmine [2,3]
+2025-05-15T08:29:23.307348 custom freqmine moved_off_core1
+2025-05-15T08:29:23.341393 update_cores ferret [2,3]
+2025-05-15T08:29:23.341432 custom ferret moved_off_core1
+2025-05-15T08:29:28.388179 update_cores freqmine [1,2,3]
+2025-05-15T08:29:28.388236 custom freqmine expanded_to_core1
+2025-05-15T08:29:28.411258 update_cores ferret [1,2,3]
+2025-05-15T08:29:28.411288 custom ferret expanded_to_core1
+2025-05-15T08:29:29.435541 update_cores memcached [0]
+2025-05-15T08:29:29.435584 custom memcached removed_from_core1
+2025-05-15T08:29:39.520095 update_cores memcached [0,1]
+2025-05-15T08:29:39.520126 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:29:40.564574 update_cores freqmine [2,3]
+2025-05-15T08:29:40.564602 custom freqmine moved_off_core1
+2025-05-15T08:29:40.606135 update_cores ferret [2,3]
+2025-05-15T08:29:40.606176 custom ferret moved_off_core1
+2025-05-15T08:30:10.817261 update_cores freqmine [1,2,3]
+2025-05-15T08:30:10.817291 custom freqmine expanded_to_core1
+2025-05-15T08:30:10.846557 update_cores ferret [1,2,3]
+2025-05-15T08:30:10.846584 custom ferret expanded_to_core1
+2025-05-15T08:30:11.872473 update_cores memcached [0]
+2025-05-15T08:30:11.872512 custom memcached removed_from_core1
+2025-05-15T08:30:21.954951 update_cores memcached [0,1]
+2025-05-15T08:30:21.955061 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:30:23.005808 update_cores freqmine [2,3]
+2025-05-15T08:30:23.005836 custom freqmine moved_off_core1
+2025-05-15T08:30:23.042254 update_cores ferret [2,3]
+2025-05-15T08:30:23.042283 custom ferret moved_off_core1
+2025-05-15T08:30:29.095165 update_cores freqmine [1,2,3]
+2025-05-15T08:30:29.095194 custom freqmine expanded_to_core1
+2025-05-15T08:30:29.123336 update_cores ferret [1,2,3]
+2025-05-15T08:30:29.123363 custom ferret expanded_to_core1
+2025-05-15T08:30:34.191788 update_cores freqmine [2,3]
+2025-05-15T08:30:34.191828 custom freqmine moved_off_core1
+2025-05-15T08:30:34.252528 update_cores ferret [2,3]
+2025-05-15T08:30:34.252559 custom ferret moved_off_core1
+2025-05-15T08:30:52.397280 update_cores freqmine [1,2,3]
+2025-05-15T08:30:52.397315 custom freqmine expanded_to_core1
+2025-05-15T08:30:52.419818 update_cores ferret [1,2,3]
+2025-05-15T08:30:52.419862 custom ferret expanded_to_core1
+2025-05-15T08:30:53.443804 update_cores memcached [0]
+2025-05-15T08:30:53.443867 custom memcached removed_from_core1
+2025-05-15T08:31:15.604018 update_cores memcached [0,1]
+2025-05-15T08:31:15.604048 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:31:16.659812 update_cores freqmine [2,3]
+2025-05-15T08:31:16.659841 custom freqmine moved_off_core1
+2025-05-15T08:31:16.693476 update_cores ferret [2,3]
+2025-05-15T08:31:16.693504 custom ferret moved_off_core1
+2025-05-15T08:31:45.903567 update_cores freqmine [1,2,3]
+2025-05-15T08:31:45.903594 custom freqmine expanded_to_core1
+2025-05-15T08:31:45.927580 update_cores ferret [1,2,3]
+2025-05-15T08:31:45.927608 custom ferret expanded_to_core1
+2025-05-15T08:31:46.948430 update_cores memcached [0]
+2025-05-15T08:31:46.948485 custom memcached removed_from_core1
+2025-05-15T08:32:10.100063 update_cores memcached [0,1]
+2025-05-15T08:32:10.100094 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:32:11.152565 update_cores freqmine [2,3]
+2025-05-15T08:32:11.152592 custom freqmine moved_off_core1
+2025-05-15T08:32:11.186853 update_cores ferret [2,3]
+2025-05-15T08:32:11.186892 custom ferret moved_off_core1
+2025-05-15T08:32:28.300308 update_cores freqmine [1,2,3]
+2025-05-15T08:32:28.300336 custom freqmine expanded_to_core1
+2025-05-15T08:32:28.324422 update_cores ferret [1,2,3]
+2025-05-15T08:32:28.324452 custom ferret expanded_to_core1
+2025-05-15T08:32:29.349906 update_cores memcached [0]
+2025-05-15T08:32:29.349951 custom memcached removed_from_core1
+2025-05-15T08:32:34.400439 update_cores memcached [0,1]
+2025-05-15T08:32:34.400491 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:32:35.447870 update_cores freqmine [2,3]
+2025-05-15T08:32:35.447901 custom freqmine moved_off_core1
+2025-05-15T08:32:35.476195 update_cores ferret [2,3]
+2025-05-15T08:32:35.476266 custom ferret moved_off_core1
+2025-05-15T08:32:39.518346 update_cores freqmine [1,2,3]
+2025-05-15T08:32:39.518376 custom freqmine expanded_to_core1
+2025-05-15T08:32:39.541601 update_cores ferret [1,2,3]
+2025-05-15T08:32:39.541640 custom ferret expanded_to_core1
+2025-05-15T08:32:40.563936 update_cores memcached [0]
+2025-05-15T08:32:40.563968 custom memcached removed_from_core1
+2025-05-15T08:33:03.719142 update_cores memcached [0,1]
+2025-05-15T08:33:03.719174 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:33:04.781825 update_cores freqmine [2,3]
+2025-05-15T08:33:04.781854 custom freqmine moved_off_core1
+2025-05-15T08:33:04.828297 update_cores ferret [2,3]
+2025-05-15T08:33:04.828328 custom ferret moved_off_core1
+2025-05-15T08:33:09.883931 update_cores freqmine [1,2,3]
+2025-05-15T08:33:09.883958 custom freqmine expanded_to_core1
+2025-05-15T08:33:09.922026 update_cores ferret [1,2,3]
+2025-05-15T08:33:09.922054 custom ferret expanded_to_core1
+2025-05-15T08:33:10.945125 update_cores memcached [0]
+2025-05-15T08:33:10.945157 custom memcached removed_from_core1
+2025-05-15T08:33:15.987464 update_cores memcached [0,1]
+2025-05-15T08:33:15.987504 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:33:17.034817 update_cores freqmine [2,3]
+2025-05-15T08:33:17.034846 custom freqmine moved_off_core1
+2025-05-15T08:33:17.063649 update_cores ferret [2,3]
+2025-05-15T08:33:17.063736 custom ferret moved_off_core1
+2025-05-15T08:33:22.116270 update_cores freqmine [1,2,3]
+2025-05-15T08:33:22.116299 custom freqmine expanded_to_core1
+2025-05-15T08:33:22.146170 update_cores ferret [1,2,3]
+2025-05-15T08:33:22.146232 custom ferret expanded_to_core1
+2025-05-15T08:33:28.244372 update_cores freqmine [2,3]
+2025-05-15T08:33:28.244425 custom freqmine moved_off_core1
+2025-05-15T08:33:28.280616 update_cores ferret [2,3]
+2025-05-15T08:33:28.280645 custom ferret moved_off_core1
+2025-05-15T08:33:52.457802 update_cores freqmine [1,2,3]
+2025-05-15T08:33:52.457830 custom freqmine expanded_to_core1
+2025-05-15T08:33:52.496911 update_cores ferret [1,2,3]
+2025-05-15T08:33:52.496939 custom ferret expanded_to_core1
+2025-05-15T08:33:53.521903 update_cores memcached [0]
+2025-05-15T08:33:53.521972 custom memcached removed_from_core1
+2025-05-15T08:34:01.581103 end ferret
+2025-05-15T08:34:01.581127 custom ferret execution_time_417.78_seconds
+2025-05-15T08:34:01.896735 start canneal [1,2,3] 2
+2025-05-15T08:34:20.029286 update_cores memcached [0,1]
+2025-05-15T08:34:20.029321 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:34:21.084985 update_cores freqmine [2,3]
+2025-05-15T08:34:21.085055 custom freqmine moved_off_core1
+2025-05-15T08:34:21.119753 update_cores canneal [2,3]
+2025-05-15T08:34:21.119780 custom canneal moved_off_core1
+2025-05-15T08:34:42.271194 update_cores freqmine [1,2,3]
+2025-05-15T08:34:42.271235 custom freqmine expanded_to_core1
+2025-05-15T08:34:42.309838 update_cores canneal [1,2,3]
+2025-05-15T08:34:42.309870 custom canneal expanded_to_core1
+2025-05-15T08:34:46.366959 update_cores freqmine [2,3]
+2025-05-15T08:34:46.366987 custom freqmine moved_off_core1
+2025-05-15T08:34:46.407750 update_cores canneal [2,3]
+2025-05-15T08:34:46.407793 custom canneal moved_off_core1
+2025-05-15T08:34:55.508783 end freqmine
+2025-05-15T08:34:55.508812 custom freqmine execution_time_471.87_seconds
+2025-05-15T08:34:55.880333 start blackscholes [2,3] 2
+2025-05-15T08:35:16.012475 update_cores canneal [1,2,3]
+2025-05-15T08:35:16.012503 custom canneal expanded_to_core1
+2025-05-15T08:35:16.036555 update_cores blackscholes [1,2,3]
+2025-05-15T08:35:16.036585 custom blackscholes expanded_to_core1
+2025-05-15T08:35:17.058995 update_cores memcached [0]
+2025-05-15T08:35:17.059025 custom memcached removed_from_core1
+2025-05-15T08:35:28.141727 update_cores memcached [0,1]
+2025-05-15T08:35:28.141768 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:35:29.188853 update_cores canneal [2,3]
+2025-05-15T08:35:29.188887 custom canneal moved_off_core1
+2025-05-15T08:35:29.218768 update_cores blackscholes [2,3]
+2025-05-15T08:35:29.218796 custom blackscholes moved_off_core1
+2025-05-15T08:35:58.405025 update_cores canneal [1,2,3]
+2025-05-15T08:35:58.405054 custom canneal expanded_to_core1
+2025-05-15T08:35:58.429475 update_cores blackscholes [1,2,3]
+2025-05-15T08:35:58.429508 custom blackscholes expanded_to_core1
+2025-05-15T08:35:59.449885 update_cores memcached [0]
+2025-05-15T08:35:59.449913 custom memcached removed_from_core1
+2025-05-15T08:36:10.526053 update_cores memcached [0,1]
+2025-05-15T08:36:10.526104 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:36:11.567649 update_cores canneal [2,3]
+2025-05-15T08:36:11.567674 custom canneal moved_off_core1
+2025-05-15T08:36:11.603447 update_cores blackscholes [2,3]
+2025-05-15T08:36:11.603475 custom blackscholes moved_off_core1
+2025-05-15T08:36:27.708154 update_cores canneal [1,2,3]
+2025-05-15T08:36:27.708181 custom canneal expanded_to_core1
+2025-05-15T08:36:27.731882 update_cores blackscholes [1,2,3]
+2025-05-15T08:36:27.731908 custom blackscholes expanded_to_core1
+2025-05-15T08:36:28.755829 update_cores memcached [0]
+2025-05-15T08:36:28.755863 custom memcached removed_from_core1
+2025-05-15T08:36:33.806734 update_cores memcached [0,1]
+2025-05-15T08:36:33.806766 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:36:34.851308 update_cores canneal [2,3]
+2025-05-15T08:36:34.851357 custom canneal moved_off_core1
+2025-05-15T08:36:34.898050 update_cores blackscholes [2,3]
+2025-05-15T08:36:34.898078 custom blackscholes moved_off_core1
+2025-05-15T08:36:40.636928 end blackscholes
+2025-05-15T08:36:40.636956 custom blackscholes execution_time_104.76_seconds
+2025-05-15T08:36:41.077896 start vips [2,3] 2
+2025-05-15T08:36:46.125961 update_cores canneal [1,2,3]
+2025-05-15T08:36:46.125989 custom canneal expanded_to_core1
+2025-05-15T08:36:46.159900 update_cores vips [1,2,3]
+2025-05-15T08:36:46.159930 custom vips expanded_to_core1
+2025-05-15T08:36:51.208332 update_cores memcached [0]
+2025-05-15T08:36:51.208362 custom memcached removed_from_core1
+2025-05-15T08:37:04.310429 update_cores memcached [0,1]
+2025-05-15T08:37:04.310460 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:37:05.353285 update_cores canneal [2,3]
+2025-05-15T08:37:05.353320 custom canneal moved_off_core1
+2025-05-15T08:37:05.387604 update_cores vips [2,3]
+2025-05-15T08:37:05.387633 custom vips moved_off_core1
+2025-05-15T08:37:16.460516 update_cores canneal [1,2,3]
+2025-05-15T08:37:16.460555 custom canneal expanded_to_core1
+2025-05-15T08:37:16.483816 update_cores vips [1,2,3]
+2025-05-15T08:37:16.483844 custom vips expanded_to_core1
+2025-05-15T08:37:17.508649 update_cores memcached [0]
+2025-05-15T08:37:17.508680 custom memcached removed_from_core1
+2025-05-15T08:37:27.579708 update_cores memcached [0,1]
+2025-05-15T08:37:27.579789 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:37:28.962300 update_cores canneal [2,3]
+2025-05-15T08:37:28.962333 custom canneal moved_off_core1
+2025-05-15T08:37:29.015186 update_cores vips [2,3]
+2025-05-15T08:37:29.015292 custom vips moved_off_core1
+2025-05-15T08:37:40.099636 update_cores canneal [1,2,3]
+2025-05-15T08:37:40.099755 custom canneal expanded_to_core1
+2025-05-15T08:37:40.124276 update_cores vips [1,2,3]
+2025-05-15T08:37:40.124327 custom vips expanded_to_core1
+2025-05-15T08:37:41.146520 update_cores memcached [0]
+2025-05-15T08:37:41.146550 custom memcached removed_from_core1
+2025-05-15T08:37:52.238428 update_cores memcached [0,1]
+2025-05-15T08:37:52.238460 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:37:53.297378 update_cores canneal [2,3]
+2025-05-15T08:37:53.297407 custom canneal moved_off_core1
+2025-05-15T08:37:53.347286 update_cores vips [2,3]
+2025-05-15T08:37:53.347315 custom vips moved_off_core1
+2025-05-15T08:38:06.448116 end canneal
+2025-05-15T08:38:06.448151 custom canneal execution_time_244.55_seconds
+2025-05-15T08:38:06.917627 start radix [2,3] 2
+2025-05-15T08:38:10.114339 end vips
+2025-05-15T08:38:10.114383 custom vips execution_time_89.04_seconds
+2025-05-15T08:38:10.883607 start dedup [2,3] 3
+2025-05-15T08:38:21.964259 update_cores radix [1,2,3]
+2025-05-15T08:38:21.964290 custom radix expanded_to_core1
+2025-05-15T08:38:21.997541 update_cores dedup [1,2,3]
+2025-05-15T08:38:21.997570 custom dedup expanded_to_core1
+2025-05-15T08:38:23.025018 update_cores memcached [0]
+2025-05-15T08:38:23.025051 custom memcached removed_from_core1
+2025-05-15T08:38:28.077480 update_cores memcached [0,1]
+2025-05-15T08:38:28.077522 custom memcached colocated_with_jobs_on_core1
+2025-05-15T08:38:29.132708 update_cores radix [2,3]
+2025-05-15T08:38:29.132737 custom radix moved_off_core1
+2025-05-15T08:38:29.173392 update_cores dedup [2,3]
+2025-05-15T08:38:29.173484 custom dedup moved_off_core1
+2025-05-15T08:38:43.125873 end dedup
+2025-05-15T08:38:43.125981 custom dedup execution_time_32.24_seconds
+2025-05-15T08:38:46.422855 update_cores radix [1,2,3]
+2025-05-15T08:38:46.422930 custom radix expanded_to_core1
+2025-05-15T08:38:47.439282 update_cores memcached [0]
+2025-05-15T08:38:47.439309 custom memcached removed_from_core1
+2025-05-15T08:38:47.441101 end radix
+2025-05-15T08:38:47.441125 custom radix execution_time_40.52_seconds
+2025-05-15T08:38:48.261991 update_cores memcached [0,1]
+2025-05-15T08:38:48.262022 custom memcached final_state_two_cores
+2025-05-15T08:38:48.262039 custom all total_execution_time_703.80_seconds
+2025-05-15T08:38:48.262045 end scheduler
+ubuntu@memcache-server-wzhw:~/dynamic_scheduler$ cat dynamic_scheduler_output.log 
+Dynamic ONE AT A TIME Scheduler started at 2025-05-15 08:27:03
+================================================================================
+
+[2025-05-15 08:27:03 | 1747297623.465003] Cleaning up existing containers...
+[2025-05-15 08:27:03 | 1747297623.466575] Setting initial memcached affinity to core 0
+[2025-05-15 08:27:03 | 1747297623.478303] Initial batch_cores: [1, 2, 3]
+[2025-05-15 08:27:03 | 1747297623.478396] Starting Freqmine with 2 threads on cores [1, 2, 3]
+[2025-05-15 08:27:03 | 1747297623.637929] Special job freqmine started successfully
+[2025-05-15 08:27:03 | 1747297623.638034] Starting ferret with 2 threads on cores [1, 2, 3]
+[2025-05-15 08:27:03 | 1747297623.800675] Special job ferret started successfully
+[2025-05-15 08:27:04 | 1747297624.001223] Core 0 usage: 15.0%
+[2025-05-15 08:27:05 | 1747297625.005134] Core 0 usage: 15.0%
+[2025-05-15 08:27:06 | 1747297626.010156] Core 0 usage: 5.6%
+[2025-05-15 08:27:07 | 1747297627.014824] Core 0 usage: 10.5%
+[2025-05-15 08:27:08 | 1747297628.021617] Core 0 usage: 15.8%
+[2025-05-15 08:27:09 | 1747297629.026497] Core 0 usage: 15.0%
+[2025-05-15 08:27:10 | 1747297630.031400] Core 0 usage: 94.7%
+[2025-05-15 08:27:10 | 1747297630.031525] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:27:11 | 1747297631.062184] Core 0 usage: 100.0%
+[2025-05-15 08:27:11 | 1747297631.062315] Moving job freqmine off core 1
+[2025-05-15 08:27:11 | 1747297631.102234] Moving job ferret off core 1
+[2025-05-15 08:27:12 | 1747297632.142712] Core 0 usage: 95.2%
+[2025-05-15 08:27:13 | 1747297633.148305] Core 0 usage: 95.2%
+[2025-05-15 08:27:14 | 1747297634.152951] Core 0 usage: 100.0%
+[2025-05-15 08:27:15 | 1747297635.157424] Core 0 usage: 95.0%
+[2025-05-15 08:27:16 | 1747297636.163250] Core 0 usage: 100.0%
+[2025-05-15 08:27:17 | 1747297637.169998] Core 0 usage: 100.0%
+[2025-05-15 08:27:18 | 1747297638.179108] Core 0 usage: 100.0%
+[2025-05-15 08:27:19 | 1747297639.184508] Core 0 usage: 100.0%
+[2025-05-15 08:27:20 | 1747297640.190015] Core 0 usage: 94.7%
+[2025-05-15 08:27:21 | 1747297641.196015] Core 0 usage: 100.0%
+[2025-05-15 08:27:22 | 1747297642.203893] Core 0 usage: 50.0%
+[2025-05-15 08:27:23 | 1747297643.208867] Core 0 usage: 26.1%
+[2025-05-15 08:27:23 | 1747297643.208976] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:27:23 | 1747297643.209011] Moving job freqmine on core 1
+[2025-05-15 08:27:23 | 1747297643.233756] Moving job ferret on core 1
+[2025-05-15 08:27:24 | 1747297644.277890] Core 0 usage: 20.0%
+[2025-05-15 08:27:24 | 1747297644.277998] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:27:25 | 1747297645.300148] Core 0 usage: 15.8%
+[2025-05-15 08:27:26 | 1747297646.304832] Core 0 usage: 10.5%
+[2025-05-15 08:27:27 | 1747297647.309411] Core 0 usage: 10.5%
+[2025-05-15 08:27:28 | 1747297648.314297] Core 0 usage: 100.0%
+[2025-05-15 08:27:28 | 1747297648.314413] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:27:29 | 1747297649.341108] Core 0 usage: 100.0%
+[2025-05-15 08:27:29 | 1747297649.341237] Moving job freqmine off core 1
+[2025-05-15 08:27:29 | 1747297649.381176] Moving job ferret off core 1
+[2025-05-15 08:27:30 | 1747297650.419853] Core 0 usage: 100.0%
+[2025-05-15 08:27:31 | 1747297651.428529] Core 0 usage: 95.0%
+[2025-05-15 08:27:32 | 1747297652.432668] Core 0 usage: 95.0%
+[2025-05-15 08:27:33 | 1747297653.437219] Core 0 usage: 100.0%
+[2025-05-15 08:27:34 | 1747297654.444081] Core 0 usage: 95.5%
+[2025-05-15 08:27:35 | 1747297655.449374] Core 0 usage: 100.0%
+[2025-05-15 08:27:36 | 1747297656.455440] Core 0 usage: 95.2%
+[2025-05-15 08:27:37 | 1747297657.461120] Core 0 usage: 95.0%
+[2025-05-15 08:27:38 | 1747297658.467162] Core 0 usage: 95.0%
+[2025-05-15 08:27:39 | 1747297659.472807] Core 0 usage: 100.0%
+[2025-05-15 08:27:40 | 1747297660.477664] Core 0 usage: 94.7%
+[2025-05-15 08:27:41 | 1747297661.483403] Core 0 usage: 94.7%
+[2025-05-15 08:27:42 | 1747297662.489172] Core 0 usage: 94.7%
+[2025-05-15 08:27:43 | 1747297663.494632] Core 0 usage: 94.7%
+[2025-05-15 08:27:44 | 1747297664.499523] Core 0 usage: 100.0%
+[2025-05-15 08:27:45 | 1747297665.506123] Core 0 usage: 95.0%
+[2025-05-15 08:27:46 | 1747297666.512491] Core 0 usage: 100.0%
+[2025-05-15 08:27:47 | 1747297667.517376] Core 0 usage: 94.7%
+[2025-05-15 08:27:48 | 1747297668.523166] Core 0 usage: 100.0%
+[2025-05-15 08:27:49 | 1747297669.527906] Core 0 usage: 94.7%
+[2025-05-15 08:27:50 | 1747297670.533576] Core 0 usage: 100.0%
+[2025-05-15 08:27:51 | 1747297671.544366] Core 0 usage: 100.0%
+[2025-05-15 08:27:52 | 1747297672.549682] Core 0 usage: 95.0%
+[2025-05-15 08:27:53 | 1747297673.556550] Core 0 usage: 95.0%
+[2025-05-15 08:27:54 | 1747297674.566584] Core 0 usage: 95.2%
+[2025-05-15 08:27:55 | 1747297675.572810] Core 0 usage: 100.0%
+[2025-05-15 08:27:56 | 1747297676.578592] Core 0 usage: 100.0%
+[2025-05-15 08:27:57 | 1747297677.585404] Core 0 usage: 95.0%
+[2025-05-15 08:27:58 | 1747297678.591164] Core 0 usage: 89.5%
+[2025-05-15 08:27:59 | 1747297679.595979] Core 0 usage: 94.7%
+[2025-05-15 08:28:00 | 1747297680.602411] Core 0 usage: 89.5%
+[2025-05-15 08:28:01 | 1747297681.607801] Core 0 usage: 90.0%
+[2025-05-15 08:28:02 | 1747297682.612434] Core 0 usage: 90.0%
+[2025-05-15 08:28:03 | 1747297683.617281] Core 0 usage: 90.0%
+[2025-05-15 08:28:04 | 1747297684.621790] Core 0 usage: 90.5%
+[2025-05-15 08:28:05 | 1747297685.627441] Core 0 usage: 89.5%
+[2025-05-15 08:28:06 | 1747297686.635324] Core 0 usage: 90.5%
+[2025-05-15 08:28:07 | 1747297687.643583] Core 0 usage: 88.9%
+[2025-05-15 08:28:08 | 1747297688.650496] Core 0 usage: 90.0%
+[2025-05-15 08:28:09 | 1747297689.658563] Core 0 usage: 100.0%
+[2025-05-15 08:28:10 | 1747297690.664844] Core 0 usage: 100.0%
+[2025-05-15 08:28:11 | 1747297691.672356] Core 0 usage: 95.0%
+[2025-05-15 08:28:12 | 1747297692.684085] Core 0 usage: 94.7%
+[2025-05-15 08:28:13 | 1747297693.690343] Core 0 usage: 100.0%
+[2025-05-15 08:28:14 | 1747297694.700943] Core 0 usage: 94.7%
+[2025-05-15 08:28:15 | 1747297695.706606] Core 0 usage: 83.3%
+[2025-05-15 08:28:16 | 1747297696.713820] Core 0 usage: 83.3%
+[2025-05-15 08:28:17 | 1747297697.721673] Core 0 usage: 83.3%
+[2025-05-15 08:28:18 | 1747297698.737120] Core 0 usage: 83.3%
+[2025-05-15 08:28:19 | 1747297699.744715] Core 0 usage: 84.2%
+[2025-05-15 08:28:20 | 1747297700.751800] Core 0 usage: 85.7%
+[2025-05-15 08:28:21 | 1747297701.757869] Core 0 usage: 85.0%
+[2025-05-15 08:28:22 | 1747297702.763950] Core 0 usage: 85.0%
+[2025-05-15 08:28:23 | 1747297703.768722] Core 0 usage: 88.9%
+[2025-05-15 08:28:24 | 1747297704.774235] Core 0 usage: 78.9%
+[2025-05-15 08:28:25 | 1747297705.781833] Core 0 usage: 88.9%
+[2025-05-15 08:28:26 | 1747297706.791061] Core 0 usage: 88.9%
+[2025-05-15 08:28:27 | 1747297707.798581] Core 0 usage: 90.0%
+[2025-05-15 08:28:28 | 1747297708.807085] Core 0 usage: 94.4%
+[2025-05-15 08:28:29 | 1747297709.815124] Core 0 usage: 94.4%
+[2025-05-15 08:28:30 | 1747297710.820600] Core 0 usage: 95.0%
+[2025-05-15 08:28:31 | 1747297711.832379] Core 0 usage: 95.0%
+[2025-05-15 08:28:32 | 1747297712.838387] Core 0 usage: 89.5%
+[2025-05-15 08:28:33 | 1747297713.844312] Core 0 usage: 100.0%
+[2025-05-15 08:28:34 | 1747297714.851150] Core 0 usage: 94.4%
+[2025-05-15 08:28:35 | 1747297715.859404] Core 0 usage: 100.0%
+[2025-05-15 08:28:36 | 1747297716.866776] Core 0 usage: 95.2%
+[2025-05-15 08:28:37 | 1747297717.874578] Core 0 usage: 100.0%
+[2025-05-15 08:28:38 | 1747297718.885000] Core 0 usage: 94.7%
+[2025-05-15 08:28:39 | 1747297719.895183] Core 0 usage: 95.0%
+[2025-05-15 08:28:40 | 1747297720.903974] Core 0 usage: 94.4%
+[2025-05-15 08:28:41 | 1747297721.912776] Core 0 usage: 95.2%
+[2025-05-15 08:28:42 | 1747297722.925871] Core 0 usage: 100.0%
+[2025-05-15 08:28:43 | 1747297723.931989] Core 0 usage: 94.7%
+[2025-05-15 08:28:44 | 1747297724.939512] Core 0 usage: 100.0%
+[2025-05-15 08:28:45 | 1747297725.947279] Core 0 usage: 94.7%
+[2025-05-15 08:28:46 | 1747297726.956259] Core 0 usage: 100.0%
+[2025-05-15 08:28:47 | 1747297727.967512] Core 0 usage: 95.2%
+[2025-05-15 08:28:48 | 1747297728.977879] Core 0 usage: 95.0%
+[2025-05-15 08:28:49 | 1747297729.985280] Core 0 usage: 95.0%
+[2025-05-15 08:28:50 | 1747297730.995493] Core 0 usage: 100.0%
+[2025-05-15 08:28:52 | 1747297732.003436] Core 0 usage: 100.0%
+[2025-05-15 08:28:53 | 1747297733.008239] Core 0 usage: 88.9%
+[2025-05-15 08:28:54 | 1747297734.013348] Core 0 usage: 85.0%
+[2025-05-15 08:28:55 | 1747297735.017763] Core 0 usage: 77.8%
+[2025-05-15 08:28:56 | 1747297736.022537] Core 0 usage: 75.0%
+[2025-05-15 08:28:57 | 1747297737.027125] Core 0 usage: 70.0%
+[2025-05-15 08:28:58 | 1747297738.031907] Core 0 usage: 95.0%
+[2025-05-15 08:28:59 | 1747297739.036265] Core 0 usage: 100.0%
+[2025-05-15 08:29:00 | 1747297740.041800] Core 0 usage: 95.0%
+[2025-05-15 08:29:01 | 1747297741.048628] Core 0 usage: 100.0%
+[2025-05-15 08:29:02 | 1747297742.052959] Core 0 usage: 95.2%
+[2025-05-15 08:29:03 | 1747297743.058522] Core 0 usage: 94.7%
+[2025-05-15 08:29:04 | 1747297744.064158] Core 0 usage: 95.0%
+[2025-05-15 08:29:05 | 1747297745.070283] Core 0 usage: 100.0%
+[2025-05-15 08:29:06 | 1747297746.074809] Core 0 usage: 100.0%
+[2025-05-15 08:29:07 | 1747297747.081737] Core 0 usage: 95.0%
+[2025-05-15 08:29:08 | 1747297748.086611] Core 0 usage: 95.0%
+[2025-05-15 08:29:09 | 1747297749.094881] Core 0 usage: 94.7%
+[2025-05-15 08:29:10 | 1747297750.099578] Core 0 usage: 95.0%
+[2025-05-15 08:29:11 | 1747297751.104195] Core 0 usage: 55.6%
+[2025-05-15 08:29:12 | 1747297752.110888] Core 0 usage: 61.1%
+[2025-05-15 08:29:13 | 1747297753.115780] Core 0 usage: 66.7%
+[2025-05-15 08:29:14 | 1747297754.121198] Core 0 usage: 33.3%
+[2025-05-15 08:29:14 | 1747297754.121331] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:29:14 | 1747297754.121366] Moving job freqmine on core 1
+[2025-05-15 08:29:14 | 1747297754.147378] Moving job ferret on core 1
+[2025-05-15 08:29:15 | 1747297755.186355] Core 0 usage: 43.8%
+[2025-05-15 08:29:15 | 1747297755.186481] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:29:16 | 1747297756.214107] Core 0 usage: 6.7%
+[2025-05-15 08:29:17 | 1747297757.219770] Core 0 usage: 11.8%
+[2025-05-15 08:29:18 | 1747297758.225572] Core 0 usage: 16.7%
+[2025-05-15 08:29:19 | 1747297759.230958] Core 0 usage: 12.5%
+[2025-05-15 08:29:20 | 1747297760.237315] Core 0 usage: 18.7%
+[2025-05-15 08:29:21 | 1747297761.242380] Core 0 usage: 11.8%
+[2025-05-15 08:29:22 | 1747297762.247415] Core 0 usage: 100.0%
+[2025-05-15 08:29:22 | 1747297762.247531] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:29:23 | 1747297763.272331] Core 0 usage: 95.2%
+[2025-05-15 08:29:23 | 1747297763.272460] Moving job freqmine off core 1
+[2025-05-15 08:29:23 | 1747297763.307365] Moving job ferret off core 1
+[2025-05-15 08:29:24 | 1747297764.346035] Core 0 usage: 94.7%
+[2025-05-15 08:29:25 | 1747297765.352135] Core 0 usage: 100.0%
+[2025-05-15 08:29:26 | 1747297766.358123] Core 0 usage: 95.0%
+[2025-05-15 08:29:27 | 1747297767.362775] Core 0 usage: 85.0%
+[2025-05-15 08:29:28 | 1747297768.366850] Core 0 usage: 27.3%
+[2025-05-15 08:29:28 | 1747297768.366973] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:29:28 | 1747297768.367012] Moving job freqmine on core 1
+[2025-05-15 08:29:28 | 1747297768.388245] Moving job ferret on core 1
+[2025-05-15 08:29:29 | 1747297769.416024] Core 0 usage: 12.5%
+[2025-05-15 08:29:29 | 1747297769.416140] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:29:30 | 1747297770.440965] Core 0 usage: 25.0%
+[2025-05-15 08:29:31 | 1747297771.446497] Core 0 usage: 12.5%
+[2025-05-15 08:29:32 | 1747297772.452219] Core 0 usage: 6.7%
+[2025-05-15 08:29:33 | 1747297773.458241] Core 0 usage: 37.5%
+[2025-05-15 08:29:34 | 1747297774.465717] Core 0 usage: 66.7%
+[2025-05-15 08:29:35 | 1747297775.473294] Core 0 usage: 64.7%
+[2025-05-15 08:29:36 | 1747297776.479030] Core 0 usage: 64.7%
+[2025-05-15 08:29:37 | 1747297777.486257] Core 0 usage: 68.4%
+[2025-05-15 08:29:38 | 1747297778.492520] Core 0 usage: 66.7%
+[2025-05-15 08:29:39 | 1747297779.499302] Core 0 usage: 90.0%
+[2025-05-15 08:29:39 | 1747297779.499416] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:29:40 | 1747297780.527500] Core 0 usage: 100.0%
+[2025-05-15 08:29:40 | 1747297780.527623] Moving job freqmine off core 1
+[2025-05-15 08:29:40 | 1747297780.564610] Moving job ferret off core 1
+[2025-05-15 08:29:41 | 1747297781.613087] Core 0 usage: 72.2%
+[2025-05-15 08:29:42 | 1747297782.618731] Core 0 usage: 78.9%
+[2025-05-15 08:29:43 | 1747297783.624752] Core 0 usage: 73.7%
+[2025-05-15 08:29:44 | 1747297784.631339] Core 0 usage: 78.9%
+[2025-05-15 08:29:45 | 1747297785.637466] Core 0 usage: 75.0%
+[2025-05-15 08:29:46 | 1747297786.643111] Core 0 usage: 77.8%
+[2025-05-15 08:29:47 | 1747297787.647971] Core 0 usage: 77.8%
+[2025-05-15 08:29:48 | 1747297788.652339] Core 0 usage: 78.9%
+[2025-05-15 08:29:49 | 1747297789.658740] Core 0 usage: 75.0%
+[2025-05-15 08:29:50 | 1747297790.665092] Core 0 usage: 77.8%
+[2025-05-15 08:29:51 | 1747297791.669809] Core 0 usage: 64.7%
+[2025-05-15 08:29:52 | 1747297792.674891] Core 0 usage: 63.2%
+[2025-05-15 08:29:53 | 1747297793.682655] Core 0 usage: 73.7%
+[2025-05-15 08:29:54 | 1747297794.688812] Core 0 usage: 68.4%
+[2025-05-15 08:29:55 | 1747297795.696039] Core 0 usage: 66.7%
+[2025-05-15 08:29:56 | 1747297796.701137] Core 0 usage: 73.7%
+[2025-05-15 08:29:57 | 1747297797.705871] Core 0 usage: 100.0%
+[2025-05-15 08:29:58 | 1747297798.713343] Core 0 usage: 95.2%
+[2025-05-15 08:29:59 | 1747297799.723372] Core 0 usage: 100.0%
+[2025-05-15 08:30:00 | 1747297800.728985] Core 0 usage: 95.0%
+[2025-05-15 08:30:01 | 1747297801.735729] Core 0 usage: 95.2%
+[2025-05-15 08:30:02 | 1747297802.742403] Core 0 usage: 95.2%
+[2025-05-15 08:30:03 | 1747297803.748375] Core 0 usage: 100.0%
+[2025-05-15 08:30:04 | 1747297804.753248] Core 0 usage: 100.0%
+[2025-05-15 08:30:05 | 1747297805.758107] Core 0 usage: 100.0%
+[2025-05-15 08:30:06 | 1747297806.763063] Core 0 usage: 94.7%
+[2025-05-15 08:30:07 | 1747297807.772232] Core 0 usage: 94.7%
+[2025-05-15 08:30:08 | 1747297808.779443] Core 0 usage: 94.7%
+[2025-05-15 08:30:09 | 1747297809.787242] Core 0 usage: 60.0%
+[2025-05-15 08:30:10 | 1747297810.791911] Core 0 usage: 30.0%
+[2025-05-15 08:30:10 | 1747297810.792026] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:30:10 | 1747297810.792063] Moving job freqmine on core 1
+[2025-05-15 08:30:10 | 1747297810.817298] Moving job ferret on core 1
+[2025-05-15 08:30:11 | 1747297811.851350] Core 0 usage: 41.2%
+[2025-05-15 08:30:11 | 1747297811.851541] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:30:12 | 1747297812.878026] Core 0 usage: 33.3%
+[2025-05-15 08:30:13 | 1747297813.883956] Core 0 usage: 43.8%
+[2025-05-15 08:30:14 | 1747297814.890296] Core 0 usage: 46.7%
+[2025-05-15 08:30:15 | 1747297815.895264] Core 0 usage: 63.2%
+[2025-05-15 08:30:16 | 1747297816.901935] Core 0 usage: 61.1%
+[2025-05-15 08:30:17 | 1747297817.908286] Core 0 usage: 64.7%
+[2025-05-15 08:30:18 | 1747297818.915055] Core 0 usage: 61.1%
+[2025-05-15 08:30:19 | 1747297819.921030] Core 0 usage: 62.5%
+[2025-05-15 08:30:20 | 1747297820.928393] Core 0 usage: 66.7%
+[2025-05-15 08:30:21 | 1747297821.935570] Core 0 usage: 100.0%
+[2025-05-15 08:30:21 | 1747297821.935680] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:30:22 | 1747297822.962603] Core 0 usage: 100.0%
+[2025-05-15 08:30:22 | 1747297822.962773] Moving job freqmine off core 1
+[2025-05-15 08:30:23 | 1747297823.005845] Moving job ferret off core 1
+[2025-05-15 08:30:24 | 1747297824.046838] Core 0 usage: 95.2%
+[2025-05-15 08:30:25 | 1747297825.053756] Core 0 usage: 94.7%
+[2025-05-15 08:30:26 | 1747297826.058889] Core 0 usage: 94.4%
+[2025-05-15 08:30:27 | 1747297827.063729] Core 0 usage: 89.5%
+[2025-05-15 08:30:28 | 1747297828.068528] Core 0 usage: 36.8%
+[2025-05-15 08:30:29 | 1747297829.072468] Core 0 usage: 29.4%
+[2025-05-15 08:30:29 | 1747297829.072586] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:30:29 | 1747297829.072621] Moving job freqmine on core 1
+[2025-05-15 08:30:29 | 1747297829.095211] Moving job ferret on core 1
+[2025-05-15 08:30:30 | 1747297830.127997] Core 0 usage: 58.8%
+[2025-05-15 08:30:31 | 1747297831.133979] Core 0 usage: 52.9%
+[2025-05-15 08:30:32 | 1747297832.140388] Core 0 usage: 55.6%
+[2025-05-15 08:30:33 | 1747297833.145970] Core 0 usage: 58.8%
+[2025-05-15 08:30:34 | 1747297834.151736] Core 0 usage: 100.0%
+[2025-05-15 08:30:34 | 1747297834.151848] Moving job freqmine off core 1
+[2025-05-15 08:30:34 | 1747297834.191836] Moving job ferret off core 1
+[2025-05-15 08:30:35 | 1747297835.260149] Core 0 usage: 95.0%
+[2025-05-15 08:30:36 | 1747297836.268116] Core 0 usage: 95.2%
+[2025-05-15 08:30:37 | 1747297837.274030] Core 0 usage: 100.0%
+[2025-05-15 08:30:38 | 1747297838.282416] Core 0 usage: 94.7%
+[2025-05-15 08:30:39 | 1747297839.288797] Core 0 usage: 95.0%
+[2025-05-15 08:30:40 | 1747297840.295697] Core 0 usage: 100.0%
+[2025-05-15 08:30:41 | 1747297841.302083] Core 0 usage: 100.0%
+[2025-05-15 08:30:42 | 1747297842.311784] Core 0 usage: 100.0%
+[2025-05-15 08:30:43 | 1747297843.321619] Core 0 usage: 100.0%
+[2025-05-15 08:30:44 | 1747297844.327660] Core 0 usage: 100.0%
+[2025-05-15 08:30:45 | 1747297845.334135] Core 0 usage: 95.2%
+[2025-05-15 08:30:46 | 1747297846.339908] Core 0 usage: 94.7%
+[2025-05-15 08:30:47 | 1747297847.346236] Core 0 usage: 95.0%
+[2025-05-15 08:30:48 | 1747297848.352505] Core 0 usage: 94.7%
+[2025-05-15 08:30:49 | 1747297849.357087] Core 0 usage: 90.0%
+[2025-05-15 08:30:50 | 1747297850.363026] Core 0 usage: 85.7%
+[2025-05-15 08:30:51 | 1747297851.369881] Core 0 usage: 83.3%
+[2025-05-15 08:30:52 | 1747297852.373706] Core 0 usage: 15.8%
+[2025-05-15 08:30:52 | 1747297852.373821] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:30:52 | 1747297852.373857] Moving job freqmine on core 1
+[2025-05-15 08:30:52 | 1747297852.397323] Moving job ferret on core 1
+[2025-05-15 08:30:53 | 1747297853.424509] Core 0 usage: 12.5%
+[2025-05-15 08:30:53 | 1747297853.424787] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:30:54 | 1747297854.448909] Core 0 usage: 12.5%
+[2025-05-15 08:30:55 | 1747297855.454449] Core 0 usage: 12.5%
+[2025-05-15 08:30:56 | 1747297856.459826] Core 0 usage: 6.2%
+[2025-05-15 08:30:57 | 1747297857.464910] Core 0 usage: 50.0%
+[2025-05-15 08:30:58 | 1747297858.471286] Core 0 usage: 61.1%
+[2025-05-15 08:30:59 | 1747297859.477064] Core 0 usage: 58.8%
+[2025-05-15 08:31:00 | 1747297860.483091] Core 0 usage: 70.6%
+[2025-05-15 08:31:01 | 1747297861.494525] Core 0 usage: 68.4%
+[2025-05-15 08:31:02 | 1747297862.500303] Core 0 usage: 70.6%
+[2025-05-15 08:31:03 | 1747297863.507046] Core 0 usage: 73.7%
+[2025-05-15 08:31:04 | 1747297864.512860] Core 0 usage: 66.7%
+[2025-05-15 08:31:05 | 1747297865.518340] Core 0 usage: 64.7%
+[2025-05-15 08:31:06 | 1747297866.524368] Core 0 usage: 73.7%
+[2025-05-15 08:31:07 | 1747297867.530357] Core 0 usage: 66.7%
+[2025-05-15 08:31:08 | 1747297868.537062] Core 0 usage: 66.7%
+[2025-05-15 08:31:09 | 1747297869.545159] Core 0 usage: 61.1%
+[2025-05-15 08:31:10 | 1747297870.551394] Core 0 usage: 56.3%
+[2025-05-15 08:31:11 | 1747297871.557855] Core 0 usage: 50.0%
+[2025-05-15 08:31:12 | 1747297872.563370] Core 0 usage: 56.3%
+[2025-05-15 08:31:13 | 1747297873.573520] Core 0 usage: 56.2%
+[2025-05-15 08:31:14 | 1747297874.579936] Core 0 usage: 53.3%
+[2025-05-15 08:31:15 | 1747297875.585834] Core 0 usage: 100.0%
+[2025-05-15 08:31:15 | 1747297875.585943] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:31:16 | 1747297876.621219] Core 0 usage: 100.0%
+[2025-05-15 08:31:16 | 1747297876.621336] Moving job freqmine off core 1
+[2025-05-15 08:31:16 | 1747297876.659850] Moving job ferret off core 1
+[2025-05-15 08:31:17 | 1747297877.698017] Core 0 usage: 100.0%
+[2025-05-15 08:31:18 | 1747297878.702369] Core 0 usage: 100.0%
+[2025-05-15 08:31:19 | 1747297879.707107] Core 0 usage: 100.0%
+[2025-05-15 08:31:20 | 1747297880.712875] Core 0 usage: 100.0%
+[2025-05-15 08:31:21 | 1747297881.721602] Core 0 usage: 100.0%
+[2025-05-15 08:31:22 | 1747297882.739170] Core 0 usage: 100.0%
+[2025-05-15 08:31:23 | 1747297883.744802] Core 0 usage: 90.5%
+[2025-05-15 08:31:24 | 1747297884.749579] Core 0 usage: 84.2%
+[2025-05-15 08:31:25 | 1747297885.754948] Core 0 usage: 84.2%
+[2025-05-15 08:31:26 | 1747297886.759994] Core 0 usage: 75.0%
+[2025-05-15 08:31:27 | 1747297887.764741] Core 0 usage: 100.0%
+[2025-05-15 08:31:28 | 1747297888.770779] Core 0 usage: 100.0%
+[2025-05-15 08:31:29 | 1747297889.777368] Core 0 usage: 100.0%
+[2025-05-15 08:31:30 | 1747297890.784539] Core 0 usage: 100.0%
+[2025-05-15 08:31:31 | 1747297891.790973] Core 0 usage: 100.0%
+[2025-05-15 08:31:32 | 1747297892.796307] Core 0 usage: 95.0%
+[2025-05-15 08:31:33 | 1747297893.805027] Core 0 usage: 100.0%
+[2025-05-15 08:31:34 | 1747297894.811187] Core 0 usage: 95.0%
+[2025-05-15 08:31:35 | 1747297895.817931] Core 0 usage: 89.5%
+[2025-05-15 08:31:36 | 1747297896.826076] Core 0 usage: 85.0%
+[2025-05-15 08:31:37 | 1747297897.833467] Core 0 usage: 70.0%
+[2025-05-15 08:31:38 | 1747297898.839551] Core 0 usage: 72.2%
+[2025-05-15 08:31:39 | 1747297899.845315] Core 0 usage: 76.2%
+[2025-05-15 08:31:40 | 1747297900.851581] Core 0 usage: 76.2%
+[2025-05-15 08:31:41 | 1747297901.857884] Core 0 usage: 76.2%
+[2025-05-15 08:31:42 | 1747297902.863756] Core 0 usage: 73.7%
+[2025-05-15 08:31:43 | 1747297903.869147] Core 0 usage: 78.9%
+[2025-05-15 08:31:44 | 1747297904.875313] Core 0 usage: 73.7%
+[2025-05-15 08:31:45 | 1747297905.881092] Core 0 usage: 25.0%
+[2025-05-15 08:31:45 | 1747297905.881221] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:31:45 | 1747297905.881263] Moving job freqmine on core 1
+[2025-05-15 08:31:45 | 1747297905.903602] Moving job ferret on core 1
+[2025-05-15 08:31:46 | 1747297906.932132] Core 0 usage: 10.5%
+[2025-05-15 08:31:46 | 1747297906.932267] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:31:47 | 1747297907.952936] Core 0 usage: 10.5%
+[2025-05-15 08:31:48 | 1747297908.957491] Core 0 usage: 15.0%
+[2025-05-15 08:31:49 | 1747297909.962241] Core 0 usage: 10.5%
+[2025-05-15 08:31:50 | 1747297910.966893] Core 0 usage: 11.1%
+[2025-05-15 08:31:51 | 1747297911.971428] Core 0 usage: 28.6%
+[2025-05-15 08:31:52 | 1747297912.977449] Core 0 usage: 33.3%
+[2025-05-15 08:31:53 | 1747297913.984099] Core 0 usage: 30.8%
+[2025-05-15 08:31:54 | 1747297914.990144] Core 0 usage: 28.6%
+[2025-05-15 08:31:55 | 1747297915.996963] Core 0 usage: 35.7%
+[2025-05-15 08:31:57 | 1747297917.003999] Core 0 usage: 37.5%
+[2025-05-15 08:31:58 | 1747297918.009461] Core 0 usage: 14.3%
+[2025-05-15 08:31:59 | 1747297919.015108] Core 0 usage: 0.0%
+[2025-05-15 08:32:00 | 1747297920.020558] Core 0 usage: 7.1%
+[2025-05-15 08:32:01 | 1747297921.027173] Core 0 usage: 14.3%
+[2025-05-15 08:32:02 | 1747297922.033179] Core 0 usage: 13.3%
+[2025-05-15 08:32:03 | 1747297923.039350] Core 0 usage: 20.0%
+[2025-05-15 08:32:04 | 1747297924.045283] Core 0 usage: 23.1%
+[2025-05-15 08:32:05 | 1747297925.051389] Core 0 usage: 33.3%
+[2025-05-15 08:32:06 | 1747297926.056810] Core 0 usage: 33.3%
+[2025-05-15 08:32:07 | 1747297927.062394] Core 0 usage: 23.1%
+[2025-05-15 08:32:08 | 1747297928.068424] Core 0 usage: 28.6%
+[2025-05-15 08:32:09 | 1747297929.074837] Core 0 usage: 33.3%
+[2025-05-15 08:32:10 | 1747297930.080456] Core 0 usage: 100.0%
+[2025-05-15 08:32:10 | 1747297930.080568] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:32:11 | 1747297931.120555] Core 0 usage: 100.0%
+[2025-05-15 08:32:11 | 1747297931.120690] Moving job freqmine off core 1
+[2025-05-15 08:32:11 | 1747297931.152601] Moving job ferret off core 1
+[2025-05-15 08:32:12 | 1747297932.191711] Core 0 usage: 66.7%
+[2025-05-15 08:32:13 | 1747297933.196343] Core 0 usage: 71.4%
+[2025-05-15 08:32:14 | 1747297934.200503] Core 0 usage: 70.0%
+[2025-05-15 08:32:15 | 1747297935.205096] Core 0 usage: 68.4%
+[2025-05-15 08:32:16 | 1747297936.210478] Core 0 usage: 85.0%
+[2025-05-15 08:32:17 | 1747297937.217278] Core 0 usage: 89.5%
+[2025-05-15 08:32:18 | 1747297938.222954] Core 0 usage: 94.4%
+[2025-05-15 08:32:19 | 1747297939.228902] Core 0 usage: 89.5%
+[2025-05-15 08:32:20 | 1747297940.233719] Core 0 usage: 90.5%
+[2025-05-15 08:32:21 | 1747297941.241384] Core 0 usage: 90.0%
+[2025-05-15 08:32:22 | 1747297942.249866] Core 0 usage: 44.4%
+[2025-05-15 08:32:23 | 1747297943.255054] Core 0 usage: 37.5%
+[2025-05-15 08:32:24 | 1747297944.259393] Core 0 usage: 37.5%
+[2025-05-15 08:32:25 | 1747297945.263565] Core 0 usage: 44.4%
+[2025-05-15 08:32:26 | 1747297946.267562] Core 0 usage: 37.5%
+[2025-05-15 08:32:27 | 1747297947.271892] Core 0 usage: 37.5%
+[2025-05-15 08:32:28 | 1747297948.276067] Core 0 usage: 30.0%
+[2025-05-15 08:32:28 | 1747297948.276174] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:32:28 | 1747297948.276223] Moving job freqmine on core 1
+[2025-05-15 08:32:28 | 1747297948.300343] Moving job ferret on core 1
+[2025-05-15 08:32:29 | 1747297949.329969] Core 0 usage: 14.3%
+[2025-05-15 08:32:29 | 1747297949.330077] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:32:30 | 1747297950.356003] Core 0 usage: 7.7%
+[2025-05-15 08:32:31 | 1747297951.362127] Core 0 usage: 7.1%
+[2025-05-15 08:32:32 | 1747297952.367830] Core 0 usage: 14.3%
+[2025-05-15 08:32:33 | 1747297953.373261] Core 0 usage: 28.6%
+[2025-05-15 08:32:34 | 1747297954.381459] Core 0 usage: 90.0%
+[2025-05-15 08:32:34 | 1747297954.381567] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:32:35 | 1747297955.405868] Core 0 usage: 90.0%
+[2025-05-15 08:32:35 | 1747297955.405983] Moving job freqmine off core 1
+[2025-05-15 08:32:35 | 1747297955.447910] Moving job ferret off core 1
+[2025-05-15 08:32:36 | 1747297956.481014] Core 0 usage: 57.9%
+[2025-05-15 08:32:37 | 1747297957.486509] Core 0 usage: 57.9%
+[2025-05-15 08:32:38 | 1747297958.492525] Core 0 usage: 63.2%
+[2025-05-15 08:32:39 | 1747297959.497081] Core 0 usage: 34.8%
+[2025-05-15 08:32:39 | 1747297959.497191] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:32:39 | 1747297959.497245] Moving job freqmine on core 1
+[2025-05-15 08:32:39 | 1747297959.518385] Moving job ferret on core 1
+[2025-05-15 08:32:40 | 1747297960.546141] Core 0 usage: 10.5%
+[2025-05-15 08:32:40 | 1747297960.546262] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:32:41 | 1747297961.568978] Core 0 usage: 15.8%
+[2025-05-15 08:32:42 | 1747297962.573919] Core 0 usage: 5.9%
+[2025-05-15 08:32:43 | 1747297963.579144] Core 0 usage: 11.1%
+[2025-05-15 08:32:44 | 1747297964.583705] Core 0 usage: 11.1%
+[2025-05-15 08:32:45 | 1747297965.588609] Core 0 usage: 28.6%
+[2025-05-15 08:32:46 | 1747297966.596021] Core 0 usage: 28.6%
+[2025-05-15 08:32:47 | 1747297967.602609] Core 0 usage: 40.0%
+[2025-05-15 08:32:48 | 1747297968.608800] Core 0 usage: 33.3%
+[2025-05-15 08:32:49 | 1747297969.615247] Core 0 usage: 43.8%
+[2025-05-15 08:32:50 | 1747297970.621358] Core 0 usage: 23.1%
+[2025-05-15 08:32:51 | 1747297971.626707] Core 0 usage: 15.4%
+[2025-05-15 08:32:52 | 1747297972.632474] Core 0 usage: 20.0%
+[2025-05-15 08:32:53 | 1747297973.638512] Core 0 usage: 14.3%
+[2025-05-15 08:32:54 | 1747297974.644473] Core 0 usage: 21.4%
+[2025-05-15 08:32:55 | 1747297975.649881] Core 0 usage: 7.7%
+[2025-05-15 08:32:56 | 1747297976.655258] Core 0 usage: 0.0%
+[2025-05-15 08:32:57 | 1747297977.661612] Core 0 usage: 56.2%
+[2025-05-15 08:32:58 | 1747297978.667163] Core 0 usage: 52.9%
+[2025-05-15 08:32:59 | 1747297979.674240] Core 0 usage: 56.2%
+[2025-05-15 08:33:00 | 1747297980.679965] Core 0 usage: 55.6%
+[2025-05-15 08:33:01 | 1747297981.686256] Core 0 usage: 52.9%
+[2025-05-15 08:33:02 | 1747297982.692802] Core 0 usage: 50.0%
+[2025-05-15 08:33:03 | 1747297983.698066] Core 0 usage: 100.0%
+[2025-05-15 08:33:03 | 1747297983.698180] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:33:04 | 1747297984.725252] Core 0 usage: 100.0%
+[2025-05-15 08:33:04 | 1747297984.725367] Moving job freqmine off core 1
+[2025-05-15 08:33:04 | 1747297984.781862] Moving job ferret off core 1
+[2025-05-15 08:33:05 | 1747297985.836427] Core 0 usage: 70.0%
+[2025-05-15 08:33:06 | 1747297986.843832] Core 0 usage: 70.0%
+[2025-05-15 08:33:07 | 1747297987.850471] Core 0 usage: 70.0%
+[2025-05-15 08:33:08 | 1747297988.856898] Core 0 usage: 68.4%
+[2025-05-15 08:33:09 | 1747297989.862572] Core 0 usage: 22.7%
+[2025-05-15 08:33:09 | 1747297989.862732] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:33:09 | 1747297989.862773] Moving job freqmine on core 1
+[2025-05-15 08:33:09 | 1747297989.883966] Moving job ferret on core 1
+[2025-05-15 08:33:10 | 1747297990.927457] Core 0 usage: 0.0%
+[2025-05-15 08:33:10 | 1747297990.927600] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:33:11 | 1747297991.949607] Core 0 usage: 5.9%
+[2025-05-15 08:33:12 | 1747297992.954183] Core 0 usage: 0.0%
+[2025-05-15 08:33:13 | 1747297993.958908] Core 0 usage: 5.9%
+[2025-05-15 08:33:14 | 1747297994.963856] Core 0 usage: 5.9%
+[2025-05-15 08:33:15 | 1747297995.969478] Core 0 usage: 95.2%
+[2025-05-15 08:33:15 | 1747297995.969581] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:33:16 | 1747297996.991982] Core 0 usage: 94.7%
+[2025-05-15 08:33:16 | 1747297996.992096] Moving job freqmine off core 1
+[2025-05-15 08:33:17 | 1747297997.034903] Moving job ferret off core 1
+[2025-05-15 08:33:18 | 1747297998.070881] Core 0 usage: 68.4%
+[2025-05-15 08:33:19 | 1747297999.075477] Core 0 usage: 63.2%
+[2025-05-15 08:33:20 | 1747298000.080091] Core 0 usage: 68.4%
+[2025-05-15 08:33:21 | 1747298001.084766] Core 0 usage: 70.0%
+[2025-05-15 08:33:22 | 1747298002.089258] Core 0 usage: 29.4%
+[2025-05-15 08:33:22 | 1747298002.089365] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:33:22 | 1747298002.089419] Moving job freqmine on core 1
+[2025-05-15 08:33:22 | 1747298002.116308] Moving job ferret on core 1
+[2025-05-15 08:33:23 | 1747298003.151953] Core 0 usage: 55.6%
+[2025-05-15 08:33:24 | 1747298004.160368] Core 0 usage: 61.1%
+[2025-05-15 08:33:25 | 1747298005.166263] Core 0 usage: 56.2%
+[2025-05-15 08:33:26 | 1747298006.172250] Core 0 usage: 58.8%
+[2025-05-15 08:33:27 | 1747298007.178641] Core 0 usage: 50.0%
+[2025-05-15 08:33:28 | 1747298008.185186] Core 0 usage: 100.0%
+[2025-05-15 08:33:28 | 1747298008.185319] Moving job freqmine off core 1
+[2025-05-15 08:33:28 | 1747298008.244434] Moving job ferret off core 1
+[2025-05-15 08:33:29 | 1747298009.291236] Core 0 usage: 100.0%
+[2025-05-15 08:33:30 | 1747298010.301105] Core 0 usage: 100.0%
+[2025-05-15 08:33:31 | 1747298011.308802] Core 0 usage: 95.2%
+[2025-05-15 08:33:32 | 1747298012.314594] Core 0 usage: 100.0%
+[2025-05-15 08:33:33 | 1747298013.324685] Core 0 usage: 100.0%
+[2025-05-15 08:33:34 | 1747298014.329421] Core 0 usage: 57.9%
+[2025-05-15 08:33:35 | 1747298015.333920] Core 0 usage: 57.9%
+[2025-05-15 08:33:36 | 1747298016.337978] Core 0 usage: 61.1%
+[2025-05-15 08:33:37 | 1747298017.343266] Core 0 usage: 57.9%
+[2025-05-15 08:33:38 | 1747298018.348083] Core 0 usage: 52.9%
+[2025-05-15 08:33:39 | 1747298019.352588] Core 0 usage: 52.9%
+[2025-05-15 08:33:40 | 1747298020.358951] Core 0 usage: 95.0%
+[2025-05-15 08:33:41 | 1747298021.366629] Core 0 usage: 95.2%
+[2025-05-15 08:33:42 | 1747298022.373223] Core 0 usage: 95.0%
+[2025-05-15 08:33:43 | 1747298023.378351] Core 0 usage: 94.7%
+[2025-05-15 08:33:44 | 1747298024.383472] Core 0 usage: 100.0%
+[2025-05-15 08:33:45 | 1747298025.389652] Core 0 usage: 100.0%
+[2025-05-15 08:33:46 | 1747298026.394535] Core 0 usage: 95.0%
+[2025-05-15 08:33:47 | 1747298027.399763] Core 0 usage: 89.5%
+[2025-05-15 08:33:48 | 1747298028.405305] Core 0 usage: 94.7%
+[2025-05-15 08:33:49 | 1747298029.411429] Core 0 usage: 90.0%
+[2025-05-15 08:33:50 | 1747298030.421480] Core 0 usage: 90.0%
+[2025-05-15 08:33:51 | 1747298031.426898] Core 0 usage: 73.7%
+[2025-05-15 08:33:52 | 1747298032.431118] Core 0 usage: 16.7%
+[2025-05-15 08:33:52 | 1747298032.431245] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:33:52 | 1747298032.431285] Moving job freqmine on core 1
+[2025-05-15 08:33:52 | 1747298032.457850] Moving job ferret on core 1
+[2025-05-15 08:33:53 | 1747298033.502173] Core 0 usage: 7.7%
+[2025-05-15 08:33:53 | 1747298033.502296] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:33:54 | 1747298034.538241] Core 0 usage: 18.8%
+[2025-05-15 08:33:55 | 1747298035.543818] Core 0 usage: 18.8%
+[2025-05-15 08:33:56 | 1747298036.549516] Core 0 usage: 18.8%
+[2025-05-15 08:33:57 | 1747298037.555790] Core 0 usage: 0.0%
+[2025-05-15 08:33:58 | 1747298038.561186] Core 0 usage: 11.8%
+[2025-05-15 08:33:59 | 1747298039.566860] Core 0 usage: 6.3%
+[2025-05-15 08:34:00 | 1747298040.571854] Core 0 usage: 6.2%
+[2025-05-15 08:34:01 | 1747298041.577183] Core 0 usage: 0.0%
+[2025-05-15 08:34:01 | 1747298041.581005] Job ferret completed
+[2025-05-15 08:34:01 | 1747298041.694093] Starting next regular job: canneal with 2 threads on cores [1, 2, 3]
+[2025-05-15 08:34:01 | 1747298041.896848] Job canneal started successfully
+[2025-05-15 08:34:02 | 1747298042.899351] Core 0 usage: 22.2%
+[2025-05-15 08:34:03 | 1747298043.904486] Core 0 usage: 14.3%
+[2025-05-15 08:34:04 | 1747298044.910272] Core 0 usage: 20.0%
+[2025-05-15 08:34:05 | 1747298045.916329] Core 0 usage: 26.7%
+[2025-05-15 08:34:06 | 1747298046.921472] Core 0 usage: 14.3%
+[2025-05-15 08:34:07 | 1747298047.927218] Core 0 usage: 23.5%
+[2025-05-15 08:34:08 | 1747298048.932917] Core 0 usage: 21.4%
+[2025-05-15 08:34:09 | 1747298049.938612] Core 0 usage: 23.1%
+[2025-05-15 08:34:10 | 1747298050.945289] Core 0 usage: 31.2%
+[2025-05-15 08:34:11 | 1747298051.950490] Core 0 usage: 40.0%
+[2025-05-15 08:34:12 | 1747298052.956360] Core 0 usage: 33.3%
+[2025-05-15 08:34:13 | 1747298053.962289] Core 0 usage: 33.3%
+[2025-05-15 08:34:14 | 1747298054.968101] Core 0 usage: 43.7%
+[2025-05-15 08:34:15 | 1747298055.973797] Core 0 usage: 84.2%
+[2025-05-15 08:34:16 | 1747298056.979303] Core 0 usage: 83.3%
+[2025-05-15 08:34:17 | 1747298057.990244] Core 0 usage: 85.0%
+[2025-05-15 08:34:19 | 1747298059.001602] Core 0 usage: 84.2%
+[2025-05-15 08:34:20 | 1747298060.007706] Core 0 usage: 88.9%
+[2025-05-15 08:34:20 | 1747298060.007822] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:34:21 | 1747298061.039047] Core 0 usage: 89.5%
+[2025-05-15 08:34:21 | 1747298061.039193] Moving job freqmine off core 1
+[2025-05-15 08:34:21 | 1747298061.085064] Moving job canneal off core 1
+[2025-05-15 08:34:22 | 1747298062.124043] Core 0 usage: 100.0%
+[2025-05-15 08:34:23 | 1747298063.131700] Core 0 usage: 95.0%
+[2025-05-15 08:34:24 | 1747298064.137839] Core 0 usage: 100.0%
+[2025-05-15 08:34:25 | 1747298065.143376] Core 0 usage: 95.2%
+[2025-05-15 08:34:26 | 1747298066.148991] Core 0 usage: 100.0%
+[2025-05-15 08:34:27 | 1747298067.157786] Core 0 usage: 100.0%
+[2025-05-15 08:34:28 | 1747298068.163997] Core 0 usage: 100.0%
+[2025-05-15 08:34:29 | 1747298069.169843] Core 0 usage: 100.0%
+[2025-05-15 08:34:30 | 1747298070.176378] Core 0 usage: 100.0%
+[2025-05-15 08:34:31 | 1747298071.182076] Core 0 usage: 100.0%
+[2025-05-15 08:34:32 | 1747298072.187771] Core 0 usage: 100.0%
+[2025-05-15 08:34:33 | 1747298073.195228] Core 0 usage: 95.0%
+[2025-05-15 08:34:34 | 1747298074.201265] Core 0 usage: 100.0%
+[2025-05-15 08:34:35 | 1747298075.207778] Core 0 usage: 84.2%
+[2025-05-15 08:34:36 | 1747298076.214097] Core 0 usage: 89.5%
+[2025-05-15 08:34:37 | 1747298077.218838] Core 0 usage: 89.5%
+[2025-05-15 08:34:38 | 1747298078.226227] Core 0 usage: 84.2%
+[2025-05-15 08:34:39 | 1747298079.232569] Core 0 usage: 81.0%
+[2025-05-15 08:34:40 | 1747298080.237129] Core 0 usage: 42.1%
+[2025-05-15 08:34:41 | 1747298081.241670] Core 0 usage: 44.4%
+[2025-05-15 08:34:42 | 1747298082.246130] Core 0 usage: 31.2%
+[2025-05-15 08:34:42 | 1747298082.246268] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:34:42 | 1747298082.246309] Moving job freqmine on core 1
+[2025-05-15 08:34:42 | 1747298082.271243] Moving job canneal on core 1
+[2025-05-15 08:34:43 | 1747298083.315385] Core 0 usage: 61.1%
+[2025-05-15 08:34:44 | 1747298084.321441] Core 0 usage: 57.1%
+[2025-05-15 08:34:45 | 1747298085.328503] Core 0 usage: 63.2%
+[2025-05-15 08:34:46 | 1747298086.333591] Core 0 usage: 100.0%
+[2025-05-15 08:34:46 | 1747298086.333702] Moving job freqmine off core 1
+[2025-05-15 08:34:46 | 1747298086.366996] Moving job canneal off core 1
+[2025-05-15 08:34:47 | 1747298087.412753] Core 0 usage: 95.5%
+[2025-05-15 08:34:48 | 1747298088.418110] Core 0 usage: 90.0%
+[2025-05-15 08:34:49 | 1747298089.423407] Core 0 usage: 94.7%
+[2025-05-15 08:34:50 | 1747298090.430190] Core 0 usage: 95.2%
+[2025-05-15 08:34:51 | 1747298091.434856] Core 0 usage: 94.7%
+[2025-05-15 08:34:52 | 1747298092.439436] Core 0 usage: 94.4%
+[2025-05-15 08:34:53 | 1747298093.443982] Core 0 usage: 89.5%
+[2025-05-15 08:34:54 | 1747298094.449804] Core 0 usage: 90.0%
+[2025-05-15 08:34:55 | 1747298095.456656] Core 0 usage: 95.0%
+[2025-05-15 08:34:55 | 1747298095.508637] Job freqmine completed
+[2025-05-15 08:34:55 | 1747298095.574793] Starting next regular job: blackscholes with 2 threads on cores [2, 3]
+[2025-05-15 08:34:55 | 1747298095.880357] Job blackscholes started successfully
+[2025-05-15 08:34:56 | 1747298096.887541] Core 0 usage: 85.0%
+[2025-05-15 08:34:57 | 1747298097.893318] Core 0 usage: 100.0%
+[2025-05-15 08:34:58 | 1747298098.899433] Core 0 usage: 95.2%
+[2025-05-15 08:34:59 | 1747298099.904924] Core 0 usage: 100.0%
+[2025-05-15 08:35:00 | 1747298100.910366] Core 0 usage: 100.0%
+[2025-05-15 08:35:01 | 1747298101.917091] Core 0 usage: 95.2%
+[2025-05-15 08:35:02 | 1747298102.923575] Core 0 usage: 100.0%
+[2025-05-15 08:35:03 | 1747298103.931175] Core 0 usage: 78.9%
+[2025-05-15 08:35:04 | 1747298104.935227] Core 0 usage: 38.9%
+[2025-05-15 08:35:05 | 1747298105.939513] Core 0 usage: 44.4%
+[2025-05-15 08:35:06 | 1747298106.944108] Core 0 usage: 38.9%
+[2025-05-15 08:35:07 | 1747298107.948619] Core 0 usage: 44.4%
+[2025-05-15 08:35:08 | 1747298108.952681] Core 0 usage: 42.1%
+[2025-05-15 08:35:09 | 1747298109.957441] Core 0 usage: 64.7%
+[2025-05-15 08:35:10 | 1747298110.961840] Core 0 usage: 62.5%
+[2025-05-15 08:35:11 | 1747298111.967232] Core 0 usage: 66.7%
+[2025-05-15 08:35:12 | 1747298112.972570] Core 0 usage: 70.0%
+[2025-05-15 08:35:13 | 1747298113.978923] Core 0 usage: 66.7%
+[2025-05-15 08:35:14 | 1747298114.985120] Core 0 usage: 70.0%
+[2025-05-15 08:35:15 | 1747298115.989794] Core 0 usage: 26.1%
+[2025-05-15 08:35:15 | 1747298115.989909] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:35:15 | 1747298115.989946] Moving job canneal on core 1
+[2025-05-15 08:35:16 | 1747298116.012511] Moving job blackscholes on core 1
+[2025-05-15 08:35:17 | 1747298117.041347] Core 0 usage: 25.0%
+[2025-05-15 08:35:17 | 1747298117.041465] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:35:18 | 1747298118.063440] Core 0 usage: 0.0%
+[2025-05-15 08:35:19 | 1747298119.068393] Core 0 usage: 5.9%
+[2025-05-15 08:35:20 | 1747298120.072854] Core 0 usage: 15.8%
+[2025-05-15 08:35:21 | 1747298121.077322] Core 0 usage: 15.8%
+[2025-05-15 08:35:22 | 1747298122.083002] Core 0 usage: 15.4%
+[2025-05-15 08:35:23 | 1747298123.092947] Core 0 usage: 21.4%
+[2025-05-15 08:35:24 | 1747298124.097737] Core 0 usage: 31.2%
+[2025-05-15 08:35:25 | 1747298125.105340] Core 0 usage: 31.3%
+[2025-05-15 08:35:26 | 1747298126.113156] Core 0 usage: 21.4%
+[2025-05-15 08:35:27 | 1747298127.119124] Core 0 usage: 20.0%
+[2025-05-15 08:35:28 | 1747298128.125134] Core 0 usage: 100.0%
+[2025-05-15 08:35:28 | 1747298128.125255] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:35:29 | 1747298129.148666] Core 0 usage: 100.0%
+[2025-05-15 08:35:29 | 1747298129.148773] Moving job canneal off core 1
+[2025-05-15 08:35:29 | 1747298129.188901] Moving job blackscholes off core 1
+[2025-05-15 08:35:30 | 1747298130.223294] Core 0 usage: 85.0%
+[2025-05-15 08:35:31 | 1747298131.229303] Core 0 usage: 81.8%
+[2025-05-15 08:35:32 | 1747298132.234500] Core 0 usage: 75.0%
+[2025-05-15 08:35:33 | 1747298133.238764] Core 0 usage: 77.3%
+[2025-05-15 08:35:34 | 1747298134.244322] Core 0 usage: 90.5%
+[2025-05-15 08:35:35 | 1747298135.249478] Core 0 usage: 85.7%
+[2025-05-15 08:35:36 | 1747298136.257137] Core 0 usage: 89.5%
+[2025-05-15 08:35:37 | 1747298137.264296] Core 0 usage: 100.0%
+[2025-05-15 08:35:38 | 1747298138.271302] Core 0 usage: 95.2%
+[2025-05-15 08:35:39 | 1747298139.275852] Core 0 usage: 90.5%
+[2025-05-15 08:35:40 | 1747298140.282196] Core 0 usage: 80.0%
+[2025-05-15 08:35:41 | 1747298141.287120] Core 0 usage: 81.0%
+[2025-05-15 08:35:42 | 1747298142.292911] Core 0 usage: 80.0%
+[2025-05-15 08:35:43 | 1747298143.299717] Core 0 usage: 77.8%
+[2025-05-15 08:35:44 | 1747298144.304281] Core 0 usage: 80.0%
+[2025-05-15 08:35:45 | 1747298145.310927] Core 0 usage: 75.0%
+[2025-05-15 08:35:46 | 1747298146.316464] Core 0 usage: 52.6%
+[2025-05-15 08:35:47 | 1747298147.320523] Core 0 usage: 50.0%
+[2025-05-15 08:35:48 | 1747298148.324764] Core 0 usage: 50.0%
+[2025-05-15 08:35:49 | 1747298149.329728] Core 0 usage: 47.1%
+[2025-05-15 08:35:50 | 1747298150.333900] Core 0 usage: 52.6%
+[2025-05-15 08:35:51 | 1747298151.338467] Core 0 usage: 52.6%
+[2025-05-15 08:35:52 | 1747298152.345505] Core 0 usage: 94.4%
+[2025-05-15 08:35:53 | 1747298153.353774] Core 0 usage: 90.0%
+[2025-05-15 08:35:54 | 1747298154.360145] Core 0 usage: 95.0%
+[2025-05-15 08:35:55 | 1747298155.365651] Core 0 usage: 94.7%
+[2025-05-15 08:35:56 | 1747298156.373574] Core 0 usage: 89.5%
+[2025-05-15 08:35:57 | 1747298157.378930] Core 0 usage: 73.7%
+[2025-05-15 08:35:58 | 1747298158.382734] Core 0 usage: 15.0%
+[2025-05-15 08:35:58 | 1747298158.382844] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:35:58 | 1747298158.382875] Moving job canneal on core 1
+[2025-05-15 08:35:58 | 1747298158.405062] Moving job blackscholes on core 1
+[2025-05-15 08:35:59 | 1747298159.433792] Core 0 usage: 0.0%
+[2025-05-15 08:35:59 | 1747298159.433999] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:36:00 | 1747298160.454471] Core 0 usage: 5.9%
+[2025-05-15 08:36:01 | 1747298161.459540] Core 0 usage: 17.6%
+[2025-05-15 08:36:02 | 1747298162.464343] Core 0 usage: 0.0%
+[2025-05-15 08:36:03 | 1747298163.469131] Core 0 usage: 0.0%
+[2025-05-15 08:36:04 | 1747298164.474234] Core 0 usage: 11.8%
+[2025-05-15 08:36:05 | 1747298165.479775] Core 0 usage: 5.9%
+[2025-05-15 08:36:06 | 1747298166.484863] Core 0 usage: 0.0%
+[2025-05-15 08:36:07 | 1747298167.489611] Core 0 usage: 11.8%
+[2025-05-15 08:36:08 | 1747298168.495341] Core 0 usage: 5.9%
+[2025-05-15 08:36:09 | 1747298169.501017] Core 0 usage: 80.0%
+[2025-05-15 08:36:10 | 1747298170.507278] Core 0 usage: 100.0%
+[2025-05-15 08:36:10 | 1747298170.507398] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:36:11 | 1747298171.532136] Core 0 usage: 100.0%
+[2025-05-15 08:36:11 | 1747298171.532264] Moving job canneal off core 1
+[2025-05-15 08:36:11 | 1747298171.567683] Moving job blackscholes off core 1
+[2025-05-15 08:36:12 | 1747298172.607326] Core 0 usage: 90.5%
+[2025-05-15 08:36:13 | 1747298173.612624] Core 0 usage: 85.0%
+[2025-05-15 08:36:14 | 1747298174.617755] Core 0 usage: 81.8%
+[2025-05-15 08:36:15 | 1747298175.622544] Core 0 usage: 100.0%
+[2025-05-15 08:36:16 | 1747298176.628254] Core 0 usage: 100.0%
+[2025-05-15 08:36:17 | 1747298177.635529] Core 0 usage: 100.0%
+[2025-05-15 08:36:18 | 1747298178.641743] Core 0 usage: 100.0%
+[2025-05-15 08:36:19 | 1747298179.649440] Core 0 usage: 100.0%
+[2025-05-15 08:36:20 | 1747298180.653964] Core 0 usage: 100.0%
+[2025-05-15 08:36:21 | 1747298181.657950] Core 0 usage: 89.5%
+[2025-05-15 08:36:22 | 1747298182.662461] Core 0 usage: 88.9%
+[2025-05-15 08:36:23 | 1747298183.667274] Core 0 usage: 65.0%
+[2025-05-15 08:36:24 | 1747298184.672298] Core 0 usage: 61.1%
+[2025-05-15 08:36:25 | 1747298185.676477] Core 0 usage: 65.0%
+[2025-05-15 08:36:26 | 1747298186.681638] Core 0 usage: 57.9%
+[2025-05-15 08:36:27 | 1747298187.686336] Core 0 usage: 10.5%
+[2025-05-15 08:36:27 | 1747298187.686479] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:36:27 | 1747298187.686525] Moving job canneal on core 1
+[2025-05-15 08:36:27 | 1747298187.708189] Moving job blackscholes on core 1
+[2025-05-15 08:36:28 | 1747298188.736253] Core 0 usage: 0.0%
+[2025-05-15 08:36:28 | 1747298188.736372] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:36:29 | 1747298189.761000] Core 0 usage: 12.5%
+[2025-05-15 08:36:30 | 1747298190.766967] Core 0 usage: 6.2%
+[2025-05-15 08:36:31 | 1747298191.772662] Core 0 usage: 13.3%
+[2025-05-15 08:36:32 | 1747298192.781597] Core 0 usage: 6.2%
+[2025-05-15 08:36:33 | 1747298193.786611] Core 0 usage: 100.0%
+[2025-05-15 08:36:33 | 1747298193.786712] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:36:34 | 1747298194.811802] Core 0 usage: 100.0%
+[2025-05-15 08:36:34 | 1747298194.811908] Moving job canneal off core 1
+[2025-05-15 08:36:34 | 1747298194.851367] Moving job blackscholes off core 1
+[2025-05-15 08:36:35 | 1747298195.906152] Core 0 usage: 100.0%
+[2025-05-15 08:36:36 | 1747298196.912485] Core 0 usage: 95.0%
+[2025-05-15 08:36:37 | 1747298197.917031] Core 0 usage: 90.5%
+[2025-05-15 08:36:38 | 1747298198.921968] Core 0 usage: 100.0%
+[2025-05-15 08:36:40 | 1747298200.636802] Job blackscholes completed
+[2025-05-15 08:36:40 | 1747298200.839845] Starting next regular job: vips with 2 threads on cores [2, 3]
+[2025-05-15 08:36:41 | 1747298201.077918] Job vips started successfully
+[2025-05-15 08:36:42 | 1747298202.081403] Core 0 usage: 52.6%
+[2025-05-15 08:36:43 | 1747298203.086642] Core 0 usage: 52.6%
+[2025-05-15 08:36:44 | 1747298204.091262] Core 0 usage: 47.1%
+[2025-05-15 08:36:45 | 1747298205.097521] Core 0 usage: 50.0%
+[2025-05-15 08:36:46 | 1747298206.103127] Core 0 usage: 33.3%
+[2025-05-15 08:36:46 | 1747298206.103257] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:36:46 | 1747298206.103297] Moving job canneal on core 1
+[2025-05-15 08:36:46 | 1747298206.125998] Moving job vips on core 1
+[2025-05-15 08:36:47 | 1747298207.164388] Core 0 usage: 52.9%
+[2025-05-15 08:36:48 | 1747298208.169685] Core 0 usage: 50.0%
+[2025-05-15 08:36:49 | 1747298209.175941] Core 0 usage: 50.0%
+[2025-05-15 08:36:50 | 1747298210.182317] Core 0 usage: 50.0%
+[2025-05-15 08:36:51 | 1747298211.188395] Core 0 usage: 46.7%
+[2025-05-15 08:36:51 | 1747298211.188513] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:36:52 | 1747298212.215280] Core 0 usage: 66.7%
+[2025-05-15 08:36:53 | 1747298213.222770] Core 0 usage: 61.1%
+[2025-05-15 08:36:54 | 1747298214.228367] Core 0 usage: 73.7%
+[2025-05-15 08:36:55 | 1747298215.233376] Core 0 usage: 73.7%
+[2025-05-15 08:36:56 | 1747298216.238151] Core 0 usage: 68.4%
+[2025-05-15 08:36:57 | 1747298217.242308] Core 0 usage: 68.4%
+[2025-05-15 08:36:58 | 1747298218.253513] Core 0 usage: 25.0%
+[2025-05-15 08:36:59 | 1747298219.260441] Core 0 usage: 20.0%
+[2025-05-15 08:37:00 | 1747298220.265071] Core 0 usage: 21.4%
+[2025-05-15 08:37:01 | 1747298221.271988] Core 0 usage: 20.0%
+[2025-05-15 08:37:02 | 1747298222.280240] Core 0 usage: 20.0%
+[2025-05-15 08:37:03 | 1747298223.285860] Core 0 usage: 25.0%
+[2025-05-15 08:37:04 | 1747298224.292805] Core 0 usage: 100.0%
+[2025-05-15 08:37:04 | 1747298224.292915] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:37:05 | 1747298225.318118] Core 0 usage: 100.0%
+[2025-05-15 08:37:05 | 1747298225.318266] Moving job canneal off core 1
+[2025-05-15 08:37:05 | 1747298225.353329] Moving job vips off core 1
+[2025-05-15 08:37:06 | 1747298226.392196] Core 0 usage: 73.7%
+[2025-05-15 08:37:07 | 1747298227.396478] Core 0 usage: 68.4%
+[2025-05-15 08:37:08 | 1747298228.401139] Core 0 usage: 68.4%
+[2025-05-15 08:37:09 | 1747298229.406285] Core 0 usage: 70.0%
+[2025-05-15 08:37:10 | 1747298230.411421] Core 0 usage: 86.4%
+[2025-05-15 08:37:11 | 1747298231.416219] Core 0 usage: 85.7%
+[2025-05-15 08:37:12 | 1747298232.421346] Core 0 usage: 85.0%
+[2025-05-15 08:37:13 | 1747298233.426611] Core 0 usage: 84.2%
+[2025-05-15 08:37:14 | 1747298234.431780] Core 0 usage: 86.4%
+[2025-05-15 08:37:15 | 1747298235.436698] Core 0 usage: 47.4%
+[2025-05-15 08:37:16 | 1747298236.440578] Core 0 usage: 22.7%
+[2025-05-15 08:37:16 | 1747298236.440710] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:37:16 | 1747298236.440749] Moving job canneal on core 1
+[2025-05-15 08:37:16 | 1747298236.460564] Moving job vips on core 1
+[2025-05-15 08:37:17 | 1747298237.488935] Core 0 usage: 0.0%
+[2025-05-15 08:37:17 | 1747298237.489048] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:37:18 | 1747298238.513305] Core 0 usage: 0.0%
+[2025-05-15 08:37:19 | 1747298239.518849] Core 0 usage: 6.7%
+[2025-05-15 08:37:20 | 1747298240.523724] Core 0 usage: 6.7%
+[2025-05-15 08:37:21 | 1747298241.528854] Core 0 usage: 6.2%
+[2025-05-15 08:37:22 | 1747298242.535010] Core 0 usage: 0.0%
+[2025-05-15 08:37:23 | 1747298243.542086] Core 0 usage: 11.8%
+[2025-05-15 08:37:24 | 1747298244.546830] Core 0 usage: 5.9%
+[2025-05-15 08:37:25 | 1747298245.551929] Core 0 usage: 5.9%
+[2025-05-15 08:37:26 | 1747298246.556358] Core 0 usage: 11.8%
+[2025-05-15 08:37:27 | 1747298247.561342] Core 0 usage: 100.0%
+[2025-05-15 08:37:27 | 1747298247.561451] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:37:28 | 1747298248.585799] Core 0 usage: 100.0%
+[2025-05-15 08:37:28 | 1747298248.585915] Moving job canneal off core 1
+[2025-05-15 08:37:28 | 1747298248.962341] Moving job vips off core 1
+[2025-05-15 08:37:30 | 1747298250.020533] Core 0 usage: 80.0%
+[2025-05-15 08:37:31 | 1747298251.026236] Core 0 usage: 80.0%
+[2025-05-15 08:37:32 | 1747298252.030757] Core 0 usage: 81.0%
+[2025-05-15 08:37:33 | 1747298253.035823] Core 0 usage: 81.8%
+[2025-05-15 08:37:34 | 1747298254.040518] Core 0 usage: 85.0%
+[2025-05-15 08:37:35 | 1747298255.046939] Core 0 usage: 90.0%
+[2025-05-15 08:37:36 | 1747298256.051574] Core 0 usage: 85.7%
+[2025-05-15 08:37:37 | 1747298257.056742] Core 0 usage: 89.5%
+[2025-05-15 08:37:38 | 1747298258.063836] Core 0 usage: 84.2%
+[2025-05-15 08:37:39 | 1747298259.068769] Core 0 usage: 90.0%
+[2025-05-15 08:37:40 | 1747298260.075751] Core 0 usage: 19.0%
+[2025-05-15 08:37:40 | 1747298260.075867] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:37:40 | 1747298260.075904] Moving job canneal on core 1
+[2025-05-15 08:37:40 | 1747298260.099764] Moving job vips on core 1
+[2025-05-15 08:37:41 | 1747298261.128250] Core 0 usage: 10.5%
+[2025-05-15 08:37:41 | 1747298261.128368] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:37:42 | 1747298262.150877] Core 0 usage: 0.0%
+[2025-05-15 08:37:43 | 1747298263.155330] Core 0 usage: 11.8%
+[2025-05-15 08:37:44 | 1747298264.160295] Core 0 usage: 5.6%
+[2025-05-15 08:37:45 | 1747298265.163797] Core 0 usage: 10.5%
+[2025-05-15 08:37:46 | 1747298266.168577] Core 0 usage: 25.0%
+[2025-05-15 08:37:47 | 1747298267.174236] Core 0 usage: 13.3%
+[2025-05-15 08:37:48 | 1747298268.179532] Core 0 usage: 7.1%
+[2025-05-15 08:37:49 | 1747298269.186410] Core 0 usage: 13.3%
+[2025-05-15 08:37:50 | 1747298270.200530] Core 0 usage: 13.3%
+[2025-05-15 08:37:51 | 1747298271.206903] Core 0 usage: 7.1%
+[2025-05-15 08:37:52 | 1747298272.212545] Core 0 usage: 100.0%
+[2025-05-15 08:37:52 | 1747298272.212659] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:37:53 | 1747298273.249503] Core 0 usage: 100.0%
+[2025-05-15 08:37:53 | 1747298273.249617] Moving job canneal off core 1
+[2025-05-15 08:37:53 | 1747298273.297416] Moving job vips off core 1
+[2025-05-15 08:37:54 | 1747298274.356971] Core 0 usage: 100.0%
+[2025-05-15 08:37:55 | 1747298275.369201] Core 0 usage: 95.0%
+[2025-05-15 08:37:56 | 1747298276.380307] Core 0 usage: 100.0%
+[2025-05-15 08:37:57 | 1747298277.388312] Core 0 usage: 100.0%
+[2025-05-15 08:37:58 | 1747298278.397277] Core 0 usage: 100.0%
+[2025-05-15 08:37:59 | 1747298279.404443] Core 0 usage: 100.0%
+[2025-05-15 08:38:00 | 1747298280.412359] Core 0 usage: 100.0%
+[2025-05-15 08:38:01 | 1747298281.418482] Core 0 usage: 100.0%
+[2025-05-15 08:38:02 | 1747298282.422851] Core 0 usage: 100.0%
+[2025-05-15 08:38:03 | 1747298283.427963] Core 0 usage: 100.0%
+[2025-05-15 08:38:04 | 1747298284.432418] Core 0 usage: 100.0%
+[2025-05-15 08:38:05 | 1747298285.439626] Core 0 usage: 100.0%
+[2025-05-15 08:38:06 | 1747298286.444738] Core 0 usage: 100.0%
+[2025-05-15 08:38:06 | 1747298286.448014] Job canneal completed
+[2025-05-15 08:38:06 | 1747298286.508605] Starting next regular job: radix with 2 threads on cores [2, 3]
+[2025-05-15 08:38:06 | 1747298286.917651] Job radix started successfully
+[2025-05-15 08:38:07 | 1747298287.927163] Core 0 usage: 100.0%
+[2025-05-15 08:38:08 | 1747298288.932297] Core 0 usage: 100.0%
+[2025-05-15 08:38:09 | 1747298289.937154] Core 0 usage: 95.2%
+[2025-05-15 08:38:10 | 1747298290.114169] Job vips completed
+[2025-05-15 08:38:10 | 1747298290.582182] Starting next regular job: dedup with 3 threads on cores [2, 3]
+[2025-05-15 08:38:10 | 1747298290.883632] Job dedup started successfully
+[2025-05-15 08:38:11 | 1747298291.888551] Core 0 usage: 100.0%
+[2025-05-15 08:38:12 | 1747298292.893148] Core 0 usage: 100.0%
+[2025-05-15 08:38:13 | 1747298293.897695] Core 0 usage: 94.7%
+[2025-05-15 08:38:14 | 1747298294.902472] Core 0 usage: 95.2%
+[2025-05-15 08:38:15 | 1747298295.906975] Core 0 usage: 100.0%
+[2025-05-15 08:38:16 | 1747298296.915190] Core 0 usage: 100.0%
+[2025-05-15 08:38:17 | 1747298297.921372] Core 0 usage: 100.0%
+[2025-05-15 08:38:18 | 1747298298.925942] Core 0 usage: 95.0%
+[2025-05-15 08:38:19 | 1747298299.930902] Core 0 usage: 100.0%
+[2025-05-15 08:38:20 | 1747298300.936788] Core 0 usage: 100.0%
+[2025-05-15 08:38:21 | 1747298301.940798] Core 0 usage: 11.1%
+[2025-05-15 08:38:21 | 1747298301.940915] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:38:21 | 1747298301.940968] Moving job radix on core 1
+[2025-05-15 08:38:21 | 1747298301.964298] Moving job dedup on core 1
+[2025-05-15 08:38:23 | 1747298303.002773] Core 0 usage: 6.7%
+[2025-05-15 08:38:23 | 1747298303.002966] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:38:24 | 1747298304.033111] Core 0 usage: 17.6%
+[2025-05-15 08:38:25 | 1747298305.038839] Core 0 usage: 6.7%
+[2025-05-15 08:38:26 | 1747298306.044197] Core 0 usage: 6.7%
+[2025-05-15 08:38:27 | 1747298307.050016] Core 0 usage: 6.7%
+[2025-05-15 08:38:28 | 1747298308.055097] Core 0 usage: 100.0%
+[2025-05-15 08:38:28 | 1747298308.055198] High memcached usage detected, scaling up to cores 0,1 (colocated)
+[2025-05-15 08:38:29 | 1747298309.085672] Core 0 usage: 100.0%
+[2025-05-15 08:38:29 | 1747298309.085811] Moving job radix off core 1
+[2025-05-15 08:38:29 | 1747298309.132756] Moving job dedup off core 1
+[2025-05-15 08:38:30 | 1747298310.185046] Core 0 usage: 100.0%
+[2025-05-15 08:38:31 | 1747298311.192494] Core 0 usage: 95.2%
+[2025-05-15 08:38:32 | 1747298312.201393] Core 0 usage: 100.0%
+[2025-05-15 08:38:33 | 1747298313.207193] Core 0 usage: 95.0%
+[2025-05-15 08:38:34 | 1747298314.211423] Core 0 usage: 65.0%
+[2025-05-15 08:38:35 | 1747298315.216429] Core 0 usage: 55.6%
+[2025-05-15 08:38:36 | 1747298316.220618] Core 0 usage: 57.9%
+[2025-05-15 08:38:37 | 1747298317.226526] Core 0 usage: 66.7%
+[2025-05-15 08:38:38 | 1747298318.231825] Core 0 usage: 78.9%
+[2025-05-15 08:38:43 | 1747298323.125714] Job dedup completed
+[2025-05-15 08:38:44 | 1747298324.395485] Core 0 usage: 90.0%
+[2025-05-15 08:38:45 | 1747298325.398647] Core 0 usage: 72.2%
+[2025-05-15 08:38:46 | 1747298326.401261] Core 0 usage: 20.0%
+[2025-05-15 08:38:46 | 1747298326.401376] Low memcached usage detected, returning to colocated state
+[2025-05-15 08:38:46 | 1747298326.401443] Moving job radix on core 1
+[2025-05-15 08:38:47 | 1747298327.425162] Core 0 usage: 29.4%
+[2025-05-15 08:38:47 | 1747298327.425311] Low memcached usage detected, scaling down to core 0 only
+[2025-05-15 08:38:47 | 1747298327.440935] Job radix completed
+[2025-05-15 08:38:48 | 1747298328.250278] All batch jobs completed.
+[2025-05-15 08:38:48 | 1747298328.250440] Setting final memcached affinity to cores 0,1
+[2025-05-15 08:38:48 | 1747298328.262109] Dynamic scheduler completed
