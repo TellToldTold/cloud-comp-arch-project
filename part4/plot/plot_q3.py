@@ -21,8 +21,6 @@ colors = {
     "vips" : "#CC0A00",
 }
 
-path = "../part4_task2_results/"
-
 def get_logger_df(logger_path):
     patterns = {
         "start": re.compile(r"(?P<timestamp>[\d\-\:T\.]+)\s+start\s+(?P<task>\w+)\s+\[(?P<cores>[\d,]+)\]\s+(?P<threads>\d+)"),
@@ -437,8 +435,8 @@ def export_plot_B(p95_df, cpu_df, job_df, memcached_df, folder, run_number, incl
     plt.close()
 
 
-def export_plots(folder, run_number, include_cpu=False):
-    folder_path = path + folder + '/'
+def export_plots(task, run_number, include_cpu=False):
+    folder_path = f"../part4_task{task}_results/" + run_number + '/'
 
     mcperf_path = get_mcperf_path(folder_path)
     
@@ -454,19 +452,19 @@ def export_plots(folder, run_number, include_cpu=False):
 
     job_df, memcached_df = extract_start_end(logger_df)
 
-    export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu)
-    export_plot_B(p95_df, cpu_df, job_df, memcached_df, folder, run_number, include_cpu)
+    export_plot_A(p95_df, cpu_df, job_df, folder_path, run_number, include_cpu)
+    export_plot_B(p95_df, cpu_df, job_df, memcached_df, folder_path, run_number, include_cpu)
 
 
-def main(folder, include_cpu=False):
-    export_plots(folder, "run_1", include_cpu)
-    #export_plots(folder, "run_2")
-    #export_plots(folder, "run_3")
+def main(task, include_cpu=False):
+    export_plots(task, "run_1", include_cpu)
+    export_plots(task, "run_2")
+    export_plots(task, "run_3")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process runs from a specified folder.")
-    parser.add_argument("folder", help="Folder containing run subdirectories")
+    parser.add_argument("task", help="Number of the task containing the run subdirectories")
     parser.add_argument("--cpu", action="store_true", help="Include CPU usage data from the plot")
     args = parser.parse_args()
     
-    main(args.folder, args.cpu)
+    main(args.task, args.cpu)
