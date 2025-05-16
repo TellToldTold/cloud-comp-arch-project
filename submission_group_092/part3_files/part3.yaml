@@ -1,0 +1,246 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  creationTimestamp: null
+  name: part3.k8s.local
+spec:
+  api:
+    loadBalancer:
+      type: Public
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudConfig:
+    gceServiceAccount: default
+  cloudProvider: gce
+  configBase: gs://cca-eth-2025-group-092-fbaldin/part3.k8s.local
+  containerRuntime: containerd
+  etcdClusters:
+  - cpuRequest: 200m
+    etcdMembers:
+    - instanceGroup: master-europe-west1-b
+      name: a
+    memoryRequest: 100Mi
+    name: main
+  - cpuRequest: 100m
+    etcdMembers:
+    - instanceGroup: master-europe-west1-b
+      name: a
+    memoryRequest: 100Mi
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubelet:
+    anonymousAuth: false
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  kubernetesVersion: 1.31.5
+  masterPublicName: api.part3.k8s.local
+  networking:
+    kubenet: {}
+  nonMasqueradeCIDR: 100.64.0.0/10
+  project: cca-eth-2025-group-092
+  sshAccess:
+  - 0.0.0.0/0
+  subnets:
+  - name: europe-west1
+    region: europe-west1
+    type: Public
+  topology:
+    dns:
+      type: None
+    masters: public
+    nodes: public
+  cloudControllerManager:
+    image: gcr.io/k8s-staging-cloud-provider-gcp/cloud-controller-manager:master@sha256:e125f4e6792978125546e64279a13de18fdf6b704edfec8400cac1254d3adf88
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: part3.k8s.local
+  name: master-europe-west1-b
+spec:
+  image: ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20250130
+  machineType: e2-standard-2
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: master-europe-west1-b
+  role: Master
+  subnets:
+  - europe-west1
+  zones:
+  - europe-west1-b
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: part3.k8s.local
+  name: client-measure
+spec:
+  image: ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20250130
+  machineType: e2-standard-2
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: nodes-europe-west1-b
+    cca-project-nodetype: "client-measure"
+    cca-project-role: "mcperf-client"
+  role: Node
+  subnets:
+  - europe-west1
+  zones:
+  - europe-west1-b
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: part3.k8s.local
+  name: client-agent-a
+spec:
+  image: ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20250130
+  machineType: e2-standard-2
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: nodes-europe-west1-b
+    cca-project-nodetype: "client-agent-a"
+    cca-project-role: "mcperf-client"
+  role: Node
+  subnets:
+  - europe-west1
+  zones:
+  - europe-west1-b
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: part3.k8s.local
+  name: client-agent-b
+spec:
+  image: ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20250130
+  machineType: e2-standard-4
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: nodes-europe-west1-b
+    cca-project-nodetype: "client-agent-b"
+    cca-project-role: "mcperf-client"
+  role: Node
+  subnets:
+  - europe-west1
+  zones:
+  - europe-west1-b
+
+---
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: part3.k8s.local
+  name: node-a-2core
+spec:
+  image: ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20250130
+  machineType: e2-highmem-2
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: nodes-europe-west1-b
+    cca-project-nodetype: "node-a-2core"
+  role: Node
+  subnets:
+  - europe-west1
+  zones:
+  - europe-west1-b
+
+---
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: part3.k8s.local
+  name: node-b-2core
+spec:
+  image: ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20250130
+  machineType: n2-highcpu-2
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: nodes-europe-west1-b
+    cca-project-nodetype: "node-b-2core"
+  role: Node
+  subnets:
+  - europe-west1
+  zones:
+  - europe-west1-b
+
+---
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: part3.k8s.local
+  name: node-c-4core
+spec:
+  image: ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20250130
+  machineType: c3-highcpu-4
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: nodes-europe-west1-b
+    cca-project-nodetype: "node-c-4core"
+  role: Node
+  rootVolumeType: pd-ssd
+  subnets:
+  - europe-west1
+  zones:
+  - europe-west1-b
+
+---
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: null
+  labels:
+    kops.k8s.io/cluster: part3.k8s.local
+  name: node-d-4core
+spec:
+  image: ubuntu-os-cloud/ubuntu-2404-noble-amd64-v20250130
+  machineType: n2-standard-4
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: nodes-europe-west1-b
+    cca-project-nodetype: "node-d-4core"
+  role: Node
+  subnets:
+  - europe-west1
+  zones:
+  - europe-west1-b
