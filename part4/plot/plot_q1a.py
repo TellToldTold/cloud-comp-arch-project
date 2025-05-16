@@ -57,7 +57,7 @@ def export_plot():
             combined['QPS_std'] = combined[['QPS_1', 'QPS_2', 'QPS_3']].std(axis=1)
 
             plt.errorbar(combined['QPS_mean'], combined['p95_mean'], xerr=combined['QPS_std'], yerr=combined['p95_std'], 
-                    fmt='-o', capsize=5, label=f"T={T}, C={C}", color=colors[2*(T-1) + C - 1])
+                    fmt='-o', capsize=5, label=f"T={T}, C={C}", color=colors[2*(T-1) + C - 1], linewidth=0.5)
 
     # Labels and grid
     plt.xlabel("Achieved Queries per Second (QPS)")

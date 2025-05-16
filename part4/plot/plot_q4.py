@@ -176,7 +176,7 @@ def export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu=False)
     spacing = 3.0    # Space between pairs of bars
     
     # Create positions for each pair of bars
-    positions = np.arange(len(p95_df)) * (2 * bar_width + spacing)
+    positions = p95_df['start_time'].values
     
     # Define nicer colors
     latency_color = '#c9184a'  # Light red
@@ -196,13 +196,19 @@ def export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu=False)
     )
     ax1.tick_params(axis='y')
     
-    # Adjust x-ticks to show time in seconds
-    # Map bar positions to actual time values
-    time_labels = p95_df['start_time'].values
-    # Use a subset of positions for readability
-    tick_indices = np.linspace(0, len(positions)-1, 10, dtype=int)
-    ax1.set_xticks(positions[tick_indices])
-    ax1.set_xticklabels([f"{time_labels[i]:.0f}" for i in tick_indices])
+    x_min = positions.min()
+    x_max = positions.max()
+
+    # Round to nearest 100
+    x_start = (x_min // 100) * 100
+    x_end = ((x_max // 100) + 1) * 100
+
+    # Generate ticks every 100 units
+    xticks = np.arange(x_start, x_end + 1, 100)
+
+    # Set ticks and labels
+    ax1.set_xticks(xticks)
+    ax1.set_xticklabels([f"{x:.0f}" for x in xticks])
 
     # Right Y-Axis: QPS
     ax1_2 = ax1.twinx()
@@ -285,7 +291,7 @@ def export_plot_A(p95_df, cpu_df, job_df, folder, run_number, include_cpu=False)
 
     ax2.set_yticks([])
     ax2.set_yticklabels([])
-    ax2.set_xlabel('Time (ms)')
+    ax2.set_xlabel('Time (s)')
     ax2.set_ylabel('Jobs')
     ax2.set_ylim(-1, spacing * len(job_df))
     ax2.grid(True, axis='x', which='both', linestyle='--', alpha=0.5)
@@ -304,14 +310,15 @@ def export_plot_B(p95_df, cpu_df, job_df, memcached_df, folder, run_number, incl
         ncols=1,
         figsize=(12, 6),
         sharex=True,
-        gridspec_kw={'height_ratios': [5, 2]})
+        gridspec_kw={'height_ratios': [5, 2]}
+        )
 
     # Calculate bar positions
     bar_width = 2.2  # Width of each bar
     spacing = 3.0    # Space between pairs of bars
     
     # Create positions for each pair of bars
-    positions = np.arange(len(p95_df)) * (2 * bar_width + spacing)
+    positions = p95_df['start_time'].values
     
     # Define nicer colors
     latency_color = '#c9184a'  # Light red
@@ -330,13 +337,19 @@ def export_plot_B(p95_df, cpu_df, job_df, memcached_df, folder, run_number, incl
     )
     ax1.tick_params(axis='y')
     
-    # Adjust x-ticks to show time in seconds
-    # Map bar positions to actual time values
-    time_labels = p95_df['start_time'].values
-    # Use a subset of positions for readability
-    tick_indices = np.linspace(0, len(positions)-1, 10, dtype=int)
-    ax1.set_xticks(positions[tick_indices])
-    ax1.set_xticklabels([f"{time_labels[i]:.0f}" for i in tick_indices])
+    x_min = positions.min()
+    x_max = positions.max()
+
+    # Round to nearest 100
+    x_start = (x_min // 100) * 100
+    x_end = ((x_max // 100) + 1) * 100
+
+    # Generate ticks every 100 units
+    xticks = np.arange(x_start, x_end + 1, 100)
+
+    # Set ticks and labels
+    ax1.set_xticks(xticks)
+    ax1.set_xticklabels([f"{x:.0f}" for x in xticks])
     ax1.set_yticks([0, 1, 2])
     ax1.set_yticklabels(['0', '1', '2'])
 
@@ -421,7 +434,7 @@ def export_plot_B(p95_df, cpu_df, job_df, memcached_df, folder, run_number, incl
 
     ax2.set_yticks([])
     ax2.set_yticklabels([])
-    ax2.set_xlabel('Time (ms)')
+    ax2.set_xlabel('Time (s)')
     ax2.set_ylabel('Jobs')
     ax2.set_ylim(-1, spacing * len(job_df))
     ax2.grid(True, axis='x', which='both', linestyle='--', alpha=0.5)
